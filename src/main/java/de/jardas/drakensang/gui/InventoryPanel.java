@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import de.jardas.drakensang.gui.inventory.InventoryItemsPanel;
 import de.jardas.drakensang.model.Inventory;
 import de.jardas.drakensang.model.Item;
 import de.jardas.drakensang.model.Weapon;

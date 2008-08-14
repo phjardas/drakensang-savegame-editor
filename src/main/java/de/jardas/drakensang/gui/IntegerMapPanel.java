@@ -1,94 +1,111 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.model.IntegerMap;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.model.IntegerMap;
 
-public class IntegerMapPanel<M extends IntegerMap> extends JPanel {
-	private M values;
-	private final Map<String, JLabel> labels = new HashMap<String, JLabel>();
-	private final Map<String, JTextField> fields = new HashMap<String, JTextField>();
-	private final ResourceBundle bundle;
-	private int currentRow = 0;
-	private int currentCol = 0;
+public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
+    private M values;
+    private final Map<String, JLabel> labels = new HashMap<String, JLabel>();
+    private final Map<String, JComponent> fields = new HashMap<String, JComponent>();
+    private final ResourceBundle bundle;
+    private int currentRow = 0;
+    private int currentCol = 0;
 
-	public IntegerMapPanel(String bundleName) {
-		bundle = ResourceBundle.getBundle(getClass().getPackage().getName()
-				+ "." + bundleName);
-	}
+    public IntegerMapPanel(String bundleName) {
+        bundle = ResourceBundle.getBundle(getClass().getPackage().getName()
+                + "." + bundleName);
+    }
 
-	protected void update() {
-		labels.clear();
-		fields.clear();
-		removeAll();
-		setLayout(new GridBagLayout());
+    protected void update() {
+        labels.clear();
+        fields.clear();
+        removeAll();
+        setLayout(new GridBagLayout());
 
-		addFields();
+        addFields();
 
-		repaint();
-	}
+        repaint();
+    }
 
-	protected void addFields() {
-		for (String key : values.getKeys()) {
-			int value = values.get(key);
-			addField(key, value);
-		}
-	}
+    protected void addFields() {
+        for (String key : values.getKeys()) {
+            int value = values.get(key);
+            addField(key, value);
+        }
+    }
 
-	protected void addField(String key, int value) {
-		String name;
+    protected void addField(final String key, int value) {
+        String name;
 
-		try {
-			name = bundle.getString(key);
-		} catch (MissingResourceException e) {
-			name = key;
-		}
+        try {
+            name = bundle.getString(key);
+        } catch (MissingResourceException e) {
+            name = key;
+        }
 
-		JLabel label = new JLabel(name);
-		JTextField field = new JTextField(String.valueOf(value));
+        final JLabel label = new JLabel(name);
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
+                    -1000, 50, 1));
+        spinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    handleChange(key, ((Number) spinner.getValue()).intValue());
+                }
+            });
 
-		labels.put(key, label);
-		fields.put(key, field);
+        labels.put(key, label);
+        fields.put(key, spinner);
 
-		Insets insets = new Insets(3, 6, 3, 6);
-		add(label, new GridBagConstraints(2 * currentRow, currentCol, 1, 1, 0,
-				0, GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0,
-				0));
-		add(field, new GridBagConstraints(2 * currentRow + 1, currentCol, 1, 1,
-				1, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-				insets, 0, 0));
+        Insets insets = new Insets(3, 6, 3, 6);
+        add(label,
+            new GridBagConstraints(2 * currentRow, currentCol, 1, 1, 0, 0,
+                GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
+        add(spinner,
+            new GridBagConstraints((2 * currentRow) + 1, currentCol, 1, 1, 1,
+                0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                insets, 0, 0));
 
-		advanceRowAndColumn();
-	}
+        advanceRowAndColumn();
+    }
 
-	private void advanceRowAndColumn() {
-		currentRow = (currentRow + 1) % 2;
+    protected void handleChange(String key, int value) {
+        values.set(key, value);
+    }
 
-		if (currentRow == 0) {
-			currentCol++;
-		}
-	}
+    private void advanceRowAndColumn() {
+        currentRow = (currentRow + 1) % 2;
 
-	public M getValues() {
-		return values;
-	}
+        if (currentRow == 0) {
+            currentCol++;
+        }
+    }
 
-	public void setValues(M values) {
-		if (values == this.values) {
-			return;
-		}
+    public M getValues() {
+        return values;
+    }
 
-		this.values = values;
-		update();
-	}
+    public void setValues(M values) {
+        if (values == this.values) {
+            return;
+        }
+
+        this.values = values;
+        update();
+    }
 }
