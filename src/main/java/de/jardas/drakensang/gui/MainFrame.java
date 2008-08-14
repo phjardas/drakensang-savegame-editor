@@ -33,6 +33,7 @@ public class MainFrame extends JFrame {
     private CharacterDao characterDao;
     private JList characterList = new JList();
     private CharacterPanel characterPanel = new CharacterPanel();
+    private JButton saveButton;
 
     public MainFrame() {
         init();
@@ -81,20 +82,20 @@ public class MainFrame extends JFrame {
                 }
             }));
 
-        toolbar.add(new JButton(new AbstractAction("Spielstand speichern",
+        saveButton = new JButton(new AbstractAction("Spielstand speichern",
                     new ImageIcon(getClass().getResource("images/save.gif"))) {
-                public void actionPerformed(ActionEvent e) {
-                    save();
-                }
-            }));
+                    public void actionPerformed(ActionEvent e) {
+                        save();
+                    }
+                });
+        saveButton.setEnabled(false);
+        toolbar.add(saveButton);
 
         getContentPane().add(toolbar, BorderLayout.NORTH);
         getContentPane().add(characterList, BorderLayout.WEST);
         getContentPane().add(characterPanel, BorderLayout.CENTER);
 
-        int width = 800;
-        int height = (int) (((Math.sqrt(5.0) - 1.0) / 2.0) * width);
-        setSize(width, height);
+        setSize(800, 720);
         centerOnScreen();
     }
 
@@ -131,6 +132,8 @@ public class MainFrame extends JFrame {
                     }
                 }
             });
+
+        saveButton.setEnabled(true);
     }
 
     public void save() {

@@ -30,7 +30,7 @@ public class UpdateStatementBuilder {
 
 	public void append(String sql, ParameterType type, Object value) {
 		append(sql);
-		parameters.add(new Parameter(type, value));
+		addParameter(type, value);
 	}
 
 	public void append(String sql, int value) {
@@ -39,6 +39,10 @@ public class UpdateStatementBuilder {
 
 	public void append(String sql, String value) {
 		append(sql, ParameterType.String, value);
+	}
+	
+	public void addParameter(ParameterType type, Object value) {
+		parameters.add(new Parameter(type, value));
 	}
 
 	public PreparedStatement createStatement(Connection connection)
@@ -104,6 +108,13 @@ public class UpdateStatementBuilder {
 			public void set(PreparedStatement stmt, int index, Object value)
 					throws SQLException {
 				stmt.setString(index, (String) value);
+			}
+		},
+		Bytes {
+			@Override
+			public void set(PreparedStatement stmt, int index, Object value)
+					throws SQLException {
+				stmt.setBytes(index, (byte[]) value);
 			}
 		};
 

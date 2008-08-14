@@ -8,6 +8,7 @@ public abstract class InventoryItem {
 	private String id;
 	private String name;
 	private int count;
+	private int maxCount;
 
 	public byte[] getGuid() {
 		return guid;
@@ -39,6 +40,14 @@ public abstract class InventoryItem {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public int getMaxCount() {
+		return this.maxCount;
+	}
+
+	public void setMaxCount(int maxCount) {
+		this.maxCount = maxCount;
 	}
 
 	@Override

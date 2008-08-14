@@ -16,6 +16,11 @@ public class Character {
 	private final Sonderfertigkeiten sonderfertigkeiten = new Sonderfertigkeiten();
 	private final Zauberfertigkeiten zauberfertigkeiten = new Zauberfertigkeiten();
 	private final Inventory inventory = new Inventory();
+	private Race race;
+	private Culture culture;
+	private Profession profession;
+	private Sex sex;
+	private boolean magician;
 
 	public byte[] getGuid() {
 		return guid;
@@ -47,7 +52,7 @@ public class Character {
 
 	public int getMoneyAmount() {
 		Set<Money> money = getInventory().getItems(Money.class);
-		return money.isEmpty() ? 0 : money.iterator().next().getAmount();
+		return money.isEmpty() ? 0 : money.iterator().next().getCount();
 	}
 
 	public void setMoneyAmount(int amount) {
@@ -58,7 +63,7 @@ public class Character {
 					+ " can not carry money.");
 		}
 
-		money.iterator().next().setAmount(amount);
+		money.iterator().next().setCount(amount);
 	}
 
 	public Inventory getInventory() {
@@ -95,6 +100,46 @@ public class Character {
 
 	public void setSteigerungspunkte(int steigerungspunkte) {
 		this.steigerungspunkte = steigerungspunkte;
+	}
+
+	public Culture getCulture() {
+		return this.culture;
+	}
+
+	public void setCulture(Culture culture) {
+		this.culture = culture;
+	}
+
+	public Profession getProfession() {
+		return this.profession;
+	}
+
+	public void setProfession(Profession profession) {
+		this.profession = profession;
+	}
+
+	public Race getRace() {
+		return this.race;
+	}
+
+	public void setRace(Race race) {
+		this.race = race;
+	}
+
+	public Sex getSex() {
+		return this.sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
+
+	public boolean isMagician() {
+		return this.magician;
+	}
+
+	public void setMagician(boolean magician) {
+		this.magician = magician;
 	}
 
 	@Override

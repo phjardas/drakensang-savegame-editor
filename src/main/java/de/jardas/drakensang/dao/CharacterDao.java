@@ -1,155 +1,137 @@
 package de.jardas.drakensang.dao;
 
+import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.Culture;
+import de.jardas.drakensang.model.IntegerMap;
+import de.jardas.drakensang.model.Profession;
+import de.jardas.drakensang.model.Race;
+import de.jardas.drakensang.model.Sex;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.IntegerMap;
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Item;
-import de.jardas.drakensang.model.Money;
-import de.jardas.drakensang.model.Weapon;
-import de.jardas.drakensang.model.Weapon.Type;
 
 public class CharacterDao {
-	private Set<Character> characters;
-	private final Connection connection;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(CharacterDao.class);
+    private final Connection connection;
+    private final InventoryDao inventoryDao;
+    private Set<Character> characters;
 
-	public CharacterDao(String filename) {
-		try {
-			System.out.println("Opening savegame at " + filename);
-			connection = DriverManager
-					.getConnection("jdbc:sqlite:/" + filename);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException("Can't open database file '"
-					+ filename + "': " + e, e);
-		}
-	}
+    public CharacterDao(String filename) {
+        try {
+            LOG.debug("Opening savegame at " + filename);
+            connection = DriverManager.getConnection("jdbc:sqlite:/" + filename);
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Can't open database file '"
+                + filename + "': " + e, e);
+        }
 
-	public synchronized Set<Character> getCharacters() {
-		if (this.characters == null) {
-			try {
-				this.characters = loadCharacters();
-			} catch (SQLException e) {
-				throw new RuntimeException("Error loading characters: " + e, e);
-			}
-		}
+        inventoryDao = new InventoryDao(connection);
+    }
 
-		return this.characters;
-	}
+    public synchronized Set<Character> getCharacters() {
+        if (this.characters == null) {
+            try {
+                this.characters = loadCharacters();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error loading characters: " + e, e);
+            }
+        }
 
-	private Set<Character> loadCharacters() throws SQLException {
-		PreparedStatement statement = connection
-				.prepareStatement("select * from _instance_pc order by name");
-		ResultSet result = statement.executeQuery();
-		Set<Character> items = new HashSet<Character>();
+        return this.characters;
+    }
 
-		while (result.next()) {
-			Character c = new Character();
-			items.add(c);
+    private Set<Character> loadCharacters() throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "select * from _instance_pc order by name");
+        ResultSet result = statement.executeQuery();
+        Set<Character> items = new HashSet<Character>();
 
-			c.setGuid(result.getBytes("Guid"));
-			c.setName(result.getString("Name"));
-			c.setId(result.getString("Id"));
-			c.setAbenteuerpunkte(result.getInt("XP"));
-			c.setSteigerungspunkte(result.getInt("UpgradeXP"));
+        while (result.next()) {
+        	LOG.debug("Loading character " + result.getString("Id") + ".");
+        	
+            Character c = new Character();
+            items.add(c);
 
-			c.getAttribute().load(result);
-			c.getTalente().load(result);
-			c.getSonderfertigkeiten().load(result);
-			c.getZauberfertigkeiten().load(result);
+            c.setGuid(result.getBytes("Guid"));
+            c.setName(result.getString("Name"));
+            c.setId(result.getString("Id"));
+            c.setAbenteuerpunkte(result.getInt("XP"));
+            c.setSteigerungspunkte(result.getInt("UpgradeXP"));
 
-			loadInventory(c);
-			System.out.println("Loaded " + c);
-		}
+            c.setSex(Sex.valueOf(result.getString("Sex")));
+            c.setRace(Race.valueOf(result.getString("Race")));
+            c.setCulture(Culture.valueOf(result.getString("Culture")));
+            c.setProfession(Profession.valueOf(result.getString("Profession")));
+            c.setMagician(result.getInt("IsMagicUser") > 0);
 
-		return items;
-	}
+            c.getAttribute().load(result);
+            c.getTalente().load(result);
+            c.getSonderfertigkeiten().load(result);
+            c.getZauberfertigkeiten().load(result);
 
-	private void loadInventory(Character character) throws SQLException {
-		loadInventory(character, Item.class, "_instance_item");
-		loadInventory(character, Money.class, "_instance_money");
-		loadInventory(character, Weapon.class, "_instance_weapon");
-	}
+            inventoryDao.loadInventory(c);
+        }
 
-	private void loadInventory(Character character,
-			Class<? extends InventoryItem> itemClass, String table)
-			throws SQLException {
-		PreparedStatement stmt = connection.prepareStatement("select * from "
-				+ table + " where StorageGuid = ?");
-		stmt.setBytes(1, character.getGuid());
-		ResultSet results = stmt.executeQuery();
+        return items;
+    }
 
-		while (results.next()) {
-			try {
-				character.getInventory().add(
-						createInventoryItem(itemClass, results));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
+    private void save(Character character) throws SQLException {
+        UpdateStatementBuilder builder = new UpdateStatementBuilder("_Instance_PC",
+                "Guid = ?");
 
-	private InventoryItem createInventoryItem(
-			Class<? extends InventoryItem> itemClass, ResultSet results)
-			throws InstantiationException, IllegalAccessException, SQLException {
-		InventoryItem item = itemClass.newInstance();
+        appendSave(builder, character.getAttribute());
+        appendSave(builder, character.getTalente());
+        appendSave(builder, character.getSonderfertigkeiten());
+        appendSave(builder, character.getZauberfertigkeiten());
 
-		item.setGuid(results.getBytes("Guid"));
-		item.setId(results.getString("Id"));
-		item.setName(results.getString("Name"));
-		item.setCount(results.getInt("StackCount"));
+        builder.append("'XP' = ?", character.getAbenteuerpunkte());
+        builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
+        builder.append("'Sex' = ?", character.getSex().name());
+        builder.append("'Race' = ?", character.getRace().name());
+        builder.append("'Culture' = ?", character.getCulture().name());
+        builder.append("'Profession' = ?", character.getProfession().name());
 
-		if (item instanceof Weapon) {
-			Weapon weapon = (Weapon) item;
-			weapon.setEquipmentType(Type.valueOf(results
-					.getString("EquipmentType")));
-		}
+        builder.addParameter(ParameterType.Bytes, character.getGuid());
 
-		return item;
-	}
+        LOG.debug("Character update: " + builder);
 
-	public void save(Character character) throws SQLException {
-		UpdateStatementBuilder builder = new UpdateStatementBuilder(
-				"_Instance_PC", "Id = '" + character.getId() + "'");
+        builder.createStatement(connection).executeUpdate();
 
-		appendSave(builder, character.getAttribute());
-		appendSave(builder, character.getTalente());
-		appendSave(builder, character.getSonderfertigkeiten());
-		appendSave(builder, character.getZauberfertigkeiten());
+        inventoryDao.save(character.getInventory());
+    }
 
-		builder.append("'XP' = ?", character.getAbenteuerpunkte());
-		builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
+    private void appendSave(UpdateStatementBuilder builder, IntegerMap values) {
+        for (String key : values.getKeys()) {
+            builder.append("'" + key + "' = ?", values.get(key));
+        }
+    }
 
-		builder.createStatement(connection).executeUpdate();
+    public void saveAll() {
+        if (characters == null) {
+            return;
+        }
 
-		System.out.println(builder);
-		System.out.println("Saved " + character);
-	}
+        try {
+            boolean autoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
 
-	public void appendSave(UpdateStatementBuilder builder, IntegerMap values) {
-		for (String key : values.getKeys()) {
-			builder.append("'" + key + "' = ?", values.get(key));
-		}
-	}
+            for (Character character : characters) {
+                save(character);
+            }
 
-	public void saveAll() {
-		if (characters == null) {
-			return;
-		}
-
-		for (Character character : characters) {
-			try {
-				save(character);
-			} catch (SQLException e) {
-				throw new RuntimeException("Error saving character "
-						+ character + ": " + e, e);
-			}
-		}
-	}
+            connection.commit();
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving characters: " + e, e);
+        }
+    }
 }
