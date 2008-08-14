@@ -10,8 +10,8 @@
 package de.jardas.drakensang.model;
 
 public class Schaden {
-    private final int diceMultiplier;
-    private final int addition;
+    private int diceMultiplier;
+    private int addition;
 
     public Schaden(final int diceMultiplier, final int addition) {
         super();
@@ -22,9 +22,17 @@ public class Schaden {
     public int getAddition() {
         return this.addition;
     }
+    
+    public void setAddition(int addition) {
+    	this.addition = addition;
+    }
 
     public int getDiceMultiplier() {
         return this.diceMultiplier;
+    }
+    
+    public void setDiceMultiplier(int diceMultiplier) {
+    	this.diceMultiplier = diceMultiplier;
     }
 
     @Override

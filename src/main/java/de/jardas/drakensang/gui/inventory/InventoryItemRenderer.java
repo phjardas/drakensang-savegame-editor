@@ -35,20 +35,35 @@ public class InventoryItemRenderer {
 
     protected List<JComponent> createComponents(final InventoryItem item) {
         List<JComponent> components = new ArrayList<JComponent>();
-        components.add(new JLabel(getBundleValue(item.getId())));
-
-        if (item.getMaxCount() > 1) {
-            final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-                        item.getCount(), 1, item.getMaxCount(), 1));
-            spinner.addChangeListener(new ChangeListener() {
-                    public void stateChanged(ChangeEvent e) {
-                        item.setCount(((Number) spinner.getValue()).intValue());
-                    }
-                });
-            components.add(spinner);
-        }
+        components.add(renderLabel(item));
+        components.add(renderCounter(item));
+        components.add(renderSpecial(item));
 
         return components;
+    }
+
+    protected JComponent renderLabel(final InventoryItem item) {
+        return new JLabel(getBundleValue(item.getId()));
+    }
+
+    protected JComponent renderCounter(final InventoryItem item) {
+        if (item.getMaxCount() <= 1) {
+            return null;
+        }
+
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+                    item.getCount(), 1, item.getMaxCount(), 1));
+        spinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    item.setCount(((Number) spinner.getValue()).intValue());
+                }
+            });
+
+        return spinner;
+    }
+
+    protected JComponent renderSpecial(final InventoryItem item) {
+        return null;
     }
 
     protected String getBundleValue(String key) {

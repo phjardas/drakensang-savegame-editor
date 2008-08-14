@@ -12,21 +12,44 @@ package de.jardas.drakensang.gui.inventory;
 import de.jardas.drakensang.model.InventoryItem;
 import de.jardas.drakensang.model.Shield;
 
-import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 public class ShieldRenderer extends InventoryItemRenderer {
     @Override
-    protected List<JComponent> createComponents(InventoryItem item) {
-        final List<JComponent> components = super.createComponents(item);
-        Shield shield = (Shield) item;
-        components.add(new JLabel(shield.getAttackeMod() + "/"
-                + shield.getParadeMod()));
+    protected JComponent renderSpecial(final InventoryItem item) {
+        final Shield shield = (Shield) item;
 
-        return components;
+        final JSpinner atSpinner = new JSpinner(new SpinnerNumberModel(
+                    shield.getAttackeMod(), -10, 10, 1));
+        atSpinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    shield.setAttackeMod(((Number) atSpinner.getValue())
+                        .intValue());
+                }
+            });
+
+        final JSpinner paSpinner = new JSpinner(new SpinnerNumberModel(
+                    shield.getParadeMod(), -10, 10, 1));
+        paSpinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    shield.setParadeMod(((Number) paSpinner.getValue()).intValue());
+                }
+            });
+
+        final JPanel panel = new JPanel();
+
+        panel.add(atSpinner);
+        panel.add(new JLabel("/"));
+        panel.add(paSpinner);
+
+        return panel;
     }
 
     @Override

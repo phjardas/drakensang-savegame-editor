@@ -39,10 +39,14 @@ public class InventoryItemsPanel extends JPanel {
             int col = 0;
 
             for (JComponent comp : getRenderer(item).createComponents(item)) {
-                add(comp,
-                    new GridBagConstraints(col++, row, 1, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
-                        insets, 0, 0));
+                if (comp != null) {
+                    add(comp,
+                        new GridBagConstraints(col, row, 1, 1, 0, 0,
+                            GridBagConstraints.WEST, GridBagConstraints.NONE,
+                            insets, 0, 0));
+                }
+
+                col++;
             }
 
             row++;

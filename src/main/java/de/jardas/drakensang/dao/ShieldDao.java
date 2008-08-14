@@ -35,5 +35,8 @@ public class ShieldDao extends InventoryItemDao<Shield> {
     protected void appendUpdateStatements(UpdateStatementBuilder builder,
         Shield item) {
         super.appendUpdateStatements(builder, item);
+
+        builder.append("WpATmod = ?", item.getAttackeMod());
+        builder.append("WpPAmod = ?", item.getParadeMod());
     }
 }
