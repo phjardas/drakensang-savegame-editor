@@ -17,7 +17,6 @@ import de.jardas.drakensang.model.Jewelry;
 import de.jardas.drakensang.model.Key;
 import de.jardas.drakensang.model.Money;
 import de.jardas.drakensang.model.Recipe;
-import de.jardas.drakensang.model.Shield;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +38,7 @@ public class InventoryDao {
         this.connection = connection;
 
         itemDaos.add(new WeaponDao(connection));
+        itemDaos.add(new ShieldDao(connection));
         itemDaos.add(new InventoryItemDao<Money>(connection, Money.class,
                 "_instance_money"));
         itemDaos.add(new InventoryItemDao<Item>(connection, Item.class,
@@ -49,8 +49,6 @@ public class InventoryDao {
                 "_instance_key"));
         itemDaos.add(new InventoryItemDao<Recipe>(connection, Recipe.class,
                 "_instance_recipe"));
-        itemDaos.add(new InventoryItemDao<Shield>(connection, Shield.class,
-                "_instance_shield"));
     }
 
     public void loadInventory(Character character) throws SQLException {

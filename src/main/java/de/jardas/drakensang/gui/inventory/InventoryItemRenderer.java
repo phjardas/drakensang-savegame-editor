@@ -28,19 +28,25 @@ public class InventoryItemRenderer {
     private static final ResourceBundle BUNDLE = ResourceBundle
         .getBundle(InventoryItemsPanel.class.getPackage().getName()
             + ".inventory");
+    private static final String[] PREFIXES = {
+            "crafted_a_", "crafted_s_", "special_", "loc01_", "loc02_",
+            "zutat_a_", "robable_", "weapon_unique_",
+        };
 
     protected List<JComponent> createComponents(final InventoryItem item) {
         List<JComponent> components = new ArrayList<JComponent>();
         components.add(new JLabel(getBundleValue(item.getId())));
 
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-                    item.getCount(), 1, item.getMaxCount(), 1));
-        spinner.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    item.setCount(((Number) spinner.getValue()).intValue());
-                }
-            });
-        components.add(spinner);
+        if (item.getMaxCount() > 1) {
+            final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+                        item.getCount(), 1, item.getMaxCount(), 1));
+            spinner.addChangeListener(new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        item.setCount(((Number) spinner.getValue()).intValue());
+                    }
+                });
+            components.add(spinner);
+        }
 
         return components;
     }
@@ -49,6 +55,15 @@ public class InventoryItemRenderer {
         try {
             return BUNDLE.getString(key);
         } catch (MissingResourceException e) {
+            for (String prefix : PREFIXES) {
+                if (key.startsWith(prefix)) {
+                    final String name = key.substring(prefix.length());
+
+                    return name.substring(0, 1).toUpperCase()
+                    + name.substring(1);
+                }
+            }
+
             return key;
         }
     }

@@ -23,6 +23,7 @@ public class InventoryItemsPanel extends JPanel {
 
     public InventoryItemsPanel() {
         renderers.add(new WeaponRenderer());
+        renderers.add(new ShieldRenderer());
         renderers.add(new InventoryItemRenderer());
 
         setLayout(new GridBagLayout());

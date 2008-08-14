@@ -17,11 +17,10 @@ public class Main {
             MainFrame frame = new MainFrame();
 
             frame.setVisible(true);
-            frame.loadSavegame(new File(
-                    "c:/opt/workspaces/abudhabi/drakensang/savegame.dsa"));
+            frame.loadSavegame(new File("c:/opt/workspaces/abudhabi/drakensang/savegame.dsa"));
 
-            // CharacterDao dao = new CharacterDao("c:/opt/workspaces/abudhabi/drakensang/savegame.dsa");
-            // Set<Character> characters = dao.getCharacters();
+//             CharacterDao dao = new CharacterDao("c:/opt/workspaces/abudhabi/drakensang/savegame.dsa");
+//             Set<Character> characters = dao.getCharacters();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
