@@ -1,13 +1,9 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.dao.CharacterDao;
-import de.jardas.drakensang.model.Character;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-
 import java.io.File;
-
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +21,9 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import de.jardas.drakensang.dao.CharacterDao;
+import de.jardas.drakensang.model.Character;
 
 public class MainFrame extends JFrame {
 	private final JToolBar toolbar = new JToolBar();
@@ -49,8 +48,18 @@ public class MainFrame extends JFrame {
 		fileChooser.setApproveButtonText("Spielstand laden");
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fileChooser.setCurrentDirectory(new File(home,
-				"Documents/Drakensang/profiles/default/save/"));
+
+		File savedir = new File(home,
+				"Documents/Drakensang/profiles/default/save/");
+		File[] saves = savedir.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory()
+						&& pathname.getName().startsWith("save");
+			}
+		});
+
+		fileChooser.setCurrentDirectory(saves[saves.length - 1]);
 
 		// fileChooser.setFileFilter(new FileFilter() {
 		// @Override
@@ -124,12 +133,17 @@ public class MainFrame extends JFrame {
 
 		characterList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				updateSelection(characters
-						.get(characterList.getSelectedIndex()));
+				if (characterList.getSelectedIndex() >= 0
+						&& characterList.getSelectedIndex() < characters.size()) {
+					updateSelection(characters.get(characterList
+							.getSelectedIndex()));
+				}
 			}
 		});
 
 		saveButton.setEnabled(true);
+
+		File image = new File(file.getParentFile(), "savegame.jpg");
 
 		characterList.setSelectedIndex(0);
 	}

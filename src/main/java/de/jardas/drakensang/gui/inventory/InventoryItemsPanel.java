@@ -50,14 +50,12 @@ public class InventoryItemsPanel extends JPanel {
 						insets, 0, 0));
 				row = 0;
 				currentClass = item.getClass();
-				System.out.println("Panel at " + 0 + " / " + panelCount);
 			}
 
 			int col = 0;
 
 			for (JComponent comp : getRenderer(item).createComponents(item)) {
 				if (comp != null) {
-					System.out.println("Component at " + col + " / " + row);
 					panel.add(comp, new GridBagConstraints(col, row, 1, 1, 0,
 							0, GridBagConstraints.WEST,
 							GridBagConstraints.NONE, insets, 0, 0));

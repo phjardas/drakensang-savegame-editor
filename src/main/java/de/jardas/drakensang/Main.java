@@ -10,8 +10,7 @@ public class Main {
 			Class.forName("SQLite.JDBCDriver").newInstance();
 			MainFrame frame = new MainFrame();
 			frame.setVisible(true);
-			frame.loadSavegame(new File(System.getProperty("user.dir"),
-					"savegame.dsa"));
+			// frame.loadSavegame(new File(System.getProperty("user.dir"), "savegame.dsa"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
