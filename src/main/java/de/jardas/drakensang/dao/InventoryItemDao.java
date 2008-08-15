@@ -53,8 +53,11 @@ public class InventoryItemDao<I extends InventoryItem> {
         item.setGuid(results.getBytes("Guid"));
         item.setId(results.getString("Id"));
         item.setName(results.getString("Name"));
-        item.setCount(results.getInt("StackCount"));
-        item.setMaxCount(results.getInt("MaxStackCount"));
+        
+        if (item.isCountable()) {
+	        item.setCount(results.getInt("StackCount"));
+	        item.setMaxCount(results.getInt("MaxStackCount"));
+        }
 
         return item;
     }
@@ -74,7 +77,12 @@ public class InventoryItemDao<I extends InventoryItem> {
     }
 
     protected void appendUpdateStatements(UpdateStatementBuilder builder, I item) {
-        builder.append("StackCount = ?", ParameterType.Int, item.getCount());
+    	builder.append("Name = ?", item.getName());
+    	builder.append("Id = ?", item.getId());
+    	
+    	if (item.isCountable()) {
+    		builder.append("StackCount = ?", ParameterType.Int, item.getCount());
+    	}
     }
 
     public String getTable() {

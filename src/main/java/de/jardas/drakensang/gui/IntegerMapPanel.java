@@ -38,6 +38,8 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
         fields.clear();
         removeAll();
         setLayout(new GridBagLayout());
+        currentRow = 0;
+        currentCol = 0;
 
         addFields();
 
@@ -49,6 +51,9 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
             int value = values.get(key);
             addField(key, value);
         }
+        add(new JLabel(),
+            new GridBagConstraints(4, currentRow+1, 1, 1, 1, 1,
+                GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
 
     protected void addField(final String key, int value) {
@@ -74,10 +79,10 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
         Insets insets = new Insets(3, 6, 3, 6);
         add(label,
-            new GridBagConstraints(2 * currentRow, currentCol, 1, 1, 0, 0,
+            new GridBagConstraints(2 * currentCol, currentRow, 1, 1, 0, 0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
         add(spinner,
-            new GridBagConstraints((2 * currentRow) + 1, currentCol, 1, 1, 1,
+            new GridBagConstraints((2 * currentCol) + 1, currentRow, 1, 1, 0,
                 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                 insets, 0, 0));
 
@@ -89,10 +94,10 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     }
 
     private void advanceRowAndColumn() {
-        currentRow = (currentRow + 1) % 2;
+        currentCol = (currentCol + 1) % 2;
 
-        if (currentRow == 0) {
-            currentCol++;
+        if (currentCol == 0) {
+            currentRow++;
         }
     }
 

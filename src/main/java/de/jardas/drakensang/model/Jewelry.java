@@ -10,5 +10,7 @@
 package de.jardas.drakensang.model;
 
 public class Jewelry extends InventoryItem {
-
+	public Jewelry() {
+		super(false);
+	}
 }

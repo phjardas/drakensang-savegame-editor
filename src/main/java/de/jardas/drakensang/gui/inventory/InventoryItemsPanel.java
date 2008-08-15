@@ -13,72 +13,103 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 public class InventoryItemsPanel extends JPanel {
-    private final List<InventoryItemRenderer> renderers = new ArrayList<InventoryItemRenderer>();
-    private List<InventoryItem> items;
+	private final List<InventoryItemRenderer> renderers = new ArrayList<InventoryItemRenderer>();
+	private List<InventoryItem> items;
 
-    public InventoryItemsPanel() {
-        renderers.add(new WeaponRenderer());
-        renderers.add(new ShieldRenderer());
-        renderers.add(new InventoryItemRenderer());
+	public InventoryItemsPanel() {
+		renderers.add(new WeaponRenderer());
+		renderers.add(new ShieldRenderer());
+		renderers.add(new ArmorRenderer());
+		renderers.add(new InventoryItemRenderer());
 
-        setLayout(new GridBagLayout());
-    }
+		setLayout(new GridBagLayout());
+	}
 
-    private void update() {
-        removeAll();
+	private void update() {
+		removeAll();
 
-        int row = 0;
+		Insets insets = new Insets(3, 6, 3, 6);
+		int row = 0;
+		int panelCount = 0;
+		JPanel panel = null;
+		Class<? extends InventoryItem> currentClass = null;
 
-        for (InventoryItem item : items) {
-            Insets insets = new Insets(3, 6, 3, 6);
-            int col = 0;
+		for (InventoryItem item : items) {
+			if (panel == null || currentClass != item.getClass()) {
+				panel = new JPanel();
+				panel.setLayout(new GridBagLayout());
+				panel.setBorder(BorderFactory.createEtchedBorder());
+				add(panel, new GridBagConstraints(0, panelCount++, 1, 1, 1, 0,
+						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+						insets, 0, 0));
+				row = 0;
+				currentClass = item.getClass();
+				System.out.println("Panel at " + 0 + " / " + panelCount);
+			}
 
-            for (JComponent comp : getRenderer(item).createComponents(item)) {
-                if (comp != null) {
-                    add(comp,
-                        new GridBagConstraints(col, row, 1, 1, 0, 0,
-                            GridBagConstraints.WEST, GridBagConstraints.NONE,
-                            insets, 0, 0));
-                }
+			int col = 0;
 
-                col++;
-            }
+			for (JComponent comp : getRenderer(item).createComponents(item)) {
+				if (comp != null) {
+					System.out.println("Component at " + col + " / " + row);
+					panel.add(comp, new GridBagConstraints(col, row, 1, 1, 0,
+							0, GridBagConstraints.WEST,
+							GridBagConstraints.NONE, insets, 0, 0));
+				}
 
-            row++;
-        }
+				col++;
+			}
 
-        repaint();
-    }
+			row++;
 
-    private InventoryItemRenderer getRenderer(InventoryItem item) {
-        for (InventoryItemRenderer renderer : renderers) {
-            if (renderer.isApplicable(item)) {
-                return renderer;
-            }
-        }
+			panel.add(new JLabel(), new GridBagConstraints(3, row, 1, 1, 1, 0,
+					GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+					new Insets(0, 0, 0, 0), 0, 0));
+		}
 
-        throw new IllegalArgumentException("Can't render " + item);
-    }
+		add(new JLabel(), new GridBagConstraints(0, panelCount, 1, 1, 0, 1,
+				GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+				new Insets(0, 0, 0, 0), 0, 0));
 
-    public Set<InventoryItem> getItems() {
-        return new HashSet<InventoryItem>(items);
-    }
+		repaint();
+	}
 
-    public void setItems(Set<InventoryItem> items) {
-        this.items = new ArrayList<InventoryItem>(items);
-        Collections.sort(this.items,
-            new Comparator<InventoryItem>() {
-                public int compare(InventoryItem o1, InventoryItem o2) {
-                    return getRenderer(o1).getBundleValue(o1.getId())
-                               .compareToIgnoreCase(getRenderer(o2)
-                                                        .getBundleValue(o2.getId()));
-                }
-            });
-        update();
-    }
+	private InventoryItemRenderer getRenderer(InventoryItem item) {
+		for (InventoryItemRenderer renderer : renderers) {
+			if (renderer.isApplicable(item)) {
+				return renderer;
+			}
+		}
+
+		throw new IllegalArgumentException("Can't render " + item);
+	}
+
+	public Set<InventoryItem> getItems() {
+		return new HashSet<InventoryItem>(items);
+	}
+
+	public void setItems(Set<InventoryItem> items) {
+		this.items = new ArrayList<InventoryItem>(items);
+		Collections.sort(this.items, new Comparator<InventoryItem>() {
+			public int compare(InventoryItem o1, InventoryItem o2) {
+				int classCompare = o1.getClass().getName().compareTo(
+						o2.getClass().getName());
+
+				if (classCompare != 0) {
+					return classCompare;
+				}
+
+				return getRenderer(o1).getBundleValue(o1.getId())
+						.compareToIgnoreCase(
+								getRenderer(o2).getBundleValue(o2.getId()));
+			}
+		});
+		update();
+	}
 }

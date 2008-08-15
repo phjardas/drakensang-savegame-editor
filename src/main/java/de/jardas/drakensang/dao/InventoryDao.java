@@ -39,6 +39,7 @@ public class InventoryDao {
 
         itemDaos.add(new WeaponDao(connection));
         itemDaos.add(new ShieldDao(connection));
+        itemDaos.add(new ArmorDao(connection));
         itemDaos.add(new InventoryItemDao<Money>(connection, Money.class,
                 "_instance_money"));
         itemDaos.add(new InventoryItemDao<Item>(connection, Item.class,

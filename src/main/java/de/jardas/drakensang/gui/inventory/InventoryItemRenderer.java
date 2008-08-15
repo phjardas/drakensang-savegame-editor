@@ -48,7 +48,7 @@ public class InventoryItemRenderer {
 
     protected JComponent renderCounter(final InventoryItem item) {
         if (item.getMaxCount() <= 1) {
-            return null;
+            return new JLabel("" + item.getCount());
         }
 
         final JSpinner spinner = new JSpinner(new SpinnerNumberModel(

@@ -19,6 +19,6 @@ public class Weapon extends InventoryItem {
     public void setEquipmentType(Type equipmentType) {
         this.equipmentType = equipmentType;
     }
-    public static enum Type {OneHandWeapon, TwoHandWeapon;
+    public static enum Type {OneHandWeapon, TwoHandWeapon, TwoHandWeaponLeft;
     }
 }

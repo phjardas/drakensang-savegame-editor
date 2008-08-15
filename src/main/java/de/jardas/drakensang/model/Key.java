@@ -10,5 +10,7 @@
 package de.jardas.drakensang.model;
 
 public class Key extends InventoryItem {
-
+	public Key() {
+		super(false);
+	}
 }

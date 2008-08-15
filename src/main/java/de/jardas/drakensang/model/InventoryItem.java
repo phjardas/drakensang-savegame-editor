@@ -1,37 +1,22 @@
 package de.jardas.drakensang.model;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-public abstract class InventoryItem {
-	private byte[] guid;
-	private String id;
-	private String name;
+public abstract class InventoryItem extends Persistable {
 	private int count;
 	private int maxCount;
+	private final boolean countable;
 
-	public byte[] getGuid() {
-		return guid;
+	public InventoryItem() {
+		this(true);
 	}
 
-	public void setGuid(byte[] guid) {
-		this.guid = guid;
-	}
+	public InventoryItem(boolean countable) {
+		super();
+		this.countable = countable;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		if (!countable) {
+			setCount(1);
+			setMaxCount(1);
+		}
 	}
 
 	public int getCount() {
@@ -50,9 +35,7 @@ public abstract class InventoryItem {
 		this.maxCount = maxCount;
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this,
-				ToStringStyle.SHORT_PREFIX_STYLE).toString();
+	public boolean isCountable() {
+		return countable;
 	}
 }

@@ -5,6 +5,7 @@ import de.jardas.drakensang.model.Inventory;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 
 public class InventoryPanel extends JPanel {
@@ -13,7 +14,7 @@ public class InventoryPanel extends JPanel {
 
     public InventoryPanel() {
         setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
+        add(new JScrollPane(panel), BorderLayout.CENTER);
     }
 
     private void update() {

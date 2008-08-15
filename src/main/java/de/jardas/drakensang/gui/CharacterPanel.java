@@ -6,6 +6,7 @@ import de.jardas.drakensang.model.Character;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 
@@ -20,11 +21,11 @@ public class CharacterPanel extends JPanel {
     private InventoryPanel inventoryPanel = new InventoryPanel();
 
     public CharacterPanel() {
-        tabs.addTab("Info", infoPanel);
-        tabs.addTab("Attribute", attributesPanel);
-        tabs.addTab("Talente", talentePanel);
-        tabs.addTab("Sonderfertigkeiten", sonderPanel);
-        tabs.addTab("Zauberfertigkeiten", zauberPanel);
+        tabs.addTab("Info", new JScrollPane(infoPanel));
+        tabs.addTab("Attribute", new JScrollPane(attributesPanel));
+        tabs.addTab("Talente", new JScrollPane(talentePanel));
+        tabs.addTab("Sonderfertigkeiten", new JScrollPane(sonderPanel));
+        tabs.addTab("Zauberfertigkeiten", new JScrollPane(zauberPanel));
         tabs.addTab("Inventar", inventoryPanel);
 
         setLayout(new BorderLayout());
