@@ -101,7 +101,7 @@ public class MainFrame extends JFrame {
 		getContentPane().add(characterList, BorderLayout.WEST);
 		getContentPane().add(characterPanel, BorderLayout.CENTER);
 
-		setSize(800, 720);
+		setSize(800, 730);
 		centerOnScreen();
 	}
 

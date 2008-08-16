@@ -20,6 +20,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.model.InventoryItem;
 
 public class InventoryItemRenderer {
@@ -33,7 +34,15 @@ public class InventoryItemRenderer {
 	}
 
 	protected JComponent renderLabel(final InventoryItem item) {
-		return new JLabel(getItemName(item.getId()));
+		return new InfoLabel(getNameKey(item), getInfoKey(item));
+	}
+
+	protected String getNameKey(final InventoryItem item) {
+		return "lookat_" + item.getId();
+	}
+
+	protected String getInfoKey(final InventoryItem item) {
+		return "infoid_" + item.getId();
 	}
 
 	protected JComponent renderCounter(final InventoryItem item) {

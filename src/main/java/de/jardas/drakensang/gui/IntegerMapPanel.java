@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
@@ -24,7 +25,7 @@ import de.jardas.drakensang.model.IntegerMap;
 
 public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 	private M values;
-	private final Map<String, JLabel> labels = new HashMap<String, JLabel>();
+	private final Map<String, JComponent> labels = new HashMap<String, JComponent>();
 	private final Map<String, JComponent> fields = new HashMap<String, JComponent>();
 	private int currentRow = 0;
 	private int currentCol = 0;
@@ -43,17 +44,10 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 	}
 
 	protected void addFields() {
-		ArrayList<String> keys = new ArrayList<String>(Arrays.asList(values
+		List<String> keys = new ArrayList<String>(Arrays.asList(values
 				.getKeys()));
 
-		Collections.sort(keys, new Comparator<String>() {
-			private final Collator collator = Collator.getInstance();
-
-			@Override
-			public int compare(String s0, String s1) {
-				return collator.compare(getName(s0), getName(s1));
-			}
-		});
+		sortKeys(keys);
 
 		for (String key : values.getKeys()) {
 			int value = values.get(key);
@@ -65,9 +59,23 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 						0, 0, 0), 0, 0));
 	}
 
+	protected void sortKeys(List<String> keys) {
+		Collections.sort(keys, getKeyComparator());
+	}
+
+	protected Comparator<String> getKeyComparator() {
+		return new Comparator<String>() {
+			private final Collator collator = Collator.getInstance();
+
+			@Override
+			public int compare(String s0, String s1) {
+				return collator.compare(getName(s0), getName(s1));
+			}
+		};
+	}
+
 	protected void addField(final String key, int value) {
-		String name = getName(key);
-		final JLabel label = new JLabel(name);
+		final InfoLabel label = new InfoLabel(getLocalKey(key), getInfoKey(key));
 
 		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
 				-1000, 50, 1));
@@ -98,6 +106,10 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
 	protected String getLocalKey(String key) {
 		return key;
+	}
+
+	protected String getInfoKey(String key) {
+		return null;
 	}
 
 	protected void handleChange(String key, int value) {

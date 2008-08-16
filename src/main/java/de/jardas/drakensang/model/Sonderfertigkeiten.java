@@ -15,7 +15,7 @@ public class Sonderfertigkeiten extends IntegerMap {
 				"SF_GezielterStich", "SF_Todesstoss", "SF_Klingensturm", "SF_Umreissen",
 				"SF_Wuchtschlag", "SF_Niederwerfen", "SF_Befreiungsschlag",
 				"SF_Hammerschlag", "SF_GezielterSchuss", "SF_Scharfschuetze",
-				"SF_Meisterschuetze", "SF_SchnellLaden", "SF_Eisenhagel", "SF_Pfeilhagel",
+				"SF_Meisterschuetze", "SF_Eisenhagel", "SF_Pfeilhagel",
 				"SF_Lademeister", "SF_GezielterWurf",
 				"SF_Kraftwurf", "SF_Meisterwurf", };
 	}

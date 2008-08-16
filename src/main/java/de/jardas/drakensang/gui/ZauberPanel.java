@@ -48,4 +48,9 @@ public class ZauberPanel extends IntegerMapPanel<Zauberfertigkeiten> {
 
 		return super.getLocalKey(key);
 	}
+	
+	@Override
+	protected String getInfoKey(String key) {
+		return "Info" + getLocalKey(key);
+	}
 }

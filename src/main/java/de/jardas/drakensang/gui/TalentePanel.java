@@ -16,15 +16,20 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 		if ("ZwSchwerter".equals(key)) {
 			return "Zweihandschwerter";
 		}
-		
+
 		if ("Schloesser".equals(key)) {
 			return "SchloesserKnacken";
 		}
-		
+
 		if ("Ueberreden".equals(key)) {
 			return "UeberredenUeberzeugen";
 		}
 
 		return key;
+	}
+
+	@Override
+	protected String getInfoKey(String key) {
+		return "Info" + getLocalKey(key);
 	}
 }

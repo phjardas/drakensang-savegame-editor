@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -20,6 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InventoryItemsPanel extends JPanel {
+	private static final ResourceBundle BUNDLE = ResourceBundle
+			.getBundle(InventoryItemsPanel.class.getPackage().getName()
+					+ ".inventory");
 	private final List<InventoryItemRenderer> renderers = new ArrayList<InventoryItemRenderer>();
 	private List<InventoryItem> items;
 
@@ -27,6 +31,7 @@ public class InventoryItemsPanel extends JPanel {
 		renderers.add(new WeaponRenderer());
 		renderers.add(new ShieldRenderer());
 		renderers.add(new ArmorRenderer());
+		renderers.add(new MoneyRenderer());
 		renderers.add(new InventoryItemRenderer());
 
 		setLayout(new GridBagLayout());
@@ -45,7 +50,8 @@ public class InventoryItemsPanel extends JPanel {
 			if (panel == null || currentClass != item.getClass()) {
 				panel = new JPanel();
 				panel.setLayout(new GridBagLayout());
-				panel.setBorder(BorderFactory.createEtchedBorder());
+				panel.setBorder(BorderFactory
+						.createTitledBorder(getGroupTitle(item.getClass())));
 				add(panel, new GridBagConstraints(0, panelCount++, 1, 1, 1, 0,
 						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 						insets, 0, 0));
@@ -79,6 +85,10 @@ public class InventoryItemsPanel extends JPanel {
 		repaint();
 	}
 
+	private String getGroupTitle(Class<? extends InventoryItem> currentClass) {
+		return BUNDLE.getString("group." + currentClass.getSimpleName());
+	}
+
 	private InventoryItemRenderer getRenderer(InventoryItem item) {
 		for (InventoryItemRenderer renderer : renderers) {
 			if (renderer.isApplicable(item)) {
@@ -95,13 +105,14 @@ public class InventoryItemsPanel extends JPanel {
 
 	public void setItems(Set<InventoryItem> items) {
 		this.items = new ArrayList<InventoryItem>(items);
-		
+
 		Collections.sort(this.items, new Comparator<InventoryItem>() {
 			private final Collator collator = Collator.getInstance();
 
 			public int compare(InventoryItem o1, InventoryItem o2) {
-				int classCompare = o1.getClass().getName().compareTo(
-						o2.getClass().getName());
+				int classCompare = collator.compare(
+						getGroupTitle(o1.getClass()), getGroupTitle(o2
+								.getClass()));
 
 				if (classCompare != 0) {
 					return classCompare;
@@ -112,7 +123,7 @@ public class InventoryItemsPanel extends JPanel {
 						getRenderer(o2).getItemName(o2.getId()));
 			}
 		});
-		
+
 		update();
 	}
 }
