@@ -1,6 +1,7 @@
 package de.jardas.drakensang.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileFilter;
@@ -36,6 +37,9 @@ public class MainFrame extends JFrame {
 	private JButton saveButton;
 
 	public MainFrame() {
+		super();
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("images/drakensang.png")));
 		init();
 	}
 
