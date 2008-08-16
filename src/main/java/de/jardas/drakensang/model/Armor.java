@@ -88,8 +88,19 @@ public class Armor extends InventoryItem {
 	}
 
 	public static enum Type {
-		ShoesWithLegArmor, GlovesWithArmArmor, ChestArmor, Trousers,
-		ChestArmorWithoutShoulder, Shoes, LegArmor, Shoulder, HeadArmor,
-		ArmArmor, Gloves, TrousersWithLegArmor,
+		ArmArmor,
+		ChestArmor,
+		ChestArmorWithoutShoulder,
+		FullBodyArmor,
+		Gloves,
+		GlovesWithArmArmor,
+		HeadArmor,
+		LegArmor,
+		Shirt,
+		Shoes,
+		ShoesWithLegArmor,
+		Shoulder,
+		Trousers,
+		TrousersWithLegArmor,
 	}
 }

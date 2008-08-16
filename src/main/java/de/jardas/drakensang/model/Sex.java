@@ -10,5 +10,5 @@
 package de.jardas.drakensang.model;
 
 public enum Sex {
-	weiblich, maennlich;
+	maennlich, weiblich;
 }

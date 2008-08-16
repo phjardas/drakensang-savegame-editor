@@ -11,6 +11,7 @@ package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.CharacterSet;
 import de.jardas.drakensang.model.Culture;
 import de.jardas.drakensang.model.Profession;
 import de.jardas.drakensang.model.Race;
@@ -21,8 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -34,8 +33,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class CharacterInfoPanel extends JPanel {
 	private Character character;
@@ -99,14 +96,6 @@ public class CharacterInfoPanel extends JPanel {
 			}
 		});
 
-		final JTextField name = new JTextField(character.getLookAtText());
-		name.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				character.setLookAtText(name.getText());
-			}
-		});
-
 		final JCheckBox magician = new JCheckBox();
 		magician.setSelected(character.isMagician());
 		magician.addChangeListener(new ChangeListener() {
@@ -116,17 +105,15 @@ public class CharacterInfoPanel extends JPanel {
 			}
 		});
 
-		final JSpinner money = new JSpinner(new SpinnerNumberModel(character
-				.getMoneyAmount(), 0, 99000000, 1));
-		money.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				character
-						.setMoneyAmount(((Number) money.getValue()).intValue());
-			}
-		});
-
 		if (character.isPlayerCharacter()) {
+			final JTextField name = new JTextField(character.getLookAtText());
+			name.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					character.setLookAtText(name.getText());
+				}
+			});
+			
 			addInput("Name", name);
 		}
 
@@ -139,7 +126,36 @@ public class CharacterInfoPanel extends JPanel {
 		addInput("UpgradeXP", up);
 
 		if (character.isPlayerCharacter()) {
+			final JSpinner money = new JSpinner(new SpinnerNumberModel(character
+					.getMoneyAmount(), 0, 9999999, 1));
+			money.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					character
+					.setMoneyAmount(((Number) money.getValue()).intValue());
+				}
+			});
+			
+			final JComboBox appearance = EnumComboBoxModel.createComboBox(
+					CharacterSet.values(), character.getCharacterSet(),
+					new EnumComboBoxModel.Listener<CharacterSet>() {
+						public void valueChanged(CharacterSet item) {
+							character.setCharacterSet(item);
+						}
+						
+						@Override
+						public boolean accept(CharacterSet item) {
+							return super.accept(item);
+						}
+						
+						@Override
+						public String toString(CharacterSet item) {
+							return item.getArchetype(character.getSex());
+						}
+					});
+			
 			addInput("Geld", money);
+			addInput("CharacterSet", appearance);
 		}
 
 		add(new JLabel(), new GridBagConstraints(2, row, 1, 1, 1, 1,
@@ -151,8 +167,9 @@ public class CharacterInfoPanel extends JPanel {
 
 	private void addInput(final String label, final JComponent input) {
 		Insets insets = new Insets(3, 6, 3, 6);
-		add(new JLabel(Messages.get(label)), new GridBagConstraints(0, row, 1, 1, 0, 0,
-				GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
+		add(new JLabel(Messages.get(label)), new GridBagConstraints(0, row, 1,
+				1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				insets, 0, 0));
 
 		add(input, new GridBagConstraints(1, row, 1, 1, 0, 0,
 				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, insets,

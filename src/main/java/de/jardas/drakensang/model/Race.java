@@ -9,5 +9,10 @@
  */
 package de.jardas.drakensang.model;
 
-public enum Race {Mittellaender, Zwerg, Elf, Tulamide;
+public enum Race {
+	Elf,
+	Mittellaender,
+	Thorwaler,
+	Tulamide,
+	Zwerg,
 }

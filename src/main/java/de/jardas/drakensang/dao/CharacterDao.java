@@ -2,6 +2,7 @@ package de.jardas.drakensang.dao;
 
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.CharacterSet;
 import de.jardas.drakensang.model.Culture;
 import de.jardas.drakensang.model.IntegerMap;
 import de.jardas.drakensang.model.Profession;
@@ -87,6 +88,10 @@ public class CharacterDao {
 			c.getTalente().load(result);
 			c.getSonderfertigkeiten().load(result);
 			c.getZauberfertigkeiten().load(result);
+			
+			if (c.isPlayerCharacter()) {
+				c.setCharacterSet(CharacterSet.valueOf(result.getString("CharacterSet")));
+			}
 
 			inventoryDao.loadInventory(c);
 		}
@@ -113,6 +118,10 @@ public class CharacterDao {
 		builder.append("'Race' = ?", character.getRace().name());
 		builder.append("'Culture' = ?", character.getCulture().name());
 		builder.append("'Profession' = ?", character.getProfession().name());
+		
+		if (character.isPlayerCharacter()) {
+			builder.append("'CharacterSet' = ?", character.getCharacterSet().name());
+		}
 
 		builder.addParameter(ParameterType.Bytes, character.getGuid());
 

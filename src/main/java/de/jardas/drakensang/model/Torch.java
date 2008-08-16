@@ -1,5 +1,5 @@
 /*
- * Culture.java
+ * Armor.java
  *
  * Version $Revision$ $Date$
  *
@@ -9,16 +9,8 @@
  */
 package de.jardas.drakensang.model;
 
-public enum Culture {
-	Amazone,
-	Ambosszwerg,
-	Andergaster,
-	Auelf,
-	Garetier,
-	Horasier,
-	Mhanadistani,
-	Mittelreicher,
-	Novadi,
-	Thorwaler,
-	Waldelf,
+public class Torch extends InventoryItem {
+	public Torch() {
+		super(false);
+	}
 }

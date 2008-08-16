@@ -20,6 +20,7 @@ public class Character extends Persistable {
 	private boolean magician;
 	private String lookAtText;
 	private boolean localizeLookAtText;
+	private CharacterSet characterSet;
 
 	public boolean isPlayerCharacter() {
 		return "CharWizardPC".equals(getId());
@@ -131,6 +132,14 @@ public class Character extends Persistable {
 
 	public void setLocalizeLookAtText(boolean localizeLookAtText) {
 		this.localizeLookAtText = localizeLookAtText;
+	}
+
+	public CharacterSet getCharacterSet() {
+		return characterSet;
+	}
+
+	public void setCharacterSet(CharacterSet characterSet) {
+		this.characterSet = characterSet;
 	}
 
 	@Override

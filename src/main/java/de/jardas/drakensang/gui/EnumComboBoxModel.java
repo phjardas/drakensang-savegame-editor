@@ -9,17 +9,19 @@ import javax.swing.JComboBox;
 import de.jardas.drakensang.dao.Messages;
 
 public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
-	private EnumComboBoxModel(E[] enumeration) {
+	private EnumComboBoxModel(E[] enumeration, Listener<E> listener) {
 		super();
 
 		for (E item : enumeration) {
-			addElement(new LocalizedEnumItem<E>(item, getLabel(item)));
+			if (listener.accept(item)) {
+				addElement(new LocalizedEnumItem<E>(item, getLabel(listener.toString(item))));
+			}
 		}
 	}
 
 	public static <E extends Enum<E>> JComboBox createComboBox(E[] enumeration,
 			E selected, final Listener<E> listener) {
-		JComboBox box = new JComboBox(new EnumComboBoxModel<E>(enumeration));
+		JComboBox box = new JComboBox(new EnumComboBoxModel<E>(enumeration, listener));
 
 		box.addItemListener(new ItemListener() {
 			@Override
@@ -40,8 +42,8 @@ public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
 		return box;
 	}
 
-	public String getLabel(E item) {
-		return Messages.get(item.name());
+	public String getLabel(String key) {
+		return Messages.get(key);
 	}
 
 	private static class LocalizedEnumItem<E extends Enum<E>> {
@@ -64,7 +66,15 @@ public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
 		}
 	}
 
-	public static interface Listener<E extends Enum<E>> {
-		void valueChanged(E item);
+	public abstract static class Listener<E extends Enum<E>> {
+		public abstract void valueChanged(E item);
+		
+		public boolean accept(E item) {
+			return toString(item) != null;
+		}
+		
+		public String toString(E item) {
+			return item.toString();
+		}
 	}
 }

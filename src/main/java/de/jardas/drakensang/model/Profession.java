@@ -9,6 +9,25 @@
  */
 package de.jardas.drakensang.model;
 
-public enum Profession {Streuner, Soeldner, Krieger, Scharlatan, Amazone, 
-    Kampfmagier, Zauberweber, Kaempfer, Alchimist, Bogenschuetze;
+public enum Profession {
+	Alchimist,
+	Amazone,
+	Bogenschuetze,
+	Dieb,
+	Einbrecher,
+	Elementarist,
+	Heilmagier,
+	Kaempfer,
+	Kampfmagier,
+	Krieger,
+	Metamagier,
+	Pirat,
+	Prospektor,
+	Sappeur,
+	Scharlatan,
+	Soeldner,
+	Soldat,
+	Streuner,
+	Waldlaeufer,
+	Zauberweber,
 }
