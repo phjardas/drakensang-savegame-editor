@@ -19,6 +19,7 @@ public class Character extends Persistable {
 	private Sex sex;
 	private boolean magician;
 	private String lookAtText;
+	private boolean localizeLookAtText;
 
 	public boolean isPlayerCharacter() {
 		return "CharWizardPC".equals(getId());
@@ -122,6 +123,14 @@ public class Character extends Persistable {
 
 	public void setLookAtText(String lookAtText) {
 		this.lookAtText = lookAtText;
+	}
+
+	public boolean isLocalizeLookAtText() {
+		return localizeLookAtText;
+	}
+
+	public void setLocalizeLookAtText(boolean localizeLookAtText) {
+		this.localizeLookAtText = localizeLookAtText;
 	}
 
 	@Override

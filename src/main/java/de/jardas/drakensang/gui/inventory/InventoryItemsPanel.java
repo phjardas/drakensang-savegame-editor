@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,7 +95,10 @@ public class InventoryItemsPanel extends JPanel {
 
 	public void setItems(Set<InventoryItem> items) {
 		this.items = new ArrayList<InventoryItem>(items);
+		
 		Collections.sort(this.items, new Comparator<InventoryItem>() {
+			private final Collator collator = Collator.getInstance();
+
 			public int compare(InventoryItem o1, InventoryItem o2) {
 				int classCompare = o1.getClass().getName().compareTo(
 						o2.getClass().getName());
@@ -103,11 +107,12 @@ public class InventoryItemsPanel extends JPanel {
 					return classCompare;
 				}
 
-				return getRenderer(o1).getBundleValue(o1.getId())
-						.compareToIgnoreCase(
-								getRenderer(o2).getBundleValue(o2.getId()));
+				return collator.compare(
+						getRenderer(o1).getItemName(o1.getId()),
+						getRenderer(o2).getItemName(o2.getId()));
 			}
 		});
+		
 		update();
 	}
 }

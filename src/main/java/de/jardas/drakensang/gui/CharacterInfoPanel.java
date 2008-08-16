@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.Culture;
 import de.jardas.drakensang.model.Profession;
@@ -34,6 +35,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class CharacterInfoPanel extends JPanel {
 	private Character character;
 	private int row;
@@ -46,46 +49,35 @@ public class CharacterInfoPanel extends JPanel {
 		removeAll();
 		row = 0;
 
-		final JComboBox race = new JComboBox(Race.values());
-		race.setSelectedIndex(character.getRace().ordinal());
-		race.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					character.setRace((Race) race.getSelectedItem());
-				}
-			}
-		});
+		final JComboBox race = EnumComboBoxModel.createComboBox(Race.values(),
+				character.getRace(), new EnumComboBoxModel.Listener<Race>() {
+					public void valueChanged(Race item) {
+						character.setRace(item);
+					}
+				});
 
-		final JComboBox culture = new JComboBox(Culture.values());
-		culture.setSelectedIndex(character.getCulture().ordinal());
-		culture.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					character.setCulture((Culture) culture.getSelectedItem());
-				}
-			}
-		});
+		final JComboBox culture = EnumComboBoxModel.createComboBox(Culture
+				.values(), character.getCulture(),
+				new EnumComboBoxModel.Listener<Culture>() {
+					public void valueChanged(Culture item) {
+						character.setCulture(item);
+					}
+				});
 
-		final JComboBox profession = new JComboBox(Profession.values());
-		profession.setSelectedIndex(character.getProfession().ordinal());
-		profession.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					character.setProfession((Profession) profession
-							.getSelectedItem());
-				}
-			}
-		});
+		final JComboBox profession = EnumComboBoxModel.createComboBox(
+				Profession.values(), character.getProfession(),
+				new EnumComboBoxModel.Listener<Profession>() {
+					public void valueChanged(Profession item) {
+						character.setProfession(item);
+					}
+				});
 
-		final JComboBox sex = new JComboBox(Sex.values());
-		sex.setSelectedIndex(character.getSex().ordinal());
-		sex.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					character.setSex((Sex) sex.getSelectedItem());
-				}
-			}
-		});
+		final JComboBox sex = EnumComboBoxModel.createComboBox(Sex.values(),
+				character.getSex(), new EnumComboBoxModel.Listener<Sex>() {
+					public void valueChanged(Sex item) {
+						character.setSex(item);
+					}
+				});
 
 		final JSpinner xp = new JSpinner(new SpinnerNumberModel(character
 				.getAbenteuerpunkte(), 0, 100000, 1));
@@ -138,13 +130,13 @@ public class CharacterInfoPanel extends JPanel {
 			addInput("Name", name);
 		}
 
-		addInput("Geschlecht", sex);
-		addInput("Rasse", race);
-		addInput("Kultur", culture);
-		addInput("Beruf", profession);
-		addInput("Magier", magician);
-		addInput("Abenteuerpunkte", xp);
-		addInput("Steigerungspunkte", up);
+		addInput("Sex", sex);
+		addInput("Race", race);
+		addInput("Culture", culture);
+		addInput("Profession", profession);
+		addInput("Magician", magician);
+		addInput("XP", xp);
+		addInput("UpgradeXP", up);
 
 		if (character.isPlayerCharacter()) {
 			addInput("Geld", money);
@@ -159,7 +151,7 @@ public class CharacterInfoPanel extends JPanel {
 
 	private void addInput(final String label, final JComponent input) {
 		Insets insets = new Insets(3, 6, 3, 6);
-		add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 0, 0,
+		add(new JLabel(Messages.get(label)), new GridBagConstraints(0, row, 1, 1, 0, 0,
 				GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
 
 		add(input, new GridBagConstraints(1, row, 1, 1, 0, 0,

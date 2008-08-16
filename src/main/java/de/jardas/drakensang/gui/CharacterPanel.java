@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.inventory.InventoryPanel;
 import de.jardas.drakensang.model.Character;
 
@@ -21,12 +22,12 @@ public class CharacterPanel extends JPanel {
     private InventoryPanel inventoryPanel = new InventoryPanel();
 
     public CharacterPanel() {
-        tabs.addTab("Info", new JScrollPane(infoPanel));
-        tabs.addTab("Attribute", new JScrollPane(attributesPanel));
-        tabs.addTab("Talente", new JScrollPane(talentePanel));
-        tabs.addTab("Sonderfertigkeiten", new JScrollPane(sonderPanel));
-        tabs.addTab("Zauberfertigkeiten", new JScrollPane(zauberPanel));
-        tabs.addTab("Inventar", inventoryPanel);
+        tabs.addTab(Messages.get("CharacterSheet"), new JScrollPane(infoPanel));
+        tabs.addTab(Messages.get("Attribute"), new JScrollPane(attributesPanel));
+        tabs.addTab(Messages.get("Talents"), new JScrollPane(talentePanel));
+        tabs.addTab(Messages.get("SpecialSkills"), new JScrollPane(sonderPanel));
+        tabs.addTab(Messages.get("Spells"), new JScrollPane(zauberPanel));
+        tabs.addTab(Messages.get("Inventory"), inventoryPanel);
 
         setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);

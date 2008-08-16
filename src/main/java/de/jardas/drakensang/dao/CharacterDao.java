@@ -73,6 +73,7 @@ public class CharacterDao {
 			c.setName(name);
 			c.setId(result.getString("Id"));
 			c.setLookAtText(result.getString("LookAtText"));
+			c.setLocalizeLookAtText(result.getBoolean("LocalizeLookAtText"));
 			c.setAbenteuerpunkte(result.getInt("XP"));
 			c.setSteigerungspunkte(result.getInt("UpgradeXP"));
 
@@ -80,7 +81,7 @@ public class CharacterDao {
 			c.setRace(Race.valueOf(result.getString("Race")));
 			c.setCulture(Culture.valueOf(result.getString("Culture")));
 			c.setProfession(Profession.valueOf(result.getString("Profession")));
-			c.setMagician(result.getInt("IsMagicUser") > 0);
+			c.setMagician(result.getBoolean("IsMagicUser"));
 
 			c.getAttribute().load(result);
 			c.getTalente().load(result);
@@ -105,7 +106,7 @@ public class CharacterDao {
 		if (character.isPlayerCharacter()) {
 			builder.append("'LookAtText' = ?", character.getLookAtText());
 		}
-		
+
 		builder.append("'XP' = ?", character.getAbenteuerpunkte());
 		builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
 		builder.append("'Sex' = ?", character.getSex().name());

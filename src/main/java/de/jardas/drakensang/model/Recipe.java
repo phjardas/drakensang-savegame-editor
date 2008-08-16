@@ -10,5 +10,7 @@
 package de.jardas.drakensang.model;
 
 public class Recipe extends InventoryItem {
-
+	public Recipe() {
+		super(false);
+	}
 }

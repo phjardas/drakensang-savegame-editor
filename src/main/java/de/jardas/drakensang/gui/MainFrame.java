@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileFilter;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.jardas.drakensang.dao.CharacterDao;
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Character;
 
 public class MainFrame extends JFrame {
@@ -42,36 +44,28 @@ public class MainFrame extends JFrame {
 		setTitle("Drakensang Savegame Editor");
 		getContentPane().setLayout(new BorderLayout());
 
-		String home = System.getProperty("user.home").replace('\\', '/');
-
 		fileChooser.setDialogTitle("Spielstand laden...");
 		fileChooser.setApproveButtonText("Spielstand laden");
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-		File savedir = new File(home,
-				"Documents/Drakensang/profiles/default/save/");
-		File[] saves = savedir.listFiles(new FileFilter() {
+		File latest = getLatestSavegame();
+		if (latest != null) {
+			fileChooser.setCurrentDirectory(latest.getParentFile());
+		}
+
+		fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory()
-						&& pathname.getName().startsWith("save");
+			public String getDescription() {
+				return "Drakensang Spielstände (*.dsa)";
+			}
+
+			@Override
+			public boolean accept(File f) {
+				return f.isDirectory() || f.getName().matches("\\.dsa$");
 			}
 		});
 
-		fileChooser.setCurrentDirectory(saves[saves.length - 1]);
-
-		// fileChooser.setFileFilter(new FileFilter() {
-		// @Override
-		// public String getDescription() {
-		// return "Drakensang save games (*.dsa)";
-		// }
-		//
-		// @Override
-		// public boolean accept(File f) {
-		// return f.isDirectory() || f.getName().matches("\\.dsa$");
-		// }
-		// });
 		toolbar.setFloatable(false);
 
 		toolbar.add(new JButton(new AbstractAction("Spielstand laden",
@@ -114,8 +108,16 @@ public class MainFrame extends JFrame {
 				characterDao.getCharacters());
 
 		Collections.sort(characters, new Comparator<Character>() {
+			private final Collator collator = Collator.getInstance();
+
 			public int compare(Character o1, Character o2) {
-				return o1.getId().compareToIgnoreCase(o2.getId());
+				if (o1.isPlayerCharacter())
+					return -1;
+				if (o2.isPlayerCharacter())
+					return 1;
+
+				return collator.compare(getCharacterName(o1),
+						getCharacterName(o2));
 			}
 		});
 
@@ -123,7 +125,7 @@ public class MainFrame extends JFrame {
 
 		characterList.setModel(new AbstractListModel() {
 			public Object getElementAt(int index) {
-				return characters.get(index).getId();
+				return getCharacterName(characters.get(index));
 			}
 
 			public int getSize() {
@@ -143,9 +145,12 @@ public class MainFrame extends JFrame {
 
 		saveButton.setEnabled(true);
 
-		File image = new File(file.getParentFile(), "savegame.jpg");
-
 		characterList.setSelectedIndex(0);
+	}
+
+	private String getCharacterName(Character character) {
+		return character.isLocalizeLookAtText() ? Messages.get(character
+				.getLookAtText()) : character.getLookAtText();
 	}
 
 	public void save() {
@@ -165,5 +170,31 @@ public class MainFrame extends JFrame {
 		int x = (screenSize.width - getWidth()) / 2;
 		int y = (screenSize.height - getHeight()) / 2;
 		setLocation(x, y);
+	}
+
+	private File getLatestSavegame() {
+		File savedir = new File(System.getProperty("user.home"),
+				"Documents/Drakensang/profiles/default/save/");
+		File[] saves = savedir.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory()
+						&& pathname.getName().startsWith("save");
+			}
+		});
+
+		if (saves.length == 0) {
+			return null;
+		}
+
+		return new File(saves[saves.length - 1], "savegame.dsa");
+	}
+
+	public void loadDefaultSavegame() {
+		File latest = getLatestSavegame();
+
+		if (latest != null) {
+			loadSavegame(latest);
+		}
 	}
 }
