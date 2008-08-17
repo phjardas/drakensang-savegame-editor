@@ -23,6 +23,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -45,6 +46,9 @@ public class CharacterInfoPanel extends JPanel {
 	private void update() {
 		removeAll();
 		row = 0;
+
+		final JLabel pic = character.isPlayerCharacter() ? new JLabel(
+				createPicture()) : null;
 
 		final JComboBox race = EnumComboBoxModel.createComboBox(Race.values(),
 				character.getRace(), new EnumComboBoxModel.Listener<Race>() {
@@ -73,6 +77,7 @@ public class CharacterInfoPanel extends JPanel {
 				character.getSex(), new EnumComboBoxModel.Listener<Sex>() {
 					public void valueChanged(Sex item) {
 						character.setSex(item);
+						updatePicture(pic);
 					}
 				});
 
@@ -113,8 +118,12 @@ public class CharacterInfoPanel extends JPanel {
 					character.setLookAtText(name.getText());
 				}
 			});
-			
+
 			addInput("Name", name);
+			
+			add(pic, new GridBagConstraints(2, row - 1, 1, 5, 0, 0,
+					GridBagConstraints.WEST, GridBagConstraints.NONE,
+					new Insets(3, 6, 3, 6), 0, 0));
 		}
 
 		addInput("Sex", sex);
@@ -126,34 +135,35 @@ public class CharacterInfoPanel extends JPanel {
 		addInput("UpgradeXP", up);
 
 		if (character.isPlayerCharacter()) {
-			final JSpinner money = new JSpinner(new SpinnerNumberModel(character
-					.getMoneyAmount(), 0, 9999999, 1));
+			final JSpinner money = new JSpinner(new SpinnerNumberModel(
+					character.getMoneyAmount(), 0, 9999999, 1));
 			money.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					character
-					.setMoneyAmount(((Number) money.getValue()).intValue());
+					character.setMoneyAmount(((Number) money.getValue())
+							.intValue());
 				}
 			});
-			
+
 			final JComboBox appearance = EnumComboBoxModel.createComboBox(
 					CharacterSet.values(), character.getCharacterSet(),
 					new EnumComboBoxModel.Listener<CharacterSet>() {
 						public void valueChanged(CharacterSet item) {
 							character.setCharacterSet(item);
+							updatePicture(pic);
 						}
-						
+
 						@Override
 						public boolean accept(CharacterSet item) {
 							return super.accept(item);
 						}
-						
+
 						@Override
 						public String toString(CharacterSet item) {
 							return item.getArchetype(character.getSex());
 						}
 					});
-			
+
 			addInput("Geld", money);
 			addInput("CharacterSet", appearance);
 		}
@@ -163,6 +173,19 @@ public class CharacterInfoPanel extends JPanel {
 						0, 0, 0), 0, 0));
 
 		repaint();
+	}
+
+	private void updatePicture(final JLabel pic) {
+		if (pic != null) {
+			pic.setIcon(createPicture());
+		}
+	}
+
+	private ImageIcon createPicture() {
+		String url = "icons/"
+				+ character.getCharacterSet().getIcon(character.getSex())
+				+ ".gif";
+		return new ImageIcon(getClass().getResource(url));
 	}
 
 	private void addInput(final String label, final JComponent input) {

@@ -35,4 +35,15 @@ public enum CharacterSet {
 		
 		return archetype != null && archetype.length() > 0 ? archetype.trim() : null;
 	}
+	
+	public String getIcon(Sex sex) {
+		String middle = name().replaceAll("^archetype_(.*)_generated$", "$1");
+		String first = "archetyp";
+		
+		if ("mi_heilmagier".equals(middle) || "mi_scharlatan".equals(middle) || "mi_taschendieb".equals(middle)) {
+			first += "e";
+		}
+		
+		return first + "_" + middle + (sex == Sex.maennlich ? "" : "_f");
+	}
 }

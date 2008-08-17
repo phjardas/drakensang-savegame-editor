@@ -53,6 +53,7 @@ public class InventoryItemDao<I extends InventoryItem> {
 		item.setGuid(results.getBytes("Guid"));
 		item.setId(results.getString("Id"));
 		item.setName(results.getString("Name"));
+		item.setIcon(results.getString("IconBrush"));
 
 		if (!Money.class.isAssignableFrom(getItemClass())) {
 			item.setQuestItem(results.getString("QuestId") != null

@@ -12,6 +12,7 @@ package de.jardas.drakensang.gui.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -26,11 +27,17 @@ import de.jardas.drakensang.model.InventoryItem;
 public class InventoryItemRenderer {
 	protected List<JComponent> createComponents(final InventoryItem item) {
 		List<JComponent> components = new ArrayList<JComponent>();
+		components.add(renderIcon(item));
 		components.add(renderLabel(item));
 		components.add(renderCounter(item));
 		components.add(renderSpecial(item));
 
 		return components;
+	}
+
+	protected JComponent renderIcon(final InventoryItem item) {
+		String icon = "../" + item.getIcon().toLowerCase() + ".gif";
+		return new JLabel(new ImageIcon(getClass().getResource(icon)));
 	}
 
 	protected JComponent renderLabel(final InventoryItem item) {
