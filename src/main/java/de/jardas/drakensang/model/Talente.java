@@ -18,7 +18,7 @@ public class Talente extends IntegerMap {
 				"TaMagiekunde", "TaHeilkundeWunden", "TaHeilkundeGift",
 				"TaGassenwissen", "TaAlchimie", "TaBogenbau", "TaSchmieden",
 				"TaFallenEntschaerfen", "TaSchloesser", "TaFeilschen",
-				"TaEtikette", "TaEinschuechtern", "TaBetoeren", "TaUeberreden",
+				"TaEtikette", "TaBetoeren", "TaUeberreden",
 				"TaMenschenkenntnis", };
 	}
 }

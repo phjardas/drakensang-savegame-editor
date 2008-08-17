@@ -70,6 +70,10 @@ public class Messages {
 	}
 
 	public static String get(String key) {
+		if (key == null) {
+			return "";
+		}
+		
 		try {
 			try {
 				return getRequired(key);

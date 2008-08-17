@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
 
 public class Main {
@@ -78,8 +79,8 @@ public class Main {
 			}
 		});
 
-		int result = fileChooser.showDialog(null, BUNDLE
-				.getString("drakensang.home.button"));
+		int result = fileChooser.showDialog(null, InfoLabel.addNewLines(BUNDLE
+				.getString("drakensang.home.button")));
 
 		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile().getParentFile();

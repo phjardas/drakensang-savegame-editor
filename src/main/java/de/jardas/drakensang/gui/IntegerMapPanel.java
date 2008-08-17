@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,37 +25,64 @@ import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.IntegerMap;
 
 public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
-	private M values;
+	private static final int COLUMNS = 2;
 	private final Map<String, JComponent> labels = new HashMap<String, JComponent>();
 	private final Map<String, JComponent> fields = new HashMap<String, JComponent>();
-	private int currentRow = 0;
-	private int currentCol = 0;
+	private M values;
 
 	protected void update() {
 		labels.clear();
 		fields.clear();
 		removeAll();
 		setLayout(new GridBagLayout());
-		currentRow = 0;
-		currentCol = 0;
 
 		addFields();
 
 		repaint();
 	}
 
+	protected boolean isVisible(String key) {
+		return true;
+	}
+
 	protected void addFields() {
-		List<String> keys = new ArrayList<String>(Arrays.asList(values
-				.getKeys()));
+		List<String> keys = new ArrayList<String>();
+		for (String key : Arrays.asList(values.getKeys())) {
+			if (isVisible(key)) {
+				keys.add(key);
+			}
+		}
 
 		sortKeys(keys);
 
-		for (String key : values.getKeys()) {
+		JComponent parent = null;
+		String currentGroupKey = null;
+		Status status = new Status();
+		int parentRow = 0;
+
+		for (String key : keys) {
+			String groupKey = getGroupKey(key);
+			if (isGrouped()
+					&& (parent == null || currentGroupKey == null || !currentGroupKey
+							.equals(groupKey))) {
+				parent = new JPanel();
+				parent.setLayout(new GridBagLayout());
+				parent.setBorder(BorderFactory.createTitledBorder(Messages
+						.get(groupKey)));
+				status = new Status();
+				add(parent, new GridBagConstraints(0, parentRow++, 1, 1, 0, 0,
+						GridBagConstraints.WEST, GridBagConstraints.NONE,
+						new Insets(0, 0, 0, 0), 0, 0));
+				currentGroupKey = groupKey;
+			}
+
 			int value = values.get(key);
-			addField(key, value);
+			addField(key, value, isGrouped() ? parent : this, status);
+			status.advance();
 		}
 
-		add(new JLabel(), new GridBagConstraints(4, currentRow + 1, 1, 1, 1, 1,
+		add(new JLabel(), new GridBagConstraints(isGrouped() ? 1 : COLUMNS,
+				isGrouped() ? parentRow : status.getRow(), 1, 1, 1, 1,
 				GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,
 						0, 0, 0), 0, 0));
 	}
@@ -69,14 +97,47 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
 			@Override
 			public int compare(String s0, String s1) {
+				if (isGrouped()) {
+					String g0 = Messages.get(getGroupKey(s0));
+					String g1 = Messages.get(getGroupKey(s1));
+					int groupCompare = collator.compare(g0, g1);
+
+					if (groupCompare != 0) {
+						return groupCompare;
+					}
+				}
+
 				return collator.compare(getName(s0), getName(s1));
 			}
 		};
 	}
 
-	protected void addField(final String key, int value) {
-		final InfoLabel label = new InfoLabel(getLocalKey(key), getInfoKey(key));
+	protected boolean isGrouped() {
+		return false;
+	}
 
+	protected String getGroupKey(String key) {
+		return null;
+	}
+
+	protected void addField(final String key, int value, JComponent parent,
+			Status status) {
+		final JComponent label = createLabel(key);
+		final JComponent spinner = createField(key, value);
+
+		labels.put(key, label);
+		fields.put(key, spinner);
+
+		Insets insets = new Insets(3, 6, 3, 6);
+		parent.add(label, new GridBagConstraints(status.getColumn(), status
+				.getRow(), 1, 1, 0, 0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, insets, 0, 0));
+		parent.add(spinner, new GridBagConstraints(status.getColumn() + 1,
+				status.getRow(), 1, 1, 0, 0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+	}
+
+	protected JComponent createField(final String key, int value) {
 		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
 				-1000, 50, 1));
 		spinner.addChangeListener(new ChangeListener() {
@@ -85,18 +146,11 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 			}
 		});
 
-		labels.put(key, label);
-		fields.put(key, spinner);
+		return spinner;
+	}
 
-		Insets insets = new Insets(3, 6, 3, 6);
-		add(label, new GridBagConstraints(2 * currentCol, currentRow, 1, 1, 0,
-				0, GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0,
-				0));
-		add(spinner, new GridBagConstraints((2 * currentCol) + 1, currentRow,
-				1, 1, 0, 0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		advanceRowAndColumn();
+	protected InfoLabel createLabel(final String key) {
+		return new InfoLabel(getLocalKey(key), getInfoKey(key));
 	}
 
 	protected String getName(final String key) {
@@ -116,14 +170,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 		values.set(key, value);
 	}
 
-	private void advanceRowAndColumn() {
-		currentCol = (currentCol + 1) % 2;
-
-		if (currentCol == 0) {
-			currentRow++;
-		}
-	}
-
 	public M getValues() {
 		return values;
 	}
@@ -135,5 +181,32 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
 		this.values = values;
 		update();
+	}
+
+	private static class Status {
+		private int column = 0;
+		private int row = 0;
+
+		public int getColumn() {
+			return column;
+		}
+
+		public int getRow() {
+			return row;
+		}
+
+		public void reset() {
+			column = 0;
+			row = 0;
+		}
+
+		public void advance() {
+			column += 2;
+
+			if (column >= COLUMNS) {
+				column = 0;
+				row++;
+			}
+		}
 	}
 }

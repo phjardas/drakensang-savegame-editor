@@ -3,6 +3,8 @@ package de.jardas.drakensang.model;
 public abstract class InventoryItem extends Persistable {
 	private int count;
 	private int maxCount;
+	private boolean questItem;
+	private int value;
 	private final boolean countable;
 
 	public InventoryItem() {
@@ -37,5 +39,21 @@ public abstract class InventoryItem extends Persistable {
 
 	public boolean isCountable() {
 		return countable;
+	}
+
+	public boolean isQuestItem() {
+		return questItem;
+	}
+
+	public void setQuestItem(boolean questItem) {
+		this.questItem = questItem;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
 	}
 }

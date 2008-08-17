@@ -4,7 +4,7 @@ package de.jardas.drakensang.model;
 public class Zauberfertigkeiten extends IntegerMap {
 	@Override
 	public String[] getKeys() {
-		return new String[] { "ZaAdlerauge", "ZaAeroFugumVakuum", "ZaAnalys",
+		return new String[] { "ZaAdlerauge", "ZaAeroFugumVakuum",
 				"ZaArmatrutz", "ZaAttributoMU", "ZaAttributoKL",
 				"ZaAttributoIN", "ZaAttributoCH", "ZaAttributoFF",
 				"ZaAttributoGE", "ZaAttributoKO", "ZaAttributoKK",

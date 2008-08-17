@@ -64,7 +64,7 @@ public class InfoLabel extends JComponent {
 		}
 	}
 
-	private String addNewLines(String in) {
+	public static String addNewLines(String in) {
 		StringBuffer out = new StringBuffer();
 		String[] words = in.split("\\s+");
 		int line = 0;

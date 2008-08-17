@@ -10,6 +10,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public abstract class IntegerMap {
 	private final Map<String, Integer> values = new HashMap<String, Integer>();
+	
+	public boolean contains(String key) {
+		return values.containsKey(key);
+	}
 
 	public int get(String name) {
 		return values.get(name);
