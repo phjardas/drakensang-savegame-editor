@@ -10,6 +10,8 @@
 package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.model.CasterRace;
+import de.jardas.drakensang.model.CasterType;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.CharacterSet;
 import de.jardas.drakensang.model.Culture;
@@ -110,6 +112,20 @@ public class CharacterInfoPanel extends JPanel {
 			}
 		});
 
+		final JComboBox casterType = EnumComboBoxModel.createComboBox(CasterType.values(),
+				character.getCasterType(), new EnumComboBoxModel.Listener<CasterType>() {
+					public void valueChanged(CasterType item) {
+						character.setCasterType(item);
+					}
+				});
+		
+		final JComboBox casterRace = EnumComboBoxModel.createComboBox(CasterRace.values(),
+				character.getCasterRace(), new EnumComboBoxModel.Listener<CasterRace>() {
+			public void valueChanged(CasterRace item) {
+				character.setCasterRace(item);
+			}
+		});
+
 		if (character.isPlayerCharacter()) {
 			final JTextField name = new JTextField(character.getLookAtText());
 			name.addFocusListener(new FocusAdapter() {
@@ -120,7 +136,7 @@ public class CharacterInfoPanel extends JPanel {
 			});
 
 			addInput("Name", name);
-			
+
 			add(pic, new GridBagConstraints(2, row - 1, 1, 5, 0, 0,
 					GridBagConstraints.WEST, GridBagConstraints.NONE,
 					new Insets(3, 6, 3, 6), 0, 0));
@@ -131,6 +147,8 @@ public class CharacterInfoPanel extends JPanel {
 		addInput("Culture", culture);
 		addInput("Profession", profession);
 		addInput("Magician", magician);
+		addInput("CasterType", casterType);
+		addInput("CasterRace", casterRace);
 		addInput("XP", xp);
 		addInput("UpgradeXP", up);
 
@@ -182,8 +200,7 @@ public class CharacterInfoPanel extends JPanel {
 	}
 
 	private ImageIcon createPicture() {
-		String url = "icons/"
-				+ character.getCharacterSet().getIcon(character.getSex())
+		String url = character.getCharacterSet().getIcon(character.getSex())
 				+ ".gif";
 		return new ImageIcon(getClass().getResource(url));
 	}

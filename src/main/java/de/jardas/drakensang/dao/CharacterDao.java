@@ -1,6 +1,8 @@
 package de.jardas.drakensang.dao;
 
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.model.CasterRace;
+import de.jardas.drakensang.model.CasterType;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.CharacterSet;
 import de.jardas.drakensang.model.Culture;
@@ -83,6 +85,8 @@ public class CharacterDao {
 			c.setCulture(Culture.valueOf(result.getString("Culture")));
 			c.setProfession(Profession.valueOf(result.getString("Profession")));
 			c.setMagician(result.getBoolean("IsMagicUser"));
+			c.setCasterType(CasterType.valueOf(result.getString("CasterType")));
+			c.setCasterRace(CasterRace.valueOf(result.getString("CasterRace")));
 
 			c.getAttribute().load(result);
 			c.getTalente().load(result);
@@ -118,6 +122,9 @@ public class CharacterDao {
 		builder.append("'Race' = ?", character.getRace().name());
 		builder.append("'Culture' = ?", character.getCulture().name());
 		builder.append("'Profession' = ?", character.getProfession().name());
+		builder.append("'IsMagicUser' = ?", character.isMagician() ? 1 : 0);
+		builder.append("'CasterType' = ?", character.getCasterType().name());
+		builder.append("'CasterRace' = ?", character.getCasterRace().name());
 		
 		if (character.isPlayerCharacter()) {
 			builder.append("'CharacterSet' = ?", character.getCharacterSet().name());

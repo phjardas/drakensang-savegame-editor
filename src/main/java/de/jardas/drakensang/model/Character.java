@@ -21,6 +21,8 @@ public class Character extends Persistable {
 	private String lookAtText;
 	private boolean localizeLookAtText;
 	private CharacterSet characterSet;
+	private CasterType casterType;
+	private CasterRace casterRace;
 
 	public boolean isPlayerCharacter() {
 		return "CharWizardPC".equals(getId());
@@ -140,6 +142,22 @@ public class Character extends Persistable {
 
 	public void setCharacterSet(CharacterSet characterSet) {
 		this.characterSet = characterSet;
+	}
+
+	public CasterType getCasterType() {
+		return casterType;
+	}
+
+	public void setCasterType(CasterType casterType) {
+		this.casterType = casterType;
+	}
+
+	public CasterRace getCasterRace() {
+		return casterRace;
+	}
+
+	public void setCasterRace(CasterRace casterRace) {
+		this.casterRace = casterRace;
 	}
 
 	@Override

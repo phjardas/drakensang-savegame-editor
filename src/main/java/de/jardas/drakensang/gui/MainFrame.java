@@ -45,11 +45,11 @@ public class MainFrame extends JFrame {
 
 	private void init() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("Drakensang Savegame Editor");
+		setTitle(Messages.get("title"));
 		getContentPane().setLayout(new BorderLayout());
 
-		fileChooser.setDialogTitle("Spielstand laden...");
-		fileChooser.setApproveButtonText("Spielstand laden");
+		fileChooser.setDialogTitle(Messages.get("LoadGame"));
+		fileChooser.setApproveButtonText(Messages.get("LoadGame"));
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -61,7 +61,7 @@ public class MainFrame extends JFrame {
 		fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 			@Override
 			public String getDescription() {
-				return "Drakensang Spielstände (*.dsa)";
+				return Messages.get("filechooser.type");
 			}
 
 			@Override
@@ -72,7 +72,7 @@ public class MainFrame extends JFrame {
 
 		toolbar.setFloatable(false);
 
-		toolbar.add(new JButton(new AbstractAction("Spielstand laden",
+		toolbar.add(new JButton(new AbstractAction(Messages.get("LoadGame"),
 				new ImageIcon(getClass().getResource("images/open.gif"))) {
 			public void actionPerformed(ActionEvent e) {
 				int result = fileChooser.showDialog(MainFrame.this, null);
@@ -88,7 +88,7 @@ public class MainFrame extends JFrame {
 			}
 		}));
 
-		saveButton = new JButton(new AbstractAction("Spielstand speichern",
+		saveButton = new JButton(new AbstractAction(Messages.get("SaveGame"),
 				new ImageIcon(getClass().getResource("images/save.gif"))) {
 			public void actionPerformed(ActionEvent e) {
 				save();

@@ -41,10 +41,32 @@ public class Messages {
 		}
 	}
 
+	public static String get(String key) {
+		if (key == null) {
+			return "";
+		}
+
+		try {
+			try {
+				return getRequired(key);
+			} catch (MissingResourceException e) {
+				return getRequired(key.toLowerCase());
+			}
+		} catch (MissingResourceException e) {
+			LOG.warn("No localization found for '" + key + "': " + e);
+			return "!!!" + key + "!!!";
+		}
+	}
+
 	public static String getRequired(String key) {
+		return get("LocaText", key, "LocaId", "_Locale");
+	}
+
+	public static String get(String col, String key, String idCol, String table) {
 		try {
 			PreparedStatement stmt = getConnection().prepareStatement(
-					"select LocaText from _Locale where LocaId = ?");
+					"select " + col + " from " + table + " where " + idCol
+							+ " = ?");
 			stmt.setString(1, key);
 			ResultSet result = stmt.executeQuery();
 
@@ -61,28 +83,11 @@ public class Messages {
 				}
 			}
 
-			return result.getString("LocaText");
+			return result.getString(col);
 		} catch (SQLException e) {
 			throw new MissingResourceException(
 					"Error looking up localized value for '" + key + "': " + e,
 					Messages.class.getName(), key);
-		}
-	}
-
-	public static String get(String key) {
-		if (key == null) {
-			return "";
-		}
-		
-		try {
-			try {
-				return getRequired(key);
-			} catch (MissingResourceException e) {
-				return getRequired(key.toLowerCase());
-			}
-		} catch (MissingResourceException e) {
-			LOG.warn("No localization found for '" + key + "': " + e);
-			return "!!!" + key + "!!!";
 		}
 	}
 
