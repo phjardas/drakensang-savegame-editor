@@ -18,7 +18,7 @@ import de.jardas.drakensang.dao.Messages;
 
 public class InfoLabel extends JComponent {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-	.getLogger(InfoLabel.class);
+			.getLogger(InfoLabel.class);
 	private static final ImageIcon HELP_ICON = new ImageIcon(InfoLabel.class
 			.getResource("images/help.png"));
 
@@ -31,14 +31,12 @@ public class InfoLabel extends JComponent {
 
 		setLayout(new GridBagLayout());
 		final String name = Messages.get(key);
-		
-		if (name.contains("obsolete")) {
-			LOG.warn("Obsolete: " + key);
-		}
 
-		add(new JLabel(name), new GridBagConstraints(0, 0, 1, 1, 0, 0,
-				GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,
-						0, 0, 0), 0, 0));
+		if (key != null) {
+			add(new JLabel(name), new GridBagConstraints(0, 0, 1, 1, 0, 0,
+					GridBagConstraints.WEST, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 0, 0));
+		}
 
 		if (infoKey != null) {
 			try {
@@ -46,7 +44,9 @@ public class InfoLabel extends JComponent {
 
 				JComponent anchor = new JLabel("?");
 				anchor.setForeground(Color.BLUE);
-				anchor.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				anchor
+						.setCursor(Cursor
+								.getPredefinedCursor(Cursor.HAND_CURSOR));
 				anchor.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
