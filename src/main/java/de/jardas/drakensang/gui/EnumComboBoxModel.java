@@ -21,7 +21,8 @@ public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
 
 	public static <E extends Enum<E>> JComboBox createComboBox(E[] enumeration,
 			E selected, final Listener<E> listener) {
-		JComboBox box = new JComboBox(new EnumComboBoxModel<E>(enumeration, listener));
+		EnumComboBoxModel<E> model = new EnumComboBoxModel<E>(enumeration, listener);
+		JComboBox box = new JComboBox(model);
 
 		box.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -35,7 +36,13 @@ public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
 		});
 
 		if (selected != null) {
-			box.setSelectedIndex(selected.ordinal());
+			for (int i = 0; i < model.getSize(); i++) {
+				@SuppressWarnings("unchecked")
+				LocalizedEnumItem<E> el = (LocalizedEnumItem<E>) model.getElementAt(i);
+				if (el.getItem() == selected) {
+					box.setSelectedIndex(i);
+				}
+			}
 		}
 
 		return box;

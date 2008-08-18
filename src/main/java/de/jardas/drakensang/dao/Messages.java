@@ -6,17 +6,36 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import de.jardas.drakensang.Main;
 import de.jardas.drakensang.Settings;
 
 public class Messages {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
 			.getLogger(Messages.class);
-	private static final ResourceBundle BUNDLE = ResourceBundle
-			.getBundle(Messages.class.getPackage().getName() + ".messages");
+	private static final Map<String, String> CACHE = new HashMap<String, String>();
 	private static Connection connection;
+
+	static {
+		ResourceBundle bundle = ResourceBundle.getBundle(Main.class
+				.getPackage().getName()
+				+ ".messages");
+		Enumeration<String> keys = bundle.getKeys();
+
+		while (keys.hasMoreElements()) {
+			final String key = keys.nextElement();
+			cache(key, bundle.getString(key));
+		}
+	}
+
+	private static void cache(String key, String value) {
+		CACHE.put(key.toLowerCase(), value);
+	}
 
 	private static Connection getConnection() {
 		if (connection == null) {
@@ -47,11 +66,7 @@ public class Messages {
 		}
 
 		try {
-			try {
-				return getRequired(key);
-			} catch (MissingResourceException e) {
-				return getRequired(key.toLowerCase());
-			}
+			return getRequired(key);
 		} catch (MissingResourceException e) {
 			LOG.warn("No localization found for '" + key + "': " + e);
 			return "!!!" + key + "!!!";
@@ -59,11 +74,22 @@ public class Messages {
 	}
 
 	public static String getRequired(String key) {
-		return get("LocaText", key, "LocaId", "_Locale");
+		String value = CACHE.get(key.toLowerCase());
+
+		if (value != null) {
+			return value;
+		}
+
+		value = get("LocaText", key, "LocaId", "_Locale");
+		cache(key, value);
+
+		return value;
 	}
 
 	public static String get(String col, String key, String idCol, String table) {
 		try {
+			LOG.debug("Loading " + col + " from " + table + " where " + idCol
+					+ " = '" + key + "'.");
 			PreparedStatement stmt = getConnection().prepareStatement(
 					"select " + col + " from " + table + " where " + idCol
 							+ " = ?");
@@ -71,16 +97,9 @@ public class Messages {
 			ResultSet result = stmt.executeQuery();
 
 			if (!result.next()) {
-				try {
-					String value = BUNDLE.getString(key);
-					LOG.debug("No localization found for '" + key
-							+ "', but found in additional properties.");
-					return value;
-				} catch (MissingResourceException e) {
-					throw new MissingResourceException(
-							"No localization found for '" + key + "'.",
-							Messages.class.getName(), key);
-				}
+				throw new MissingResourceException(
+						"No localization found for '" + key + "'.",
+						Messages.class.getName(), key);
 			}
 
 			return result.getString(col);

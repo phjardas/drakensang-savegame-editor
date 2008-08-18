@@ -114,12 +114,24 @@ public class CharacterInfoPanel extends JPanel {
 					public void valueChanged(CasterType item) {
 						character.setCasterType(item);
 					}
+					
+					public String toString(CasterType item) {
+						if (item == CasterType.none) {
+							return "CasterType.none";
+						}
+						
+						return super.toString(item);
+					}
 				});
 		
 		final JComboBox casterRace = EnumComboBoxModel.createComboBox(CasterRace.values(),
 				character.getCasterRace(), new EnumComboBoxModel.Listener<CasterRace>() {
 			public void valueChanged(CasterRace item) {
 				character.setCasterRace(item);
+			}
+			
+			public boolean accept(CasterRace item) {
+				return item != CasterRace.dwarf;
 			}
 		});
 

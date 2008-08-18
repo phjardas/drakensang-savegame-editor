@@ -11,9 +11,13 @@ import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
 
-public class Main {
+public final class Main {
 	private static final ResourceBundle BUNDLE = ResourceBundle
-			.getBundle(Main.class.getPackage().getName() + ".main");
+			.getBundle(Main.class.getPackage().getName() + ".messages");
+	
+	private Main() {
+		// utility class
+	}
 
 	public static void main(String[] args) {
 		try {

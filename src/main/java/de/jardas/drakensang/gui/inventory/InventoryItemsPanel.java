@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui.inventory;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.InventoryItem;
 
 import java.awt.GridBagConstraints;
@@ -21,9 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InventoryItemsPanel extends JPanel {
-	private static final ResourceBundle BUNDLE = ResourceBundle
-			.getBundle(InventoryItemsPanel.class.getPackage().getName()
-					+ ".inventory");
 	private final List<InventoryItemRenderer> renderers = new ArrayList<InventoryItemRenderer>();
 	private List<InventoryItem> items;
 
@@ -86,7 +84,7 @@ public class InventoryItemsPanel extends JPanel {
 	}
 
 	private String getGroupTitle(Class<? extends InventoryItem> currentClass) {
-		return BUNDLE.getString("group." + currentClass.getSimpleName());
+		return Messages.get("inventorygroup." + currentClass.getSimpleName());
 	}
 
 	private InventoryItemRenderer getRenderer(InventoryItem item) {

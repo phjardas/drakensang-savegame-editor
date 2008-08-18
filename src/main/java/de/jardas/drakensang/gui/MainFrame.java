@@ -23,6 +23,7 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileSystemView;
 
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
@@ -75,16 +76,7 @@ public class MainFrame extends JFrame {
 		toolbar.add(new JButton(new AbstractAction(Messages.get("LoadGame"),
 				new ImageIcon(getClass().getResource("images/open.gif"))) {
 			public void actionPerformed(ActionEvent e) {
-				int result = fileChooser.showDialog(MainFrame.this, null);
-
-				if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-					File file = fileChooser.getSelectedFile();
-					loadSavegame(file);
-				} else if (result == javax.swing.JFileChooser.ERROR_OPTION) {
-					// FIXME error handling
-				} else if (result == javax.swing.JFileChooser.CANCEL_OPTION) {
-					// do nothing
-				}
+				showLoadDialog();
 			}
 		}));
 
@@ -103,6 +95,19 @@ public class MainFrame extends JFrame {
 
 		setSize(800, 730);
 		centerOnScreen();
+	}
+
+	private void showLoadDialog() {
+		int result = fileChooser.showDialog(MainFrame.this, null);
+
+		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			loadSavegame(file);
+		} else if (result == javax.swing.JFileChooser.ERROR_OPTION) {
+			// FIXME error handling
+		} else if (result == javax.swing.JFileChooser.CANCEL_OPTION) {
+			// do nothing
+		}
 	}
 
 	public void loadSavegame(File file) {
@@ -177,8 +182,10 @@ public class MainFrame extends JFrame {
 	}
 
 	private File getLatestSavegame() {
-		File savedir = new File(System.getProperty("user.home"),
-				"Documents/Drakensang/profiles/default/save/");
+		FileSystemView fw = fileChooser.getFileSystemView();
+		File documentsDir = fw.getDefaultDirectory();
+		File savedir = new File(documentsDir,
+				"Drakensang/profiles/default/save/");
 		File[] saves = savedir.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory()
@@ -198,6 +205,8 @@ public class MainFrame extends JFrame {
 
 		if (latest != null) {
 			loadSavegame(latest);
+		} else {
+			showLoadDialog();
 		}
 	}
 }
