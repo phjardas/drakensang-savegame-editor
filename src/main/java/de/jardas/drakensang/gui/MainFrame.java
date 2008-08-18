@@ -1,11 +1,23 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.dao.CharacterDao;
+import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.model.Character;
+
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import java.io.File;
 import java.io.FileFilter;
+
 import java.text.Collator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,198 +27,271 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileSystemView;
 
-import de.jardas.drakensang.dao.CharacterDao;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.Character;
 
 public class MainFrame extends JFrame {
-	private final JToolBar toolbar = new JToolBar();
-	private final JFileChooser fileChooser = new JFileChooser();
-	private CharacterDao characterDao;
-	private JList characterList = new JList();
-	private CharacterPanel characterPanel = new CharacterPanel();
-	private JButton saveButton;
+    private final JToolBar toolbar = new JToolBar();
+    private final JFileChooser fileChooser = new JFileChooser();
+    private CharacterDao characterDao;
+    private JList characterList = new JList();
+    private CharacterPanel characterPanel = new CharacterPanel(this);
+    private JButton saveButton;
+    private JComponent glassPane = new JPanel();
+    private JComponent defaultGlassPane;
+    private boolean busy;
 
-	public MainFrame() {
-		super();
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource("images/drakensang.png")));
-		init();
-	}
+    public MainFrame() {
+        super();
+        setIconImage(Toolkit.getDefaultToolkit()
+                            .getImage(getClass()
+                                          .getResource("images/drakensang.png")));
+        init();
+    }
 
-	private void init() {
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle(Messages.get("title"));
-		getContentPane().setLayout(new BorderLayout());
+    private void init() {
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle(Messages.get("title"));
+        getContentPane().setLayout(new BorderLayout());
 
-		fileChooser.setDialogTitle(Messages.get("LoadGame"));
-		fileChooser.setApproveButtonText(Messages.get("LoadGame"));
-		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        glassPane.setOpaque(false);
+        glassPane.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    e.consume();
+                }
 
-		File latest = getLatestSavegame();
-		if (latest != null) {
-			fileChooser.setCurrentDirectory(latest.getParentFile());
-		}
+                public void keyReleased(KeyEvent e) {
+                    e.consume();
+                }
 
-		fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-			@Override
-			public String getDescription() {
-				return Messages.get("filechooser.type");
-			}
+                public void keyTyped(KeyEvent e) {
+                    e.consume();
+                }
+            });
+        glassPane.addMouseListener(new MouseListener() {
+                public void mouseClicked(MouseEvent e) {
+                    e.consume();
+                }
 
-			@Override
-			public boolean accept(File f) {
-				return f.isDirectory() || f.getName().matches("\\.dsa$");
-			}
-		});
+                public void mouseEntered(MouseEvent e) {
+                    e.consume();
+                }
 
-		toolbar.setFloatable(false);
+                public void mouseExited(MouseEvent e) {
+                    e.consume();
+                }
 
-		toolbar.add(new JButton(new AbstractAction(Messages.get("LoadGame"),
-				new ImageIcon(getClass().getResource("images/open.gif"))) {
-			public void actionPerformed(ActionEvent e) {
-				showLoadDialog();
-			}
-		}));
+                public void mousePressed(MouseEvent e) {
+                    e.consume();
+                }
 
-		saveButton = new JButton(new AbstractAction(Messages.get("SaveGame"),
-				new ImageIcon(getClass().getResource("images/save.gif"))) {
-			public void actionPerformed(ActionEvent e) {
-				save();
-			}
-		});
-		saveButton.setEnabled(false);
-		toolbar.add(saveButton);
+                public void mouseReleased(MouseEvent e) {
+                    e.consume();
+                }
+            });
 
-		getContentPane().add(toolbar, BorderLayout.NORTH);
-		getContentPane().add(characterList, BorderLayout.WEST);
-		getContentPane().add(characterPanel, BorderLayout.CENTER);
+        fileChooser.setDialogTitle(Messages.get("LoadGame"));
+        fileChooser.setApproveButtonText(Messages.get("LoadGame"));
+        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-		setSize(800, 730);
-		centerOnScreen();
-	}
+        File latest = getLatestSavegame();
 
-	private void showLoadDialog() {
-		int result = fileChooser.showDialog(MainFrame.this, null);
+        if (latest != null) {
+            fileChooser.setCurrentDirectory(latest.getParentFile());
+        }
 
-		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			loadSavegame(file);
-		} else if (result == javax.swing.JFileChooser.ERROR_OPTION) {
-			// FIXME error handling
-		} else if (result == javax.swing.JFileChooser.CANCEL_OPTION) {
-			// do nothing
-		}
-	}
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public String getDescription() {
+                    return Messages.get("filechooser.type");
+                }
 
-	public void loadSavegame(File file) {
-		characterDao = new CharacterDao(file.getAbsolutePath());
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().matches("\\.dsa$");
+                }
+            });
 
-		final List<Character> characters = new ArrayList<Character>(
-				characterDao.getCharacters());
+        toolbar.setFloatable(false);
 
-		Collections.sort(characters, new Comparator<Character>() {
-			private final Collator collator = Collator.getInstance();
+        toolbar.add(new JButton(new AbstractAction(Messages.get("LoadGame"),
+                    new ImageIcon(getClass().getResource("images/open.gif"))) {
+                public void actionPerformed(ActionEvent e) {
+                    showLoadDialog();
+                }
+            }));
 
-			public int compare(Character o1, Character o2) {
-				if (o1.isPlayerCharacter())
-					return -1;
-				if (o2.isPlayerCharacter())
-					return 1;
+        saveButton = new JButton(new AbstractAction(Messages.get("SaveGame"),
+                    new ImageIcon(getClass().getResource("images/save.gif"))) {
+                    public void actionPerformed(ActionEvent e) {
+                        save();
+                    }
+                });
+        saveButton.setEnabled(false);
+        toolbar.add(saveButton);
 
-				return collator.compare(getCharacterName(o1),
-						getCharacterName(o2));
-			}
-		});
+        getContentPane().add(toolbar, BorderLayout.NORTH);
+        getContentPane().add(characterList, BorderLayout.WEST);
+        getContentPane().add(characterPanel, BorderLayout.CENTER);
 
-		characterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setSize(800, 730);
+        centerOnScreen();
+    }
 
-		characterList.setModel(new AbstractListModel() {
-			public Object getElementAt(int index) {
-				return getCharacterName(characters.get(index));
-			}
+    public void setBusy(boolean busy) {
+        // only set if changing
+        if (this.busy != busy) {
+            this.busy = busy;
 
-			public int getSize() {
-				return characters.size();
-			}
-		});
+            // If busy, keep current glass pane to put back when not
+            // busy. This is done in case the application is using
+            // it's own glass pane for something special.
+            if (busy) {
+                defaultGlassPane = glassPane;
+                setGlassPane(glassPane);
+            } else {
+                setGlassPane(defaultGlassPane);
+                defaultGlassPane = null;
+            }
 
-		characterList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				if (characterList.getSelectedIndex() >= 0
-						&& characterList.getSelectedIndex() < characters.size()) {
-					updateSelection(characters.get(characterList
-							.getSelectedIndex()));
-				}
-			}
-		});
+            glassPane.setVisible(busy);
+            glassPane.setCursor(busy
+                ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
+                : Cursor.getDefaultCursor());
+            setCursor(glassPane.getCursor());
+        }
+    }
 
-		saveButton.setEnabled(true);
+    private void showLoadDialog() {
+        int result = fileChooser.showDialog(MainFrame.this, null);
 
-		characterList.setSelectedIndex(0);
-	}
+        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            loadSavegame(file);
+        } else if (result == javax.swing.JFileChooser.ERROR_OPTION) {
+            // FIXME error handling
+        } else if (result == javax.swing.JFileChooser.CANCEL_OPTION) {
+            // do nothing
+        }
+    }
 
-	private String getCharacterName(Character character) {
-		return character.isLocalizeLookAtText() ? Messages.get(character
-				.getLookAtText()) : character.getLookAtText();
-	}
+    public void loadSavegame(File file) {
+    	setBusy(true);
+    	
+        characterDao = new CharacterDao(file.getAbsolutePath());
 
-	public void save() {
-		characterDao.saveAll();
-		JOptionPane.showMessageDialog(this,
-				"Der Spielstand wurde gespeichert.", "Speichern",
-				JOptionPane.INFORMATION_MESSAGE);
-	}
+        final List<Character> characters = new ArrayList<Character>(characterDao
+                .getCharacters());
 
-	private void updateSelection(Character character) {
-		characterPanel.setCharacter(character);
-	}
+        Collections.sort(characters,
+            new Comparator<Character>() {
+                private final Collator collator = Collator.getInstance();
 
-	private void centerOnScreen() {
-		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit()
-				.getScreenSize();
-		int x = (screenSize.width - getWidth()) / 2;
-		int y = (screenSize.height - getHeight()) / 2;
-		setLocation(x, y);
-	}
+                public int compare(Character o1, Character o2) {
+                    if (o1.isPlayerCharacter()) {
+                        return -1;
+                    }
 
-	private File getLatestSavegame() {
-		FileSystemView fw = fileChooser.getFileSystemView();
-		File documentsDir = fw.getDefaultDirectory();
-		File savedir = new File(documentsDir,
-				"Drakensang/profiles/default/save/");
-		File[] saves = savedir.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				return pathname.isDirectory()
-						&& pathname.getName().startsWith("save");
-			}
-		});
+                    if (o2.isPlayerCharacter()) {
+                        return 1;
+                    }
 
-		if (saves == null || saves.length == 0) {
-			return null;
-		}
+                    return collator.compare(getCharacterName(o1),
+                        getCharacterName(o2));
+                }
+            });
 
-		return new File(saves[saves.length - 1], "savegame.dsa");
-	}
+        characterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-	public void loadDefaultSavegame() {
-		File latest = getLatestSavegame();
+        characterList.setModel(new AbstractListModel() {
+                public Object getElementAt(int index) {
+                    return getCharacterName(characters.get(index));
+                }
 
-		if (latest != null) {
-			loadSavegame(latest);
-		} else {
-			showLoadDialog();
-		}
-	}
+                public int getSize() {
+                    return characters.size();
+                }
+            });
+
+        characterList.addListSelectionListener(new ListSelectionListener() {
+                public void valueChanged(ListSelectionEvent e) {
+                    if ((characterList.getSelectedIndex() >= 0)
+                            && (characterList.getSelectedIndex() < characters
+                            .size())) {
+                        updateSelection(characters.get(
+                                characterList.getSelectedIndex()));
+                    }
+                }
+            });
+
+        saveButton.setEnabled(true);
+
+        characterList.setSelectedIndex(0);
+        
+        setBusy(false);
+    }
+
+    private String getCharacterName(Character character) {
+        return character.isLocalizeLookAtText()
+        ? Messages.get(character.getLookAtText()) : character.getLookAtText();
+    }
+
+    public void save() {
+        characterDao.saveAll();
+        JOptionPane.showMessageDialog(this,
+            "Der Spielstand wurde gespeichert.", "Speichern",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void updateSelection(Character character) {
+        characterPanel.setCharacter(character);
+    }
+
+    private void centerOnScreen() {
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit()
+                                                        .getScreenSize();
+        int x = (screenSize.width - getWidth()) / 2;
+        int y = (screenSize.height - getHeight()) / 2;
+        setLocation(x, y);
+    }
+
+    private File getLatestSavegame() {
+        FileSystemView fw = fileChooser.getFileSystemView();
+        File documentsDir = fw.getDefaultDirectory();
+        File savedir = new File(documentsDir,
+                "Drakensang/profiles/default/save/");
+        File[] saves = savedir.listFiles(new FileFilter() {
+                    public boolean accept(File pathname) {
+                        return pathname.isDirectory()
+                        && pathname.getName().startsWith("save");
+                    }
+                });
+
+        if ((saves == null) || (saves.length == 0)) {
+            return null;
+        }
+
+        return new File(saves[saves.length - 1], "savegame.dsa");
+    }
+
+    public void loadDefaultSavegame() {
+        File latest = getLatestSavegame();
+
+        if (latest != null) {
+            loadSavegame(latest);
+        } else {
+            showLoadDialog();
+        }
+    }
 }

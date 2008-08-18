@@ -12,6 +12,7 @@ import javax.swing.JTabbedPane;
 
 
 public class CharacterPanel extends JPanel {
+	private final MainFrame mainFrame;
     private Character character;
     private JTabbedPane tabs = new JTabbedPane();
     private CharacterInfoPanel infoPanel = new CharacterInfoPanel();
@@ -21,7 +22,9 @@ public class CharacterPanel extends JPanel {
     private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
     private InventoryPanel inventoryPanel = new InventoryPanel();
 
-    public CharacterPanel() {
+    public CharacterPanel(MainFrame mainFrame) {
+    	this.mainFrame = mainFrame;
+    	
         tabs.addTab(Messages.get("CharacterSheet"), new JScrollPane(infoPanel));
         tabs.addTab(Messages.get("Attribute"), new JScrollPane(attributesPanel));
         tabs.addTab(Messages.get("Talents"), new JScrollPane(talentePanel));
@@ -43,13 +46,17 @@ public class CharacterPanel extends JPanel {
         }
 
         this.character = character;
+        this.mainFrame.setBusy(true);
+        
         infoPanel.setCharacter(character);
         attributesPanel.setValues(character.getAttribute());
         talentePanel.setValues(character.getTalente());
         zauberPanel.setValues(character.getZauberfertigkeiten());
         sonderPanel.setValues(character.getSonderfertigkeiten());
         inventoryPanel.setInventory(character.getInventory());
-
+        
+        this.mainFrame.setBusy(false);
+        
         repaint();
     }
 }

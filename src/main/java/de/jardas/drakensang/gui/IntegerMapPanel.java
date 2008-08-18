@@ -37,8 +37,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 		setLayout(new GridBagLayout());
 
 		addFields();
-
-		repaint();
 	}
 
 	protected boolean isVisible(String key) {
