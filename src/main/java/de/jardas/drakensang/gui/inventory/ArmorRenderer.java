@@ -134,7 +134,6 @@ public class ArmorRenderer extends InventoryItemRenderer {
 				GridBagConstraints.NONE, insets, 0, 0));
 
 		spinner.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				access.setValue(((Number) spinner.getValue()).intValue());
 			}

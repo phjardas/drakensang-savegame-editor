@@ -1,8 +1,8 @@
 package de.jardas.drakensang;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -53,7 +53,7 @@ public class Settings {
 
 		try {
 			Properties props = new Properties();
-			FileReader reader = new FileReader(SETTINGS_FILE);
+			FileInputStream reader = new FileInputStream(SETTINGS_FILE);
 			props.load(reader);
 			reader.close();
 

@@ -95,7 +95,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 		return new Comparator<String>() {
 			private final Collator collator = Collator.getInstance();
 
-			@Override
 			public int compare(String s0, String s1) {
 				if (isGrouped()) {
 					String g0 = Messages.get(getGroupKey(s0));

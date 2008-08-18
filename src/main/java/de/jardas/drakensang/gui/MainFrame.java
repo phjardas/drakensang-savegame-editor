@@ -180,7 +180,6 @@ public class MainFrame extends JFrame {
 		File savedir = new File(System.getProperty("user.home"),
 				"Documents/Drakensang/profiles/default/save/");
 		File[] saves = savedir.listFiles(new FileFilter() {
-			@Override
 			public boolean accept(File pathname) {
 				return pathname.isDirectory()
 						&& pathname.getName().startsWith("save");

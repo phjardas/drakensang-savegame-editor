@@ -24,7 +24,6 @@ public class EnumComboBoxModel<E extends Enum<E>> extends DefaultComboBoxModel {
 		JComboBox box = new JComboBox(new EnumComboBoxModel<E>(enumeration, listener));
 
 		box.addItemListener(new ItemListener() {
-			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					@SuppressWarnings("unchecked")

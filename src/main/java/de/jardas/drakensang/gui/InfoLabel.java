@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.util.MissingResourceException;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,8 +19,6 @@ import de.jardas.drakensang.dao.Messages;
 public class InfoLabel extends JComponent {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
 			.getLogger(InfoLabel.class);
-	private static final ImageIcon HELP_ICON = new ImageIcon(InfoLabel.class
-			.getResource("images/help.png"));
 
 	public InfoLabel(String key) {
 		this(key, null);

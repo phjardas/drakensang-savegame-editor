@@ -86,7 +86,6 @@ public class CharacterInfoPanel extends JPanel {
 		final JSpinner xp = new JSpinner(new SpinnerNumberModel(character
 				.getAbenteuerpunkte(), 0, 100000, 1));
 		xp.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				character.setAbenteuerpunkte(((Number) xp.getValue())
 						.intValue());
@@ -96,7 +95,6 @@ public class CharacterInfoPanel extends JPanel {
 		final JSpinner up = new JSpinner(new SpinnerNumberModel(character
 				.getSteigerungspunkte(), 0, 100000, 1));
 		up.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				character.setSteigerungspunkte(((Number) up.getValue())
 						.intValue());
@@ -106,7 +104,6 @@ public class CharacterInfoPanel extends JPanel {
 		final JCheckBox magician = new JCheckBox();
 		magician.setSelected(character.isMagician());
 		magician.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				character.setMagician(magician.isSelected());
 			}
@@ -156,7 +153,6 @@ public class CharacterInfoPanel extends JPanel {
 			final JSpinner money = new JSpinner(new SpinnerNumberModel(
 					character.getMoneyAmount(), 0, 9999999, 1));
 			money.addChangeListener(new ChangeListener() {
-				@Override
 				public void stateChanged(ChangeEvent e) {
 					character.setMoneyAmount(((Number) money.getValue())
 							.intValue());
