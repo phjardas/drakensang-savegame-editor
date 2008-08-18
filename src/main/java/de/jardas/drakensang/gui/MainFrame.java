@@ -144,6 +144,7 @@ public class MainFrame extends JFrame {
         getContentPane().add(toolbar, BorderLayout.NORTH);
         getContentPane().add(characterList, BorderLayout.WEST);
         getContentPane().add(characterPanel, BorderLayout.CENTER);
+        getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
         setSize(800, 730);
         centerOnScreen();
