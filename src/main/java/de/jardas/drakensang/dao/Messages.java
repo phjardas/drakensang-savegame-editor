@@ -101,7 +101,7 @@ public class Messages {
 	}
 
 	public static void resetConnection() {
-		Messages.LOG.debug("Resetting connection.");
+		LOG.debug("Resetting connection.");
 		connection = null;
 	}
 }

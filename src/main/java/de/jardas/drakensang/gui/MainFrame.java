@@ -186,7 +186,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		if (saves.length == 0) {
+		if (saves == null || saves.length == 0) {
 			return null;
 		}
 
