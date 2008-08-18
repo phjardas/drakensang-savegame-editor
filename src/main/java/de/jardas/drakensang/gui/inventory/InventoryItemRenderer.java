@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.InfoLabel;
+import de.jardas.drakensang.gui.MainFrame;
 import de.jardas.drakensang.model.InventoryItem;
 
 public class InventoryItemRenderer {
@@ -36,8 +37,7 @@ public class InventoryItemRenderer {
 
 	protected JComponent renderLabel(final InventoryItem item) {
 		return new InfoLabel(getNameKey(item), getInfoKey(item), new ImageIcon(
-				getClass().getResource(
-						"../" + item.getIcon().toLowerCase() + ".png")));
+				MainFrame.class.getResource(item.getIcon().toLowerCase() + ".png")));
 	}
 
 	protected String getNameKey(final InventoryItem item) {
