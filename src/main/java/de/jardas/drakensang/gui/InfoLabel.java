@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.MissingResourceException;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,6 +28,10 @@ public class InfoLabel extends JComponent {
 	}
 
 	public InfoLabel(String key, String infoKey) {
+		this(key, infoKey, null);
+	}
+	
+	public InfoLabel(String key, String infoKey, final Icon icon) {
 		super();
 
 		setLayout(new GridBagLayout());
@@ -51,7 +56,7 @@ public class InfoLabel extends JComponent {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						JOptionPane.showMessageDialog(InfoLabel.this, info,
-								name, JOptionPane.INFORMATION_MESSAGE);
+								name, JOptionPane.INFORMATION_MESSAGE, icon);
 					}
 				});
 

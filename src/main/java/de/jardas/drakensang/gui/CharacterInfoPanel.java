@@ -201,7 +201,7 @@ public class CharacterInfoPanel extends JPanel {
 
 	private ImageIcon createPicture() {
 		String url = character.getCharacterSet().getIcon(character.getSex())
-				+ ".gif";
+				+ ".png";
 		return new ImageIcon(getClass().getResource(url));
 	}
 
