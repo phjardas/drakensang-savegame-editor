@@ -58,7 +58,7 @@ public class Static {
 		} catch (SQLException e) {
 			throw new MissingResourceException(
 					"Error looking up static value in table '" + table
-							+ "' for '" + key + "': " + e, Messages.class
+							+ "' for '" + key + "' (" + sql + "): " + e, Messages.class
 							.getName(), key);
 		}
 	}

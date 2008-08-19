@@ -29,7 +29,6 @@ public abstract class EnumComboBox<E extends Enum<E>> extends JComboBox {
         addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e) {
                     if (e.getStateChange() == ItemEvent.SELECTED) {
-                        @SuppressWarnings("unchecked")
                         LocalizedEnumItem selected = (LocalizedEnumItem) e
                             .getItem();
                         valueChanged(selected.getItem());
@@ -57,7 +56,6 @@ public abstract class EnumComboBox<E extends Enum<E>> extends JComboBox {
     public void setSelected(E selected) {
         if (selected != null) {
             for (int i = 0; i < getMutableModel().getSize(); i++) {
-                @SuppressWarnings("unchecked")
                 LocalizedEnumItem el = (LocalizedEnumItem) getMutableModel()
                                                                .getElementAt(i);
 

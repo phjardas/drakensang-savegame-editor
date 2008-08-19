@@ -181,33 +181,44 @@ public class Character extends Persistable {
     }
 
     public int getAttackeBasis() {
-        // FIXME stimmt die Formel für Attacke-Basis?
         return (int) Math.round((double) (getAttribute().get("MU")
-            + getAttribute().get("KK") + getAttribute().get("GE")) / 5);
+            + getAttribute().get("GE") + getAttribute().get("KK")) / 5);
     }
 
     public int getParadeBasis() {
-        // FIXME stimmt die Formel für Parade-Basis?
         return (int) Math.round((double) (getAttribute().get("IN")
-            + getAttribute().get("KK") + getAttribute().get("GE")) / 5);
+            + getAttribute().get("GE") + getAttribute().get("KK")) / 5);
     }
 
     public int getFernkampfBasis() {
-        // FIXME stimmt die Formel für Fernkampf-Basis?
-        return (int) Math.round((double) (getAttribute().get("KK")
-            + getAttribute().get("FF") + getAttribute().get("GE")) / 5);
+        return (int) Math.round((double) (getAttribute().get("IN")
+            + getAttribute().get("FF") + getAttribute().get("KK")) / 5);
     }
 
     public int getLebensenergie() {
-        // FIXME stimmt die Formel für Fernkampf-Basis?
         int basis = (int) Math.round((double) (getAttribute().get("KO")
-                + getAttribute().get("KK") + getAttribute().get("KO")) / 3);
+                + getAttribute().get("KO") + getAttribute().get("KK")) / 2);
 
-        return basis + getLebensenergieBonus();
+        return basis + getLebensenergieBonus() + getRace().getLebensenergieModifikator() + getCulture().getLebensenergieModifikator() + getProfession().getLebensenergieModifikator();
+    }
+    
+    public int getAusdauer() {
+    	int basis = (int) Math.round((double) (getAttribute().get("MU")
+    			+ getAttribute().get("KO") + getAttribute().get("GE")) / 2);
+    	
+    	return basis + getRace().getAusdauerModifikator() + getCulture().getAusdauerModifikator() + getProfession().getAusdauerModifikator();
     }
 
     public int getAstralenergie() {
-        return 0 + getAstralenergieBonus();
+    	int basis = (int) Math.round((double) (getAttribute().get("MU")
+    			+ getAttribute().get("IN") + getAttribute().get("CH")) / 2);
+
+    	return basis + getAstralenergieBonus() + getRace().getAstralenergieModifikator() + getCulture().getAstralenergieModifikator() + getProfession().getAstralenergieModifikator();
+    }
+    
+    public int getMagieresistenz() {
+    	return (int) Math.round((double) (getAttribute().get("MU")
+                + getAttribute().get("KL") + getAttribute().get("KO")) / 5) + getRace().getMagieresistenzModifikator() + getCulture().getMagieresistenzModifikator() + getProfession().getMagieresistenzModifikator();
     }
 
     @Override

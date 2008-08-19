@@ -44,6 +44,8 @@ public class CharacterInfoPanel extends JPanel {
     private final JLabel fernkampfBasis = new JLabel();
     private final JLabel paradeBasis = new JLabel();
     private final JLabel attackeBasis = new JLabel();
+    private final JLabel ausdauer = new JLabel();
+    private final JLabel magieresistenz = new JLabel();
     private final AttributePanel attributesPanel;
     private Character character;
     private EnumComboBox<CharacterSet> appearanceCombo;
@@ -127,6 +129,8 @@ public class CharacterInfoPanel extends JPanel {
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
 
+        addInput(panel, "maximaleAusdauer", ausdauer, row++);
+        addInput(panel, "Magieresistenz", magieresistenz, row++);
         addInput(panel, "AttackeBasis", attackeBasis, row++);
         addInput(panel, "ParadeBasis", paradeBasis, row++);
         addInput(panel, "Fernkampf-Basis", fernkampfBasis, row++);
@@ -138,6 +142,8 @@ public class CharacterInfoPanel extends JPanel {
         attackeBasis.setText(String.valueOf(character.getAttackeBasis()));
         paradeBasis.setText(String.valueOf(character.getParadeBasis()));
         fernkampfBasis.setText(String.valueOf(character.getFernkampfBasis()));
+        ausdauer.setText(String.valueOf(character.getAusdauer()));
+        magieresistenz.setText(String.valueOf(character.getMagieresistenz()));
     }
 
     private void addMagicFields(int panelRow) {
@@ -261,6 +267,7 @@ public class CharacterInfoPanel extends JPanel {
                 character.getRace()) {
                 protected void valueChanged(Race item) {
                     character.setRace(item);
+                    updateDerivedFields();
                 }
             };
 
@@ -278,6 +285,7 @@ public class CharacterInfoPanel extends JPanel {
                 .values(), character.getCulture()) {
                 protected void valueChanged(Culture item) {
                     character.setCulture(item);
+                    updateDerivedFields();
                 }
             };
 
@@ -287,6 +295,7 @@ public class CharacterInfoPanel extends JPanel {
                 .values(), character.getProfession()) {
                 protected void valueChanged(Profession item) {
                     character.setProfession(item);
+                    updateDerivedFields();
                 }
             };
 
@@ -347,8 +356,13 @@ public class CharacterInfoPanel extends JPanel {
     }
 
     private void addInput(JComponent parent, String label, JComponent input,
+    		int row) {
+    	addInput(parent, label, null, input, row);
+    }
+    
+    private void addInput(JComponent parent, String label, String infoLabel, JComponent input,
         int row) {
-        parent.add(new JLabel(Messages.get(label)),
+        parent.add(new InfoLabel(label, infoLabel),
             new GridBagConstraints(0, row, 1, 1, 0, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
                 new Insets(3, 6, 3, 6), 0, 0));

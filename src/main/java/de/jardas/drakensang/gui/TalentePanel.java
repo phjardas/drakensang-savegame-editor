@@ -8,9 +8,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.MissingResourceException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -129,10 +131,17 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
             return null;
         }
     }
-
+    
     @Override
     protected String getInfoKey(String key) {
         return Static.get("Description", key, "TaAttr", "_Template_Talent");
+    }
+    
+    @Override
+    protected ImageIcon getInfoIcon(String key) {
+    	String icon = Static.get("IconBrush", key, "TaAttr", "_Template_Talent");
+		URL url = MainFrame.class.getResource(icon + ".png");
+		return new ImageIcon(url);
     }
 
     public Character getCharacter() {

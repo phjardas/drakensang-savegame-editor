@@ -1,5 +1,8 @@
 package de.jardas.drakensang.gui;
 
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
@@ -28,6 +31,13 @@ public class SonderfertigkeitenPanel extends
 	protected String getInfoKey(String key) {
 		return Static.get("Description", key, "AtAttr", "_Template_Attacks");
 	}
+    
+    @Override
+    protected ImageIcon getInfoIcon(String key) {
+    	String icon = Static.get("IconBrush", key, "AtAttr", "_Template_Attacks");
+		URL url = MainFrame.class.getResource(icon + ".png");
+		return new ImageIcon(url);
+    }
 
 	@Override
 	protected JComponent createField(final String key, int value) {

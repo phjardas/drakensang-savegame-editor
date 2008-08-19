@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -78,7 +79,7 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
                 status = new Status();
                 add(parent,
                     new GridBagConstraints(0, parentRow++, 1, 1, 0, 0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0));
                 currentGroupKey = groupKey;
             }
@@ -177,7 +178,7 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     }
 
     protected InfoLabel createLabel(final String key) {
-        return new InfoLabel(getLocalKey(key), getInfoKey(key));
+        return new InfoLabel(getLocalKey(key), getInfoKey(key), getInfoIcon(key));
     }
 
     protected String getName(final String key) {
@@ -192,6 +193,10 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
     protected String getInfoKey(String key) {
         return null;
+    }
+    
+    protected ImageIcon getInfoIcon(String key) {
+    	return null;
     }
 
     protected void handleChange(String key, int value) {
