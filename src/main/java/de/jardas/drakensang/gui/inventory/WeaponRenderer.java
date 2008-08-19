@@ -25,6 +25,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
     @Override
     protected JComponent renderSpecial(InventoryItem item) {
         final Weapon weapon = (Weapon) item;
+        final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
 
         final JSpinner diceSpinner = new JSpinner(new SpinnerNumberModel(
                     weapon.getSchaden().getDiceMultiplier(), 0, 10, 1));
@@ -33,6 +34,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
                     weapon.getSchaden()
                           .setDiceMultiplier(((Number) diceSpinner.getValue())
                         .intValue());
+                    schadenLabel.setText(getSchadenText(weapon));
                 }
             });
 
@@ -42,6 +44,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
                 public void stateChanged(ChangeEvent e) {
                     weapon.getSchaden()
                           .setAddition(((Number) addSpinner.getValue()).intValue());
+                    schadenLabel.setText(getSchadenText(weapon));
                 }
             });
 
@@ -50,8 +53,14 @@ public class WeaponRenderer extends InventoryItemRenderer {
         panel.add(diceSpinner);
         panel.add(new JLabel("W6+"));
         panel.add(addSpinner);
+        panel.add(schadenLabel);
 
         return panel;
+    }
+
+    private String getSchadenText(Weapon weapon) {
+        return " (" + weapon.getSchaden().getMinimum() + "-"
+        + weapon.getSchaden().getMaximum() + " TP)";
     }
 
     @Override

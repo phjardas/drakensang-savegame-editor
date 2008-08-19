@@ -22,17 +22,25 @@ public class Schaden {
     public int getAddition() {
         return this.addition;
     }
-    
+
     public void setAddition(int addition) {
-    	this.addition = addition;
+        this.addition = addition;
     }
 
     public int getDiceMultiplier() {
         return this.diceMultiplier;
     }
-    
+
     public void setDiceMultiplier(int diceMultiplier) {
-    	this.diceMultiplier = diceMultiplier;
+        this.diceMultiplier = diceMultiplier;
+    }
+
+    public int getMinimum() {
+        return getDiceMultiplier() + getAddition();
+    }
+
+    public int getMaximum() {
+        return (getDiceMultiplier() * 6) + getAddition();
     }
 
     @Override
@@ -47,6 +55,9 @@ public class Schaden {
 
             buffer.append(getAddition());
         }
+
+        buffer.append(" (").append(getMinimum()).append("-").append(getMaximum())
+              .append(")");
 
         return buffer.toString();
     }

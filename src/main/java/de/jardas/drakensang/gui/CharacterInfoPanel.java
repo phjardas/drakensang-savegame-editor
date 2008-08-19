@@ -39,25 +39,105 @@ import javax.swing.event.ChangeListener;
 
 
 public class CharacterInfoPanel extends JPanel {
+    private final JLabel ae = new JLabel();
+    private final JLabel le = new JLabel();
+    private final JLabel fernkampfBasis = new JLabel();
+    private final JLabel paradeBasis = new JLabel();
+    private final JLabel attackeBasis = new JLabel();
+    private final AttributePanel attributesPanel;
     private Character character;
     private EnumComboBox<CharacterSet> appearanceCombo;
     private JLabel pic;
 
-    public CharacterInfoPanel() {
+    public CharacterInfoPanel(AttributePanel attributesPanel) {
+        this.attributesPanel = attributesPanel;
+
         setLayout(new GridBagLayout());
+
+        attributesPanel.setBorder(BorderFactory.createTitledBorder(Messages.get(
+                    "Attribute")));
+        attributesPanel.addChangeListener(new de.jardas.drakensang.gui.IntegerMapPanel.ChangeListener() {
+                public void valueChanged(String key, int value) {
+                    updateDerivedFields();
+                }
+            });
     }
 
     private void update() {
+        this.attributesPanel.setValues(getCharacter().getAttribute());
         removeAll();
 
         int row = 0;
         addArchetypeFields(row++);
-        addNumberFields(row++);
         addMagicFields(row++);
+        addNumberFields(row++);
+        addDerivedFields();
+
+        add(attributesPanel,
+            new GridBagConstraints(1, 1, 1, 2, 1, 1,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
 
         add(new JLabel(),
             new GridBagConstraints(1, row, 1, 1, 1, 1, GridBagConstraints.WEST,
                 GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
+        updateDerivedFields();
+    }
+
+    private void addDerivedFields() {
+        int row = 0;
+        final JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Werte"));
+        add(panel,
+            new GridBagConstraints(1, 0, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                new Insets(3, 6, 3, 6), 0, 0));
+
+        addInput(panel, "LE", le, row);
+
+        final JSpinner leBonus = new JSpinner(new SpinnerNumberModel(
+                    character.getLebensenergieBonus(), -100, 100, 1));
+        leBonus.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setLebensenergieBonus(((Number) leBonus.getValue())
+                        .intValue());
+                    updateDerivedFields();
+                }
+            });
+        panel.add(leBonus,
+            new GridBagConstraints(2, row++, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
+
+        addInput(panel, "AE", ae, row);
+
+        final JSpinner aeBonus = new JSpinner(new SpinnerNumberModel(
+                    character.getAstralenergieBonus(), -100, 100, 1));
+        aeBonus.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setAstralenergieBonus(((Number) aeBonus.getValue())
+                        .intValue());
+                    updateDerivedFields();
+                }
+            });
+        panel.add(aeBonus,
+            new GridBagConstraints(2, row++, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
+
+        addInput(panel, "AttackeBasis", attackeBasis, row++);
+        addInput(panel, "ParadeBasis", paradeBasis, row++);
+        addInput(panel, "Fernkampf-Basis", fernkampfBasis, row++);
+    }
+
+    public void updateDerivedFields() {
+        ae.setText(String.valueOf(character.getAstralenergie()));
+        le.setText(String.valueOf(character.getLebensenergie()));
+        attackeBasis.setText(String.valueOf(character.getAttackeBasis()));
+        paradeBasis.setText(String.valueOf(character.getParadeBasis()));
+        fernkampfBasis.setText(String.valueOf(character.getFernkampfBasis()));
     }
 
     private void addMagicFields(int panelRow) {
@@ -67,7 +147,7 @@ public class CharacterInfoPanel extends JPanel {
         magicPanel.setBorder(BorderFactory.createTitledBorder("Magie"));
         add(magicPanel,
             new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
-                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
 
         final JCheckBox magician = new JCheckBox();
@@ -117,7 +197,7 @@ public class CharacterInfoPanel extends JPanel {
         numbersPanel.setBorder(BorderFactory.createTitledBorder("Zahlen"));
         add(numbersPanel,
             new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
-                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
 
         final JSpinner xp = new JSpinner(new SpinnerNumberModel(
@@ -162,7 +242,7 @@ public class CharacterInfoPanel extends JPanel {
         archetypePanel.setBorder(BorderFactory.createTitledBorder("Archetyp"));
         add(archetypePanel,
             new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
-                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                 new Insets(3, 6, 3, 6), 0, 0));
 
         if (character.isPlayerCharacter()) {
@@ -269,12 +349,14 @@ public class CharacterInfoPanel extends JPanel {
     private void addInput(JComponent parent, String label, JComponent input,
         int row) {
         parent.add(new JLabel(Messages.get(label)),
-            new GridBagConstraints(0, row, 1, 1, 0, 0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
+            new GridBagConstraints(0, row, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(3, 6, 3, 6), 0, 0));
 
         parent.add(input,
-            new GridBagConstraints(1, row, 1, 1, 0, 0, GridBagConstraints.WEST,
-                GridBagConstraints.HORIZONTAL, new Insets(3, 6, 3, 6), 0, 0));
+            new GridBagConstraints(1, row, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
     }
 
     public Character getCharacter() {

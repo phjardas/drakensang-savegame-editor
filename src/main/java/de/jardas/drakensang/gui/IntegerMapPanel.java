@@ -1,9 +1,14 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.model.IntegerMap;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
 import java.text.Collator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,191 +24,237 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.IntegerMap;
 
 public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
-	private static final int COLUMNS = 2;
-	private final Map<String, JComponent> labels = new HashMap<String, JComponent>();
-	private final Map<String, JComponent> fields = new HashMap<String, JComponent>();
-	private M values;
+    private static final int COLUMNS = 2;
+    private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
+    private final Map<String, JComponent> labels = new HashMap<String, JComponent>();
+    private final Map<String, JComponent> fields = new HashMap<String, JComponent>();
+    private final Map<String, JComponent> specials = new HashMap<String, JComponent>();
+    private M values;
 
-	protected void update() {
-		labels.clear();
-		fields.clear();
-		removeAll();
-		setLayout(new GridBagLayout());
+    protected void update() {
+        labels.clear();
+        fields.clear();
+        specials.clear();
 
-		addFields();
-	}
+        removeAll();
+        setLayout(new GridBagLayout());
 
-	protected boolean isVisible(String key) {
-		return true;
-	}
+        addFields();
+    }
 
-	protected void addFields() {
-		List<String> keys = new ArrayList<String>();
-		for (String key : Arrays.asList(values.getKeys())) {
-			if (isVisible(key)) {
-				keys.add(key);
-			}
-		}
+    protected boolean isVisible(String key) {
+        return true;
+    }
 
-		sortKeys(keys);
+    protected void addFields() {
+        List<String> keys = new ArrayList<String>();
 
-		JComponent parent = null;
-		String currentGroupKey = null;
-		Status status = new Status();
-		int parentRow = 0;
+        for (String key : Arrays.asList(values.getKeys())) {
+            if (isVisible(key)) {
+                keys.add(key);
+            }
+        }
 
-		for (String key : keys) {
-			String groupKey = getGroupKey(key);
-			if (isGrouped()
-					&& (parent == null || currentGroupKey == null || !currentGroupKey
-							.equals(groupKey))) {
-				parent = new JPanel();
-				parent.setLayout(new GridBagLayout());
-				parent.setBorder(BorderFactory.createTitledBorder(Messages
-						.get(groupKey)));
-				status = new Status();
-				add(parent, new GridBagConstraints(0, parentRow++, 1, 1, 0, 0,
-						GridBagConstraints.WEST, GridBagConstraints.NONE,
-						new Insets(0, 0, 0, 0), 0, 0));
-				currentGroupKey = groupKey;
-			}
+        sortKeys(keys);
 
-			int value = values.get(key);
-			addField(key, value, isGrouped() ? parent : this, status);
-			status.advance();
-		}
+        JComponent parent = null;
+        String currentGroupKey = null;
+        Status status = new Status();
+        int parentRow = 0;
 
-		add(new JLabel(), new GridBagConstraints(isGrouped() ? 1 : COLUMNS,
-				isGrouped() ? parentRow : status.getRow(), 1, 1, 1, 1,
-				GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,
-						0, 0, 0), 0, 0));
-	}
+        for (String key : keys) {
+            String groupKey = getGroupKey(key);
 
-	protected void sortKeys(List<String> keys) {
-		Collections.sort(keys, getKeyComparator());
-	}
+            if (isGrouped()
+                    && ((parent == null) || (currentGroupKey == null)
+                    || !currentGroupKey.equals(groupKey))) {
+                parent = new JPanel();
+                parent.setLayout(new GridBagLayout());
+                parent.setBorder(BorderFactory.createTitledBorder(Messages.get(
+                            groupKey)));
+                status = new Status();
+                add(parent,
+                    new GridBagConstraints(0, parentRow++, 1, 1, 0, 0,
+                        GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 0), 0, 0));
+                currentGroupKey = groupKey;
+            }
 
-	protected Comparator<String> getKeyComparator() {
-		return new Comparator<String>() {
-			private final Collator collator = Collator.getInstance();
+            int value = values.get(key);
+            addField(key, value, isGrouped() ? parent : this, status,
+                createSpecial(key));
+            status.advance();
+        }
 
-			public int compare(String s0, String s1) {
-				if (isGrouped()) {
-					String g0 = Messages.get(getGroupKey(s0));
-					String g1 = Messages.get(getGroupKey(s1));
-					int groupCompare = collator.compare(g0, g1);
+        add(new JLabel(),
+            new GridBagConstraints(isGrouped() ? 1 : COLUMNS,
+                isGrouped() ? parentRow : status.getRow(), 1, 1, 1, 1,
+                GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0));
+    }
 
-					if (groupCompare != 0) {
-						return groupCompare;
-					}
-				}
+    protected JComponent createSpecial(String key) {
+        return null;
+    }
 
-				return collator.compare(getName(s0), getName(s1));
-			}
-		};
-	}
+    protected void sortKeys(List<String> keys) {
+        Collections.sort(keys, getKeyComparator());
+    }
 
-	protected boolean isGrouped() {
-		return false;
-	}
+    protected Comparator<String> getKeyComparator() {
+        return new Comparator<String>() {
+                private final Collator collator = Collator.getInstance();
 
-	protected String getGroupKey(String key) {
-		return null;
-	}
+                public int compare(String s0, String s1) {
+                    if (isGrouped()) {
+                        String g0 = Messages.get(getGroupKey(s0));
+                        String g1 = Messages.get(getGroupKey(s1));
+                        int groupCompare = collator.compare(g0, g1);
 
-	protected void addField(final String key, int value, JComponent parent,
-			Status status) {
-		final JComponent label = createLabel(key);
-		final JComponent spinner = createField(key, value);
+                        if (groupCompare != 0) {
+                            return groupCompare;
+                        }
+                    }
 
-		labels.put(key, label);
-		fields.put(key, spinner);
+                    return collator.compare(getName(s0), getName(s1));
+                }
+            };
+    }
 
-		Insets insets = new Insets(3, 6, 3, 6);
-		parent.add(label, new GridBagConstraints(status.getColumn(), status
-				.getRow(), 1, 1, 0, 0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, insets, 0, 0));
-		parent.add(spinner, new GridBagConstraints(status.getColumn() + 1,
-				status.getRow(), 1, 1, 0, 0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-	}
+    protected boolean isGrouped() {
+        return false;
+    }
 
-	protected JComponent createField(final String key, int value) {
-		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
-				-1000, 50, 1));
-		spinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				handleChange(key, ((Number) spinner.getValue()).intValue());
-			}
-		});
+    protected String getGroupKey(String key) {
+        return null;
+    }
 
-		return spinner;
-	}
+    protected void addField(final String key, int value, JComponent parent,
+        Status status, JComponent special) {
+        final JComponent label = createLabel(key);
+        final JComponent spinner = createField(key, value);
 
-	protected InfoLabel createLabel(final String key) {
-		return new InfoLabel(getLocalKey(key), getInfoKey(key));
-	}
+        Insets insets = new Insets(3, 6, 3, 6);
+        parent.add(label,
+            new GridBagConstraints(status.getColumn(), status.getRow(), 1, 1,
+                0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, insets,
+                0, 0));
+        parent.add(spinner,
+            new GridBagConstraints(status.getColumn() + 1, status.getRow(), 1,
+                1, 0, 0, GridBagConstraints.CENTER,
+                GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
-	protected String getName(final String key) {
-		String localKey = getLocalKey(key);
-		return Messages.get(localKey);
-	}
+        if (special != null) {
+            parent.add(special,
+                new GridBagConstraints(status.getColumn() + 2, status.getRow(),
+                    1, 1, 0, 0, GridBagConstraints.CENTER,
+                    GridBagConstraints.HORIZONTAL, insets, 0, 0));
+        }
 
-	protected String getLocalKey(String key) {
-		return key;
-	}
+        labels.put(key, label);
+        fields.put(key, spinner);
+        specials.put(key, special);
+    }
 
-	protected String getInfoKey(String key) {
-		return null;
-	}
+    protected JComponent createField(final String key, int value) {
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
+                    -1000, 50, 1));
+        spinner.addChangeListener(new javax.swing.event.ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    final int val = ((Number) spinner.getValue()).intValue();
+                    handleChange(key, val);
 
-	protected void handleChange(String key, int value) {
-		values.set(key, value);
-	}
+                    for (ChangeListener changeListener : changeListeners) {
+                        changeListener.valueChanged(key, val);
+                    }
+                }
+            });
 
-	public M getValues() {
-		return values;
-	}
+        return spinner;
+    }
 
-	public void setValues(M values) {
-		if (values == this.values) {
-			return;
-		}
+    protected InfoLabel createLabel(final String key) {
+        return new InfoLabel(getLocalKey(key), getInfoKey(key));
+    }
 
-		this.values = values;
-		update();
-	}
+    protected String getName(final String key) {
+        String localKey = getLocalKey(key);
 
-	private static class Status {
-		private int column = 0;
-		private int row = 0;
+        return Messages.get(localKey);
+    }
 
-		public int getColumn() {
-			return column;
-		}
+    protected String getLocalKey(String key) {
+        return key;
+    }
 
-		public int getRow() {
-			return row;
-		}
+    protected String getInfoKey(String key) {
+        return null;
+    }
 
-		public void reset() {
-			column = 0;
-			row = 0;
-		}
+    protected void handleChange(String key, int value) {
+        values.set(key, value);
+    }
 
-		public void advance() {
-			column += 2;
+    public M getValues() {
+        return values;
+    }
 
-			if (column >= COLUMNS) {
-				column = 0;
-				row++;
-			}
-		}
-	}
+    public void setValues(M values) {
+        if (values == this.values) {
+            return;
+        }
+
+        this.values = values;
+        update();
+    }
+
+    public void addChangeListener(ChangeListener changeListener) {
+        this.changeListeners.add(changeListener);
+    }
+
+    public Map<String, JComponent> getFields() {
+        return this.fields;
+    }
+
+    public Map<String, JComponent> getLabels() {
+        return this.labels;
+    }
+
+    public Map<String, JComponent> getSpecials() {
+        return this.specials;
+    }
+
+    public static interface ChangeListener {
+        void valueChanged(String key, int value);
+    }
+
+    private static class Status {
+        private int column = 0;
+        private int row = 0;
+
+        public int getColumn() {
+            return column;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public void reset() {
+            column = 0;
+            row = 0;
+        }
+
+        public void advance() {
+            column += 2;
+
+            if (column >= COLUMNS) {
+                column = 0;
+                row++;
+            }
+        }
+    }
 }

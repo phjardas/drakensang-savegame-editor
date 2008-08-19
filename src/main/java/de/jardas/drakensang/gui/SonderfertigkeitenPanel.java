@@ -3,7 +3,6 @@ package de.jardas.drakensang.gui;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.dao.Static;
 import de.jardas.drakensang.model.Sonderfertigkeiten;
@@ -34,7 +33,7 @@ public class SonderfertigkeitenPanel extends
 	protected JComponent createField(final String key, int value) {
 		final JCheckBox box = new JCheckBox();
 		box.setSelected(value >= 0);
-		box.addChangeListener(new ChangeListener() {
+		box.addChangeListener(new javax.swing.event.ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getValues().set(key, box.isSelected() ? 0 : -500);
 			}

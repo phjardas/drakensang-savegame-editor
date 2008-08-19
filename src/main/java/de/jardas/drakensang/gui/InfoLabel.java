@@ -21,18 +21,30 @@ public class InfoLabel extends JComponent {
 			.getLogger(InfoLabel.class);
 
 	public InfoLabel(String key) {
-		this(key, null);
+		this(key, null, null, true);
+	}
+	
+	public InfoLabel(String key, boolean localize) {
+		this(key, null, null, localize);
 	}
 
 	public InfoLabel(String key, String infoKey) {
-		this(key, infoKey, null);
+		this(key, infoKey, true);
+	}
+	
+	public InfoLabel(String key, String infoKey, boolean localize) {
+		this(key, infoKey, null, localize);
 	}
 	
 	public InfoLabel(String key, String infoKey, final Icon icon) {
+		this(key, infoKey, icon, true);
+	}
+	
+	public InfoLabel(String key, String infoKey, final Icon icon, boolean localize) {
 		super();
 
 		setLayout(new GridBagLayout());
-		final String name = Messages.get(key);
+		final String name = localize ? Messages.get(key) : key;
 
 		if (key != null) {
 			add(new JLabel(name), new GridBagConstraints(0, 0, 1, 1, 0, 0,

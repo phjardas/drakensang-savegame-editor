@@ -1,168 +1,218 @@
 package de.jardas.drakensang.model;
 
-import java.util.Set;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.util.Set;
+
+
 public class Character extends Persistable {
-	private int abenteuerpunkte;
-	private int steigerungspunkte;
-	private final Attribute attribute = new Attribute();
-	private final Talente talente = new Talente();
-	private final Sonderfertigkeiten sonderfertigkeiten = new Sonderfertigkeiten();
-	private final Zauberfertigkeiten zauberfertigkeiten = new Zauberfertigkeiten();
-	private final Inventory inventory = new Inventory();
-	private Race race;
-	private Culture culture;
-	private Profession profession;
-	private Sex sex;
-	private boolean magician;
-	private String lookAtText;
-	private boolean localizeLookAtText;
-	private CharacterSet characterSet;
-	private CasterType casterType;
-	private CasterRace casterRace;
+    private int abenteuerpunkte;
+    private int steigerungspunkte;
+    private final Attribute attribute = new Attribute();
+    private final Talente talente = new Talente();
+    private final Sonderfertigkeiten sonderfertigkeiten = new Sonderfertigkeiten();
+    private final Zauberfertigkeiten zauberfertigkeiten = new Zauberfertigkeiten();
+    private final Inventory inventory = new Inventory();
+    private Race race;
+    private Culture culture;
+    private Profession profession;
+    private Sex sex;
+    private boolean magician;
+    private String lookAtText;
+    private boolean localizeLookAtText;
+    private CharacterSet characterSet;
+    private CasterType casterType;
+    private CasterRace casterRace;
+    private int lebensenergieBonus;
+    private int astralenergieBonus;
 
-	public boolean isPlayerCharacter() {
-		return "CharWizardPC".equals(getId());
-	}
+    public boolean isPlayerCharacter() {
+        return "CharWizardPC".equals(getId());
+    }
 
-	public int getMoneyAmount() {
-		Set<Money> money = getInventory().getItems(Money.class);
-		return money.isEmpty() ? 0 : money.iterator().next().getCount();
-	}
+    public int getMoneyAmount() {
+        Set<Money> money = getInventory().getItems(Money.class);
 
-	public void setMoneyAmount(int amount) {
-		Set<Money> money = getInventory().getItems(Money.class);
+        return money.isEmpty() ? 0 : money.iterator().next().getCount();
+    }
 
-		if (money.size() != 1) {
-			throw new IllegalArgumentException("The character " + getName()
-					+ " can not carry money.");
-		}
+    public void setMoneyAmount(int amount) {
+        Set<Money> money = getInventory().getItems(Money.class);
 
-		money.iterator().next().setCount(amount);
-	}
+        if (money.size() != 1) {
+            throw new IllegalArgumentException("The character " + getName()
+                + " can not carry money.");
+        }
 
-	public Inventory getInventory() {
-		return inventory;
-	}
+        money.iterator().next().setCount(amount);
+    }
 
-	public Attribute getAttribute() {
-		return attribute;
-	}
+    public Inventory getInventory() {
+        return inventory;
+    }
 
-	public Talente getTalente() {
-		return talente;
-	}
+    public Attribute getAttribute() {
+        return attribute;
+    }
 
-	public Sonderfertigkeiten getSonderfertigkeiten() {
-		return sonderfertigkeiten;
-	}
+    public Talente getTalente() {
+        return talente;
+    }
 
-	public Zauberfertigkeiten getZauberfertigkeiten() {
-		return zauberfertigkeiten;
-	}
+    public Sonderfertigkeiten getSonderfertigkeiten() {
+        return sonderfertigkeiten;
+    }
 
-	public int getAbenteuerpunkte() {
-		return abenteuerpunkte;
-	}
+    public Zauberfertigkeiten getZauberfertigkeiten() {
+        return zauberfertigkeiten;
+    }
 
-	public void setAbenteuerpunkte(int abenteuerpunkte) {
-		this.abenteuerpunkte = abenteuerpunkte;
-	}
+    public int getAbenteuerpunkte() {
+        return abenteuerpunkte;
+    }
 
-	public int getSteigerungspunkte() {
-		return steigerungspunkte;
-	}
+    public void setAbenteuerpunkte(int abenteuerpunkte) {
+        this.abenteuerpunkte = abenteuerpunkte;
+    }
 
-	public void setSteigerungspunkte(int steigerungspunkte) {
-		this.steigerungspunkte = steigerungspunkte;
-	}
+    public int getSteigerungspunkte() {
+        return steigerungspunkte;
+    }
 
-	public Culture getCulture() {
-		return this.culture;
-	}
+    public void setSteigerungspunkte(int steigerungspunkte) {
+        this.steigerungspunkte = steigerungspunkte;
+    }
 
-	public void setCulture(Culture culture) {
-		this.culture = culture;
-	}
+    public Culture getCulture() {
+        return this.culture;
+    }
 
-	public Profession getProfession() {
-		return this.profession;
-	}
+    public void setCulture(Culture culture) {
+        this.culture = culture;
+    }
 
-	public void setProfession(Profession profession) {
-		this.profession = profession;
-	}
+    public Profession getProfession() {
+        return this.profession;
+    }
 
-	public Race getRace() {
-		return this.race;
-	}
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
 
-	public void setRace(Race race) {
-		this.race = race;
-	}
+    public Race getRace() {
+        return this.race;
+    }
 
-	public Sex getSex() {
-		return this.sex;
-	}
+    public void setRace(Race race) {
+        this.race = race;
+    }
 
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
+    public Sex getSex() {
+        return this.sex;
+    }
 
-	public boolean isMagician() {
-		return this.magician;
-	}
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
 
-	public void setMagician(boolean magician) {
-		this.magician = magician;
-	}
+    public boolean isMagician() {
+        return this.magician;
+    }
 
-	public String getLookAtText() {
-		return lookAtText;
-	}
+    public void setMagician(boolean magician) {
+        this.magician = magician;
+    }
 
-	public void setLookAtText(String lookAtText) {
-		this.lookAtText = lookAtText;
-	}
+    public String getLookAtText() {
+        return lookAtText;
+    }
 
-	public boolean isLocalizeLookAtText() {
-		return localizeLookAtText;
-	}
+    public void setLookAtText(String lookAtText) {
+        this.lookAtText = lookAtText;
+    }
 
-	public void setLocalizeLookAtText(boolean localizeLookAtText) {
-		this.localizeLookAtText = localizeLookAtText;
-	}
+    public boolean isLocalizeLookAtText() {
+        return localizeLookAtText;
+    }
 
-	public CharacterSet getCharacterSet() {
-		return characterSet;
-	}
+    public void setLocalizeLookAtText(boolean localizeLookAtText) {
+        this.localizeLookAtText = localizeLookAtText;
+    }
 
-	public void setCharacterSet(CharacterSet characterSet) {
-		this.characterSet = characterSet;
-	}
+    public CharacterSet getCharacterSet() {
+        return characterSet;
+    }
 
-	public CasterType getCasterType() {
-		return casterType;
-	}
+    public void setCharacterSet(CharacterSet characterSet) {
+        this.characterSet = characterSet;
+    }
 
-	public void setCasterType(CasterType casterType) {
-		this.casterType = casterType;
-	}
+    public CasterType getCasterType() {
+        return casterType;
+    }
 
-	public CasterRace getCasterRace() {
-		return casterRace;
-	}
+    public void setCasterType(CasterType casterType) {
+        this.casterType = casterType;
+    }
 
-	public void setCasterRace(CasterRace casterRace) {
-		this.casterRace = casterRace;
-	}
+    public CasterRace getCasterRace() {
+        return casterRace;
+    }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this,
-				ToStringStyle.MULTI_LINE_STYLE).toString();
-	}
+    public void setCasterRace(CasterRace casterRace) {
+        this.casterRace = casterRace;
+    }
+
+    public int getAstralenergieBonus() {
+        return this.astralenergieBonus;
+    }
+
+    public void setAstralenergieBonus(int astralenergieBonus) {
+        this.astralenergieBonus = astralenergieBonus;
+    }
+
+    public int getLebensenergieBonus() {
+        return this.lebensenergieBonus;
+    }
+
+    public void setLebensenergieBonus(int lebensenergieBonus) {
+        this.lebensenergieBonus = lebensenergieBonus;
+    }
+
+    public int getAttackeBasis() {
+        // FIXME stimmt die Formel für Attacke-Basis?
+        return (int) Math.round((double) (getAttribute().get("MU")
+            + getAttribute().get("KK") + getAttribute().get("GE")) / 5);
+    }
+
+    public int getParadeBasis() {
+        // FIXME stimmt die Formel für Parade-Basis?
+        return (int) Math.round((double) (getAttribute().get("IN")
+            + getAttribute().get("KK") + getAttribute().get("GE")) / 5);
+    }
+
+    public int getFernkampfBasis() {
+        // FIXME stimmt die Formel für Fernkampf-Basis?
+        return (int) Math.round((double) (getAttribute().get("KK")
+            + getAttribute().get("FF") + getAttribute().get("GE")) / 5);
+    }
+
+    public int getLebensenergie() {
+        // FIXME stimmt die Formel für Fernkampf-Basis?
+        int basis = (int) Math.round((double) (getAttribute().get("KO")
+                + getAttribute().get("KK") + getAttribute().get("KO")) / 3);
+
+        return basis + getLebensenergieBonus();
+    }
+
+    public int getAstralenergie() {
+        return 0 + getAstralenergieBonus();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this,
+            ToStringStyle.MULTI_LINE_STYLE).toString();
+    }
 }
