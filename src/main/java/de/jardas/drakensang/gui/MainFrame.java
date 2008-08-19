@@ -4,7 +4,6 @@ import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.validation.ValidationResult;
-import de.jardas.drakensang.model.validation.ValidationResult.Message;
 import de.jardas.drakensang.model.validation.Validator;
 
 import java.awt.BorderLayout;
@@ -152,7 +151,7 @@ public class MainFrame extends JFrame {
         getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
         setSize(800, 730);
-        centerOnScreen();
+        setLocationRelativeTo(null);
     }
 
     public void setBusy(boolean busy) {
@@ -253,27 +252,6 @@ public class MainFrame extends JFrame {
     }
 
     public void save() {
-        final ValidationResult validationResults = validateModel();
-
-        if (validationResults.containsWarnings()) {
-            StringBuffer out = new StringBuffer();
-
-            for (Character character : characters) {
-                final List<Message> messages = validationResults.getMessage(character);
-                // FIXME rendering of validation messages.
-                out.append(getCharacterName(character) + ": " + messages.size()
-                    + "\n");
-            }
-
-            final int result = JOptionPane.showConfirmDialog(this,
-                    out.toString(), Messages.get("validation.title"),
-                    JOptionPane.YES_NO_OPTION);
-
-            if (result != JOptionPane.YES_OPTION) {
-                return;
-            }
-        }
-
         characterDao.saveAll();
         JOptionPane.showMessageDialog(this, Messages.get("GameSaved"),
             Messages.get("SaveGame"), JOptionPane.INFORMATION_MESSAGE);
@@ -291,14 +269,6 @@ public class MainFrame extends JFrame {
 
     private void updateSelection(Character character) {
         characterPanel.setCharacter(character);
-    }
-
-    private void centerOnScreen() {
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit()
-                                                        .getScreenSize();
-        int x = (screenSize.width - getWidth()) / 2;
-        int y = (screenSize.height - getHeight()) / 2;
-        setLocation(x, y);
     }
 
     private File getLatestSavegame() {

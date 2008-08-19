@@ -1,6 +1,7 @@
 package de.jardas.drakensang;
 
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.ExceptionDialog;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
 
@@ -22,18 +23,25 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        MainFrame frame = null;
+
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
 
             checkSettings();
 
-            MainFrame frame = new MainFrame();
+            frame = new MainFrame();
             frame.setVisible(true);
             frame.loadDefaultSavegame();
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("error") + e,
-                BUNDLE.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+        	e.printStackTrace();
+        	
+        	if (frame != null) {
+        		frame.setVisible(false);
+        	}
+        	
+            new ExceptionDialog(frame, e).setVisible(true);
+            
             System.exit(1);
         }
     }
@@ -45,7 +53,7 @@ public final class Main {
             Messages.resetConnection();
 
             File[] candidates = {
-            		new File("C:/Programme/Drakensang/drakensang.exe"),
+                    new File("C:/Programme/Drakensang/drakensang.exe"),
                     new File("C:/Program Files/Drakensang/drakensang.exe"),
                 };
 

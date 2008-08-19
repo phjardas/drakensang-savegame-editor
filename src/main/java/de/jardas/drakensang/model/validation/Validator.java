@@ -12,6 +12,7 @@ package de.jardas.drakensang.model.validation;
 import de.jardas.drakensang.model.Character;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -27,6 +28,16 @@ public class Validator implements Validation {
 
         for (Validation validation : validations) {
             result.merge(validation.validate(character));
+        }
+
+        return result;
+    }
+
+    public ValidationResult validate(Collection<Character> characters) {
+        ValidationResult result = new ValidationResult();
+
+        for (Character character : characters) {
+            result.merge(validate(character));
         }
 
         return result;

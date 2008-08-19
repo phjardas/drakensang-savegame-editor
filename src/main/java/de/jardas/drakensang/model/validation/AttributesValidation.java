@@ -14,7 +14,7 @@ import de.jardas.drakensang.model.Character;
 
 
 public class AttributesValidation implements Validation {
-    private static final int MAX = 40;
+    private static final int MAX = 20;
 
     public ValidationResult validate(Character character) {
         ValidationResult result = new ValidationResult();
