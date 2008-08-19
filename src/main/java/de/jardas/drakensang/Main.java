@@ -1,96 +1,106 @@
 package de.jardas.drakensang;
 
+import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.InfoLabel;
+import de.jardas.drakensang.gui.MainFrame;
+
 import java.io.File;
+
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.gui.InfoLabel;
-import de.jardas.drakensang.gui.MainFrame;
 
 public final class Main {
-	private static final ResourceBundle BUNDLE = ResourceBundle
-			.getBundle(Main.class.getPackage().getName() + ".messages");
-	
-	private Main() {
-		// utility class
-	}
+    private static final ResourceBundle BUNDLE = ResourceBundle
+        .getBundle(Main.class.getPackage().getName() + ".messages");
 
-	public static void main(String[] args) {
-		try {
-			Class.forName("SQLite.JDBCDriver").newInstance();
+    private Main() {
+        // utility class
+    }
 
-			checkSettings();
+    public static void main(String[] args) {
+        try {
+            Class.forName("SQLite.JDBCDriver").newInstance();
 
-			MainFrame frame = new MainFrame();
-			frame.setVisible(true);
-			frame.loadDefaultSavegame();
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, BUNDLE.getString("error") + e,
-					BUNDLE.getString("error.title"), JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-	}
+            checkSettings();
 
-	private static void checkSettings() {
-		Settings settings = Settings.getInstance();
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
+            frame.loadDefaultSavegame();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("error") + e,
+                BUNDLE.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
 
-		if (!Messages.testConnection()) {
-			Messages.resetConnection();
-			File candidate = new File(
-					"C:/Program Files/Drakensang/drakensang.exe");
+    private static void checkSettings() {
+        Settings settings = Settings.getInstance();
 
-			if (candidate.isFile()) {
-				settings.setDrakensangHome(candidate.getParentFile());
-				return;
-			}
-		}
+        if (!Messages.testConnection()) {
+            Messages.resetConnection();
 
-		while (!Messages.testConnection()) {
-			Messages.resetConnection();
-			settings.setDrakensangHome(getDrakensangHome(settings));
-		}
+            File[] candidates = {
+            		new File("C:/Programme/Drakensang/drakensang.exe"),
+                    new File("C:/Program Files/Drakensang/drakensang.exe"),
+                };
 
-		settings.save();
-	}
+            for (File candidate : candidates) {
+                if (candidate.isFile()) {
+                    settings.setDrakensangHome(candidate.getParentFile());
 
-	private static File getDrakensangHome(Settings settings) {
-		JOptionPane.showMessageDialog(null, InfoLabel.addNewLines(BUNDLE
-				.getString("drakensang.home.info")), BUNDLE
-				.getString("drakensang.home.title"),
-				JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+        }
 
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser = new JFileChooser();
-		fileChooser.setDialogTitle(BUNDLE.getString("drakensang.home.title"));
-		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fileChooser.setCurrentDirectory(new File("c:/Program Files"));
+        while (!Messages.testConnection()) {
+            Messages.resetConnection();
+            settings.setDrakensangHome(getDrakensangHome(settings));
+        }
 
-		fileChooser.removeChoosableFileFilter(fileChooser
-				.getChoosableFileFilters()[0]);
-		fileChooser.setFileFilter(new FileFilter() {
-			public boolean accept(File f) {
-				return f.isDirectory() || f.getName().equals("drakensang.exe");
-			}
+        settings.save();
+    }
 
-			public String getDescription() {
-				return "Drakensang (drakensang.exe)";
-			}
-		});
+    private static File getDrakensangHome(Settings settings) {
+        JOptionPane.showMessageDialog(null,
+            InfoLabel.addNewLines(BUNDLE.getString("drakensang.home.info")),
+            BUNDLE.getString("drakensang.home.title"),
+            JOptionPane.WARNING_MESSAGE);
 
-		int result = fileChooser.showDialog(null, BUNDLE
-				.getString("drakensang.home.button"));
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(BUNDLE.getString("drakensang.home.title"));
+        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setCurrentDirectory(new File("c:/Program Files"));
 
-		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile().getParentFile();
-		}
+        fileChooser.removeChoosableFileFilter(fileChooser
+            .getChoosableFileFilters()[0]);
+        fileChooser.setFileFilter(new FileFilter() {
+                public boolean accept(File f) {
+                    return f.isDirectory()
+                    || f.getName().equals("drakensang.exe");
+                }
 
-		System.exit(0);
-		return null;
-	}
+                public String getDescription() {
+                    return "Drakensang (drakensang.exe)";
+                }
+            });
+
+        int result = fileChooser.showDialog(null,
+                BUNDLE.getString("drakensang.home.button"));
+
+        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile().getParentFile();
+        }
+
+        System.exit(0);
+
+        return null;
+    }
 }

@@ -3,6 +3,9 @@ package de.jardas.drakensang.gui;
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.validation.ValidationResult;
+import de.jardas.drakensang.model.validation.ValidationResult.Message;
+import de.jardas.drakensang.model.validation.Validator;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -43,6 +46,7 @@ import javax.swing.filechooser.FileSystemView;
 public class MainFrame extends JFrame {
     private final JToolBar toolbar = new JToolBar();
     private final JFileChooser fileChooser = new JFileChooser();
+    private final Validator validator = new Validator();
     private CharacterDao characterDao;
     private JList characterList = new JList();
     private CharacterPanel characterPanel = new CharacterPanel(this);
@@ -50,6 +54,7 @@ public class MainFrame extends JFrame {
     private JComponent glassPane = new JPanel();
     private JComponent defaultGlassPane;
     private boolean busy;
+    private List<Character> characters;
 
     public MainFrame() {
         super();
@@ -188,12 +193,11 @@ public class MainFrame extends JFrame {
     }
 
     public void loadSavegame(File file) {
-    	setBusy(true);
-    	
+        setBusy(true);
+
         characterDao = new CharacterDao(file.getAbsolutePath());
 
-        final List<Character> characters = new ArrayList<Character>(characterDao
-                .getCharacters());
+        characters = new ArrayList<Character>(characterDao.getCharacters());
 
         Collections.sort(characters,
             new Comparator<Character>() {
@@ -239,7 +243,7 @@ public class MainFrame extends JFrame {
         saveButton.setEnabled(true);
 
         characterList.setSelectedIndex(0);
-        
+
         setBusy(false);
     }
 
@@ -249,10 +253,40 @@ public class MainFrame extends JFrame {
     }
 
     public void save() {
+        final ValidationResult validationResults = validateModel();
+
+        if (validationResults.containsWarnings()) {
+            StringBuffer out = new StringBuffer();
+
+            for (Character character : characters) {
+                final List<Message> messages = validationResults.getMessage(character);
+                // FIXME rendering of validation messages.
+                out.append(getCharacterName(character) + ": " + messages.size()
+                    + "\n");
+            }
+
+            final int result = JOptionPane.showConfirmDialog(this,
+                    out.toString(), Messages.get("validation.title"),
+                    JOptionPane.YES_NO_OPTION);
+
+            if (result != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
         characterDao.saveAll();
-        JOptionPane.showMessageDialog(this,
-            "Der Spielstand wurde gespeichert.", "Speichern",
-            JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, Messages.get("GameSaved"),
+            Messages.get("SaveGame"), JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private ValidationResult validateModel() {
+        ValidationResult result = new ValidationResult();
+
+        for (Character character : characters) {
+            result.merge(validator.validate(character));
+        }
+
+        return result;
     }
 
     private void updateSelection(Character character) {
