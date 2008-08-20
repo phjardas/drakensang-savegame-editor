@@ -1,8 +1,12 @@
 package de.jardas.drakensang.model;
 
 public class Attribute extends IntegerMap {
-	@Override
-	public String[] getKeys() {
-		return new String[] { "CH", "GE", "FF", "IN", "KL", "KK", "KO", "MU", };
-	}
+    public static final String[] KEYS = new String[] {
+            "CH", "GE", "FF", "IN", "KL", "KK", "KO", "MU",
+        };
+
+    @Override
+    public String[] getKeys() {
+        return Attribute.KEYS;
+    }
 }

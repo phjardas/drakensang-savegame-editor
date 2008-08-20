@@ -17,6 +17,7 @@ public class CharacterPanel extends JPanel {
     private JTabbedPane tabs = new JTabbedPane();
     private AttributePanel attributesPanel = new AttributePanel();
     private CharacterInfoPanel infoPanel = new CharacterInfoPanel(attributesPanel);
+    private AdvantagesPanel advantagesPanel = new AdvantagesPanel();
     private TalentePanel talentePanel = new TalentePanel();
     private ZauberPanel zauberPanel = new ZauberPanel();
     private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
@@ -32,6 +33,7 @@ public class CharacterPanel extends JPanel {
             });
 
         tabs.addTab(Messages.get("CharacterSheet"), new JScrollPane(infoPanel));
+        tabs.addTab(Messages.get("Advantages"), new JScrollPane(advantagesPanel));
         tabs.addTab(Messages.get("Talents"), new JScrollPane(talentePanel));
         tabs.addTab(Messages.get("SpecialSkills"), new JScrollPane(sonderPanel));
         tabs.addTab(Messages.get("Spells"), new JScrollPane(zauberPanel));
@@ -55,6 +57,7 @@ public class CharacterPanel extends JPanel {
 
         infoPanel.setCharacter(character);
         attributesPanel.setValues(character.getAttribute());
+        advantagesPanel.setCharacter(character);
         talentePanel.setCharacter(character);
         zauberPanel.setValues(character.getZauberfertigkeiten());
         sonderPanel.setValues(character.getSonderfertigkeiten());

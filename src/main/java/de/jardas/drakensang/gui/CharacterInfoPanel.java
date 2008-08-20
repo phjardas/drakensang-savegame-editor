@@ -198,13 +198,23 @@ public class CharacterInfoPanel extends JPanel {
 
     private void addNumberFields(int panelRow) {
         int row = 0;
-        final JPanel numbersPanel = new JPanel();
-        numbersPanel.setLayout(new GridBagLayout());
-        numbersPanel.setBorder(BorderFactory.createTitledBorder("Zahlen"));
-        add(numbersPanel,
+        final JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Zahlen"));
+        add(panel,
             new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
+        
+        final JSpinner level = new JSpinner(new SpinnerNumberModel(
+        		character.getLevel(), 1, 20, 1));
+        level.addChangeListener(new ChangeListener() {
+        	public void stateChanged(ChangeEvent e) {
+        		character.setLevel(((Number) level.getValue())
+        				.intValue());
+        	}
+        });
+        addInput(panel, "Stufe", level, row++);
 
         final JSpinner xp = new JSpinner(new SpinnerNumberModel(
                     character.getAbenteuerpunkte(), 0, 100000, 1));
@@ -214,7 +224,7 @@ public class CharacterInfoPanel extends JPanel {
                         .intValue());
                 }
             });
-        addInput(numbersPanel, "XP", xp, row++);
+        addInput(panel, "XP", xp, row++);
 
         final JSpinner up = new JSpinner(new SpinnerNumberModel(
                     character.getSteigerungspunkte(), 0, 100000, 1));
@@ -224,7 +234,7 @@ public class CharacterInfoPanel extends JPanel {
                         .intValue());
                 }
             });
-        addInput(numbersPanel, "UpgradeXP", up, row++);
+        addInput(panel, "UpgradeXP", up, row++);
 
         if (character.isPlayerCharacter()) {
             final JSpinner money = new JSpinner(new SpinnerNumberModel(
@@ -236,7 +246,7 @@ public class CharacterInfoPanel extends JPanel {
                     }
                 });
 
-            addInput(numbersPanel, "Money", money, row++);
+            addInput(panel, "Money", money, row++);
         }
     }
 

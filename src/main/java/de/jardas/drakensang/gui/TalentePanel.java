@@ -41,7 +41,7 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 
     @Override
     protected String getLocalKey(String key) {
-        return Static.get("Name", key, "TaAttr", "_Template_Talent");
+        return Talente.getNameKey(key);
     }
 
     @Override

@@ -3,6 +3,8 @@ package de.jardas.drakensang.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -26,6 +28,8 @@ public class Character extends Persistable {
     private CasterRace casterRace;
     private int lebensenergieBonus;
     private int astralenergieBonus;
+    private final List<Advantage> advantages = new ArrayList<Advantage>();
+    private int level;
 
     public boolean isPlayerCharacter() {
         return "CharWizardPC".equals(getId());
@@ -199,26 +203,49 @@ public class Character extends Persistable {
         int basis = (int) Math.round((double) (getAttribute().get("KO")
                 + getAttribute().get("KO") + getAttribute().get("KK")) / 2);
 
-        return basis + getLebensenergieBonus() + getRace().getLebensenergieModifikator() + getCulture().getLebensenergieModifikator() + getProfession().getLebensenergieModifikator();
+        return basis + getLebensenergieBonus()
+        + getRace().getLebensenergieModifikator()
+        + getCulture().getLebensenergieModifikator()
+        + getProfession().getLebensenergieModifikator();
     }
-    
+
     public int getAusdauer() {
-    	int basis = (int) Math.round((double) (getAttribute().get("MU")
-    			+ getAttribute().get("KO") + getAttribute().get("GE")) / 2);
-    	
-    	return basis + getRace().getAusdauerModifikator() + getCulture().getAusdauerModifikator() + getProfession().getAusdauerModifikator();
+        int basis = (int) Math.round((double) (getAttribute().get("MU")
+                + getAttribute().get("KO") + getAttribute().get("GE")) / 2);
+
+        return basis + getRace().getAusdauerModifikator()
+        + getCulture().getAusdauerModifikator()
+        + getProfession().getAusdauerModifikator();
     }
 
     public int getAstralenergie() {
-    	int basis = (int) Math.round((double) (getAttribute().get("MU")
-    			+ getAttribute().get("IN") + getAttribute().get("CH")) / 2);
+        int basis = (int) Math.round((double) (getAttribute().get("MU")
+                + getAttribute().get("IN") + getAttribute().get("CH")) / 2);
 
-    	return basis + getAstralenergieBonus() + getRace().getAstralenergieModifikator() + getCulture().getAstralenergieModifikator() + getProfession().getAstralenergieModifikator();
+        return basis + getAstralenergieBonus()
+        + getRace().getAstralenergieModifikator()
+        + getCulture().getAstralenergieModifikator()
+        + getProfession().getAstralenergieModifikator();
     }
-    
+
     public int getMagieresistenz() {
-    	return (int) Math.round((double) (getAttribute().get("MU")
-                + getAttribute().get("KL") + getAttribute().get("KO")) / 5) + getRace().getMagieresistenzModifikator() + getCulture().getMagieresistenzModifikator() + getProfession().getMagieresistenzModifikator();
+        return (int) Math.round((double) (getAttribute().get("MU")
+            + getAttribute().get("KL") + getAttribute().get("KO")) / 5)
+        + getRace().getMagieresistenzModifikator()
+        + getCulture().getMagieresistenzModifikator()
+        + getProfession().getMagieresistenzModifikator();
+    }
+
+    public List<Advantage> getAdvantages() {
+        return this.advantages;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     @Override

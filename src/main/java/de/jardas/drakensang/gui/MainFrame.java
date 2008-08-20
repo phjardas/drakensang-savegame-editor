@@ -291,8 +291,8 @@ public class MainFrame extends JFrame {
     }
 
     public void loadDefaultSavegame() {
-        // File latest = getLatestSavegame();
-    	File latest = new File(System.getProperty("user.dir"), "savegame/savegame.dsa");
+        File latest = getLatestSavegame();
+    	// File latest = new File(System.getProperty("user.dir"), "savegame/savegame.dsa");
 
         if (latest != null) {
             loadSavegame(latest);

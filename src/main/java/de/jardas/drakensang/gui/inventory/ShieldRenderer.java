@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.gui.inventory;
 
+import de.jardas.drakensang.dao.Static;
 import de.jardas.drakensang.model.InventoryItem;
 import de.jardas.drakensang.model.Shield;
 
@@ -50,6 +51,16 @@ public class ShieldRenderer extends InventoryItemRenderer {
         panel.add(paSpinner);
 
         return panel;
+    }
+    
+    @Override
+    protected String getNameKey(InventoryItem item) {
+    	return Static.get("LookAtText", item.getId(), "Id", "_Template_Shield");
+    }
+    
+    @Override
+    protected String getInfoKey(InventoryItem item) {
+    	return Static.get("InfoIdentified", item.getId(), "Id", "_Template_Shield");
     }
 
     @Override

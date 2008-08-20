@@ -2,6 +2,7 @@ package de.jardas.drakensang.dao;
 
 import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.model.Advantage;
 import de.jardas.drakensang.model.CasterRace;
 import de.jardas.drakensang.model.CasterType;
 import de.jardas.drakensang.model.Character;
@@ -89,6 +90,7 @@ public class CharacterDao {
             c.setId(result.getString("Id"));
             c.setLookAtText(result.getString("LookAtText"));
             c.setLocalizeLookAtText(result.getBoolean("LocalizeLookAtText"));
+            c.setLevel(result.getInt("Stufe"));
             c.setAbenteuerpunkte(result.getInt("XP"));
             c.setSteigerungspunkte(result.getInt("UpgradeXP"));
 
@@ -113,10 +115,21 @@ public class CharacterDao {
                             "CharacterSet")));
             }
 
+            loadAdvantages(c, result);
+
             inventoryDao.loadInventory(c);
         }
 
         return items;
+    }
+
+    private void loadAdvantages(Character c, ResultSet result)
+        throws SQLException {
+        final String[] tokens = result.getString("Advantages").split("\\s*;\\s*");
+
+        for (String token : tokens) {
+            c.getAdvantages().add(Advantage.valueOf(token));
+        }
     }
 
     private void save(Character character) throws SQLException {
@@ -132,6 +145,7 @@ public class CharacterDao {
             builder.append("'LookAtText' = ?", character.getLookAtText());
         }
 
+        builder.append("'Stufe' = ?", character.getLevel());
         builder.append("'XP' = ?", character.getAbenteuerpunkte());
         builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
         builder.append("'Sex' = ?", character.getSex().name());
@@ -143,6 +157,8 @@ public class CharacterDao {
         builder.append("'CasterRace' = ?", character.getCasterRace().name());
         builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
         builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
+        builder.append("'Advantages' = ?",
+            Advantage.serialize(character.getAdvantages()));
 
         if (character.isPlayerCharacter()) {
             builder.append("'CharacterSet' = ?",
@@ -151,7 +167,7 @@ public class CharacterDao {
 
         builder.addParameter(ParameterType.Bytes, character.getGuid());
 
-        LOG.debug("Character update: " + builder);
+        LOG.debug("Character update '" + character.getName() + "': " + builder);
 
         builder.createStatement(connection).executeUpdate();
 

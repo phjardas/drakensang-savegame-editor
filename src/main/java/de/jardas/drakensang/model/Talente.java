@@ -30,4 +30,8 @@ public class Talente extends IntegerMap {
 
         return new String[] { t1, t2, t3 };
     }
+    
+    public static String getNameKey(String key) {
+    	return Static.get("Name", key, "TaAttr", "_Template_Talent");
+    }
 }
