@@ -17,33 +17,85 @@ import javax.swing.filechooser.FileFilter;
 public final class Main {
     private static final ResourceBundle BUNDLE = ResourceBundle
         .getBundle(Main.class.getPackage().getName() + ".messages");
+    private static MainFrame frame = null;
 
     private Main() {
         // utility class
     }
 
-    public static void main(String[] args) {
-        MainFrame frame = null;
+    public static MainFrame getFrame() {
+		return Main.frame;
+	}
 
+	public static void main(String[] args) {
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
 
             checkSettings();
 
             frame = new MainFrame();
+
+            checkForUpdates();
+
             frame.setVisible(true);
             frame.loadDefaultSavegame();
         } catch (Exception e) {
-        	e.printStackTrace();
-        	
-        	if (frame != null) {
-        		frame.setVisible(false);
-        	}
-        	
+            e.printStackTrace();
+
+            if (frame != null) {
+                frame.setVisible(false);
+            }
+
             new ExceptionDialog(frame, e).setVisible(true);
-            
+
             System.exit(1);
         }
+    }
+
+    private static void checkForUpdates() {
+        try {
+            VersionInformation newestVersion = VersionInformation
+                .getNewestVersion();
+            Settings settings = Settings.getInstance();
+
+            if (!newestVersion.getVersion().equals(getCurrentVersion())
+                    && !newestVersion.getVersion()
+                                         .equals(settings
+                        .getLatestVersionInformation())) {
+                settings.setLatestVersionInformation(newestVersion.getVersion());
+                settings.save();
+
+                showNewVersionAvailableDialog(newestVersion);
+            }
+        } catch (Exception e) {
+            System.err.println("Error checking for new version: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    private static String getCurrentVersion() {
+        ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
+                                                                   .getName()
+                + ".version");
+
+        return bundle.getString("version");
+    }
+
+    private static void showNewVersionAvailableDialog(
+        VersionInformation newestVersion) {
+        StringBuilder msg = new StringBuilder();
+        msg.append("Version ").append(newestVersion.getVersion())
+           .append(" is now available!\n\n");
+
+        for (String change : newestVersion.getChangelog()) {
+            msg.append("- ").append(change).append("\n");
+        }
+
+        msg.append("\nVisit http://www.jardas.de/drakensang/ to download it.");
+
+        JOptionPane.showMessageDialog(frame, msg.toString(),
+            "Drakensang Savegame Editor " + newestVersion.getVersion()
+            + " available", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static void checkSettings() {

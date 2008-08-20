@@ -14,6 +14,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+
+import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
 
 public class InfoLabel extends JComponent {
@@ -64,7 +66,7 @@ public class InfoLabel extends JComponent {
 				anchor.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						JOptionPane.showMessageDialog(InfoLabel.this, info,
+						JOptionPane.showMessageDialog(Main.getFrame(), info,
 								name, JOptionPane.INFORMATION_MESSAGE, icon);
 					}
 				});

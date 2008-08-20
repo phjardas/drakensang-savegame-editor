@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 public class ArmorDao extends InventoryItemDao<Armor> {
 	public ArmorDao(Connection connection) {
-		super(connection, Armor.class, "_instance_armor");
+		super(connection, Armor.class, "_Instance_Armor");
 	}
 
 	@Override

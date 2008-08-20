@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 public class ShieldDao extends InventoryItemDao<Shield> {
     public ShieldDao(Connection connection) {
-        super(connection, Shield.class, "_instance_shield");
+        super(connection, Shield.class, "_Instance_Shield");
     }
 
     @Override

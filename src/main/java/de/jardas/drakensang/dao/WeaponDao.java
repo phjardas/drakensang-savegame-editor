@@ -20,7 +20,7 @@ import java.sql.SQLException;
 
 public class WeaponDao extends InventoryItemDao<Weapon> {
     public WeaponDao(Connection connection) {
-        super(connection, Weapon.class, "_instance_weapon");
+        super(connection, Weapon.class, "_Instance_Weapon");
     }
 
     @Override

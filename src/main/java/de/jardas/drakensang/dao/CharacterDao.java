@@ -1,5 +1,6 @@
 package de.jardas.drakensang.dao;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.CasterRace;
 import de.jardas.drakensang.model.CasterType;
@@ -20,153 +21,166 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class CharacterDao {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(CharacterDao.class);
-	private final Connection connection;
-	private final InventoryDao inventoryDao;
-	private Set<Character> characters;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(CharacterDao.class);
+    private final Connection connection;
+    private final InventoryDao inventoryDao;
+    private Set<Character> characters;
 
-	public CharacterDao(String filename) {
-		try {
-			LOG.debug("Opening savegame at " + filename);
-			connection = DriverManager
-					.getConnection("jdbc:sqlite:/" + filename);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException("Can't open database file '"
-					+ filename + "': " + e, e);
-		}
+    public CharacterDao(String filename) {
+        try {
+            LOG.debug("Opening savegame at " + filename);
+            connection = DriverManager.getConnection("jdbc:sqlite:/" + filename);
+        } catch (Exception e) {
+            throw new DrakensangException("Can't open database file '"
+                + filename + "': " + e, e);
+        }
 
-		inventoryDao = new InventoryDao(connection);
-	}
+        inventoryDao = new InventoryDao(connection);
+    }
 
-	public synchronized Set<Character> getCharacters() {
-		if (this.characters == null) {
-			try {
-				this.characters = loadCharacters();
-			} catch (SQLException e) {
-				throw new RuntimeException("Error loading characters: " + e, e);
-			}
-		}
+    public synchronized Set<Character> getCharacters() {
+        if (this.characters == null) {
+            try {
+                this.characters = loadCharacters();
+            } catch (Exception e) {
+                throw new DrakensangException("Error loading characters: " + e,
+                    e);
+            }
+        }
 
-		return this.characters;
-	}
+        return this.characters;
+    }
 
-	private Set<Character> loadCharacters() throws SQLException {
-		PreparedStatement statement = connection
-				.prepareStatement("select * from _instance_pc order by name");
-		ResultSet result = statement.executeQuery();
-		Set<Character> items = new HashSet<Character>();
+    private Set<Character> loadCharacters() throws SQLException {
+        final String sql = "select * from _Instance_PC order by Name";
+        ResultSet result;
 
-		while (result.next()) {
-			String name = result.getString("Name");
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            result = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DrakensangException(
+                "Error preparing or executing SQL statement " + sql + ": " + e,
+                e);
+        }
 
-			if (name.contains("fake") || name.startsWith("loc")
-					|| name.contains("cutscene")) {
-				LOG.debug("Skipping character " + name + ".");
-				continue;
-			}
+        Set<Character> items = new HashSet<Character>();
 
-			LOG.debug("Loading character " + name + ".");
+        while (result.next()) {
+            String name = result.getString("Name");
 
-			Character c = new Character();
-			items.add(c);
+            if (name.contains("fake") || name.startsWith("loc")
+                    || name.contains("cutscene")) {
+                LOG.debug("Skipping character " + name + ".");
 
-			c.setGuid(result.getBytes("Guid"));
-			c.setName(name);
-			c.setId(result.getString("Id"));
-			c.setLookAtText(result.getString("LookAtText"));
-			c.setLocalizeLookAtText(result.getBoolean("LocalizeLookAtText"));
-			c.setAbenteuerpunkte(result.getInt("XP"));
-			c.setSteigerungspunkte(result.getInt("UpgradeXP"));
+                continue;
+            }
 
-			c.setSex(Sex.valueOf(result.getString("Sex")));
-			c.setRace(Race.valueOf(result.getString("Race")));
-			c.setCulture(Culture.valueOf(result.getString("Culture")));
-			c.setProfession(Profession.valueOf(result.getString("Profession")));
-			c.setMagician(result.getBoolean("IsMagicUser"));
-			c.setCasterType(CasterType.valueOf(result.getString("CasterType")));
-			c.setCasterRace(CasterRace.valueOf(result.getString("CasterRace")));
-			
-			c.setLebensenergieBonus(result.getInt("LEBonus"));
-			c.setAstralenergieBonus(result.getInt("AEBonus"));
+            LOG.debug("Loading character " + name + ".");
 
-			c.getAttribute().load(result);
-			c.getTalente().load(result);
-			c.getSonderfertigkeiten().load(result);
-			c.getZauberfertigkeiten().load(result);
-			
-			if (c.isPlayerCharacter()) {
-				c.setCharacterSet(CharacterSet.valueOf(result.getString("CharacterSet")));
-			}
+            Character c = new Character();
+            items.add(c);
 
-			inventoryDao.loadInventory(c);
-		}
+            c.setGuid(result.getBytes("Guid"));
+            c.setName(name);
+            c.setId(result.getString("Id"));
+            c.setLookAtText(result.getString("LookAtText"));
+            c.setLocalizeLookAtText(result.getBoolean("LocalizeLookAtText"));
+            c.setAbenteuerpunkte(result.getInt("XP"));
+            c.setSteigerungspunkte(result.getInt("UpgradeXP"));
 
-		return items;
-	}
+            c.setSex(Sex.valueOf(result.getString("Sex")));
+            c.setRace(Race.valueOf(result.getString("Race")));
+            c.setCulture(Culture.valueOf(result.getString("Culture")));
+            c.setProfession(Profession.valueOf(result.getString("Profession")));
+            c.setMagician(result.getBoolean("IsMagicUser"));
+            c.setCasterType(CasterType.valueOf(result.getString("CasterType")));
+            c.setCasterRace(CasterRace.valueOf(result.getString("CasterRace")));
 
-	private void save(Character character) throws SQLException {
-		UpdateStatementBuilder builder = new UpdateStatementBuilder(
-				"_Instance_PC", "Guid = ?");
+            c.setLebensenergieBonus(result.getInt("LEBonus"));
+            c.setAstralenergieBonus(result.getInt("AEBonus"));
 
-		appendSave(builder, character.getAttribute());
-		appendSave(builder, character.getTalente());
-		appendSave(builder, character.getSonderfertigkeiten());
-		appendSave(builder, character.getZauberfertigkeiten());
+            c.getAttribute().load(result);
+            c.getTalente().load(result);
+            c.getSonderfertigkeiten().load(result);
+            c.getZauberfertigkeiten().load(result);
 
-		if (character.isPlayerCharacter()) {
-			builder.append("'LookAtText' = ?", character.getLookAtText());
-		}
+            if (c.isPlayerCharacter()) {
+                c.setCharacterSet(CharacterSet.valueOf(result.getString(
+                            "CharacterSet")));
+            }
 
-		builder.append("'XP' = ?", character.getAbenteuerpunkte());
-		builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
-		builder.append("'Sex' = ?", character.getSex().name());
-		builder.append("'Race' = ?", character.getRace().name());
-		builder.append("'Culture' = ?", character.getCulture().name());
-		builder.append("'Profession' = ?", character.getProfession().name());
-		builder.append("'IsMagicUser' = ?", character.isMagician() ? 1 : 0);
-		builder.append("'CasterType' = ?", character.getCasterType().name());
-		builder.append("'CasterRace' = ?", character.getCasterRace().name());
-		builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
-		builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
-		
-		if (character.isPlayerCharacter()) {
-			builder.append("'CharacterSet' = ?", character.getCharacterSet().name());
-		}
+            inventoryDao.loadInventory(c);
+        }
 
-		builder.addParameter(ParameterType.Bytes, character.getGuid());
+        return items;
+    }
 
-		LOG.debug("Character update: " + builder);
+    private void save(Character character) throws SQLException {
+        UpdateStatementBuilder builder = new UpdateStatementBuilder("_Instance_PC",
+                "Guid = ?");
 
-		builder.createStatement(connection).executeUpdate();
+        appendSave(builder, character.getAttribute());
+        appendSave(builder, character.getTalente());
+        appendSave(builder, character.getSonderfertigkeiten());
+        appendSave(builder, character.getZauberfertigkeiten());
 
-		inventoryDao.save(character.getInventory());
-	}
+        if (character.isPlayerCharacter()) {
+            builder.append("'LookAtText' = ?", character.getLookAtText());
+        }
 
-	private void appendSave(UpdateStatementBuilder builder, IntegerMap values) {
-		for (String key : values.getKeys()) {
-			builder.append("'" + key + "' = ?", values.get(key));
-		}
-	}
+        builder.append("'XP' = ?", character.getAbenteuerpunkte());
+        builder.append("'UpgradeXP' = ?", character.getSteigerungspunkte());
+        builder.append("'Sex' = ?", character.getSex().name());
+        builder.append("'Race' = ?", character.getRace().name());
+        builder.append("'Culture' = ?", character.getCulture().name());
+        builder.append("'Profession' = ?", character.getProfession().name());
+        builder.append("'IsMagicUser' = ?", character.isMagician() ? 1 : 0);
+        builder.append("'CasterType' = ?", character.getCasterType().name());
+        builder.append("'CasterRace' = ?", character.getCasterRace().name());
+        builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
+        builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
 
-	public void saveAll() {
-		if (characters == null) {
-			return;
-		}
+        if (character.isPlayerCharacter()) {
+            builder.append("'CharacterSet' = ?",
+                character.getCharacterSet().name());
+        }
 
-		try {
-			boolean autoCommit = connection.getAutoCommit();
-			connection.setAutoCommit(false);
+        builder.addParameter(ParameterType.Bytes, character.getGuid());
 
-			for (Character character : characters) {
-				save(character);
-			}
+        LOG.debug("Character update: " + builder);
 
-			connection.commit();
-			connection.setAutoCommit(autoCommit);
-		} catch (SQLException e) {
-			throw new RuntimeException("Error saving characters: " + e, e);
-		}
-	}
+        builder.createStatement(connection).executeUpdate();
+
+        inventoryDao.save(character.getInventory());
+    }
+
+    private void appendSave(UpdateStatementBuilder builder, IntegerMap values) {
+        for (String key : values.getKeys()) {
+            builder.append("'" + key + "' = ?", values.get(key));
+        }
+    }
+
+    public void saveAll() {
+        if (characters == null) {
+            return;
+        }
+
+        try {
+            boolean autoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+
+            for (Character character : characters) {
+                save(character);
+            }
+
+            connection.commit();
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving characters: " + e, e);
+        }
+    }
 }

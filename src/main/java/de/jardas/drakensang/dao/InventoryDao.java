@@ -41,17 +41,17 @@ public class InventoryDao {
 		itemDaos.add(new ShieldDao(connection));
 		itemDaos.add(new ArmorDao(connection));
 		itemDaos.add(new InventoryItemDao<Money>(connection, Money.class,
-				"_instance_money"));
+				"_Instance_Money"));
 		itemDaos.add(new InventoryItemDao<Item>(connection, Item.class,
-				"_instance_item"));
+				"_Instance_Item"));
 		itemDaos.add(new InventoryItemDao<Jewelry>(connection, Jewelry.class,
-				"_instance_jewelry"));
+				"_Instance_Jewelry"));
 		itemDaos.add(new InventoryItemDao<Key>(connection, Key.class,
-				"_instance_key"));
+				"_Instance_Key"));
 		itemDaos.add(new InventoryItemDao<Recipe>(connection, Recipe.class,
-				"_instance_recipe"));
+				"_Instance_Recipe"));
 		itemDaos.add(new InventoryItemDao<Torch>(connection, Torch.class,
-				"_instance_torch"));
+				"_Instance_Torch"));
 	}
 
 	public void loadInventory(Character character) throws SQLException {
