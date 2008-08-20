@@ -15,9 +15,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+
 public enum Advantage {
 	begabung_dolche, begabung_fechtwaffen, 
     begabung_hiebwaffen, begabung_saebel, begabung_schwerter, begabung_speere, 
