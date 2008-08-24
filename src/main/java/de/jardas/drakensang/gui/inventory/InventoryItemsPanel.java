@@ -21,16 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InventoryItemsPanel extends JPanel {
-	private final List<InventoryItemRenderer> renderers = new ArrayList<InventoryItemRenderer>();
 	private List<InventoryItem> items;
 
 	public InventoryItemsPanel() {
-		renderers.add(new WeaponRenderer());
-		renderers.add(new ShieldRenderer());
-		renderers.add(new ArmorRenderer());
-		renderers.add(new MoneyRenderer());
-		renderers.add(new InventoryItemRenderer());
-
 		setLayout(new GridBagLayout());
 	}
 
@@ -81,19 +74,13 @@ public class InventoryItemsPanel extends JPanel {
 
 		repaint();
 	}
-
+	
 	private String getGroupTitle(Class<? extends InventoryItem> currentClass) {
 		return Messages.get("inventorygroup." + currentClass.getSimpleName());
 	}
 
 	private InventoryItemRenderer getRenderer(InventoryItem item) {
-		for (InventoryItemRenderer renderer : renderers) {
-			if (renderer.isApplicable(item)) {
-				return renderer;
-			}
-		}
-
-		throw new IllegalArgumentException("Can't render " + item);
+		return InventoryItemRenderer.getRenderer(item);
 	}
 
 	public Set<InventoryItem> getItems() {

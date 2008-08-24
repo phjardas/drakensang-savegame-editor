@@ -1,7 +1,11 @@
 package de.jardas.drakensang.model;
 
 public abstract class InventoryItem extends Persistable {
+	public static final Class<?>[] TYPES = { Armor.class, Jewelry.class,
+			Key.class, Money.class, Recipe.class, Shield.class, Torch.class,
+			Weapon.class, };
 	private final boolean countable;
+	private Inventory inventory;
 	private int count;
 	private int maxCount;
 	private boolean questItem;
@@ -64,5 +68,13 @@ public abstract class InventoryItem extends Persistable {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	public Inventory getInventory() {
+		return inventory;
+	}
+
+	public void setInventory(Inventory inventory) {
+		this.inventory = inventory;
 	}
 }

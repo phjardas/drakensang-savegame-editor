@@ -24,7 +24,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class InventoryDao {
@@ -56,14 +58,15 @@ public class InventoryDao {
 
 	public void loadInventory(Character character) throws SQLException {
 		for (InventoryItemDao<? extends InventoryItem> dao : itemDaos) {
-			loadInventory(character, dao.getItemClass(), dao.getTable());
+			loadInventory(character, dao.getItemClass());
 		}
 	}
 
 	private void loadInventory(Character character,
-			Class<? extends InventoryItem> itemClass, String table)
-			throws SQLException {
-		final String sql = "select * from " + table + " where StorageGuid = ?";
+			Class<? extends InventoryItem> itemClass) throws SQLException {
+		InventoryItemDao<? extends InventoryItem> dao = getInventoryItemDao(itemClass);
+		final String sql = "select * from " + dao.getTable()
+				+ " where StorageGuid = ?";
 		LOG.debug("Loading inventory for character " + character.getId() + ": "
 				+ sql);
 
@@ -71,16 +74,49 @@ public class InventoryDao {
 		stmt.setBytes(1, character.getGuid());
 
 		ResultSet results = stmt.executeQuery();
+		List<InventoryItem> items = new ArrayList<InventoryItem>();
 
 		while (results.next()) {
 			try {
-				final InventoryItem item = getInventoryItemDao(itemClass).load(
-						results);
-				character.getInventory().add(item);
+				final InventoryItem item = dao.load(results);
+				items.add(item);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
+
+		for (InventoryItem item : items) {
+			character.getInventory().getItems().add(item);
+			item.setInventory(character.getInventory());
+		}
+	}
+
+	public List<InventoryItem> loadInventory(
+			Class<? extends InventoryItem> itemClass) {
+		List<InventoryItem> items = new ArrayList<InventoryItem>();
+		InventoryItemDao<? extends InventoryItem> dao = getInventoryItemDao(itemClass);
+		final String sql = "select * from " + dao.getTable();
+
+		try {
+			PreparedStatement stmt = connection.prepareStatement(sql);
+
+			ResultSet results = stmt.executeQuery();
+
+			while (results.next()) {
+				try {
+					final InventoryItem item = dao.load(results);
+					items.add(item);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error loading inventory items: " + e, e);
+		}
+		
+		LOG.debug("Loaded " + items.size() + " inventory items of type " + itemClass.getSimpleName() + ".");
+
+		return items;
 	}
 
 	private <I extends InventoryItem> InventoryItemDao<I> getInventoryItemDao(

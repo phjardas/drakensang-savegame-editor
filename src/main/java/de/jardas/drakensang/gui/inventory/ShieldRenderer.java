@@ -54,7 +54,7 @@ public class ShieldRenderer extends InventoryItemRenderer {
     }
     
     @Override
-    protected String getNameKey(InventoryItem item) {
+    public String getNameKey(InventoryItem item) {
     	return Static.get("LookAtText", item.getId(), "Id", "_Template_Shield");
     }
     

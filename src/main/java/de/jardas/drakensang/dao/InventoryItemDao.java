@@ -12,6 +12,7 @@ package de.jardas.drakensang.dao;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.InventoryItem;
 import de.jardas.drakensang.model.Money;
+import de.jardas.drakensang.model.Recipe;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -56,8 +57,12 @@ public class InventoryItemDao<I extends InventoryItem> {
 		item.setIcon(results.getString("IconBrush"));
 
 		if (!Money.class.isAssignableFrom(getItemClass())) {
-			item.setQuestItem(results.getString("QuestId") != null
-					&& !"NONE".equalsIgnoreCase(results.getString("QuestId")));
+			if (!Recipe.class.isAssignableFrom(getItemClass())) {
+				item.setQuestItem(results.getString("QuestId") != null
+						&& !"NONE".equalsIgnoreCase(results
+								.getString("QuestId")));
+			}
+			
 			item.setValue(results.getInt("Value"));
 		}
 

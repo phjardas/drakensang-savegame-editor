@@ -28,7 +28,11 @@ public class CharacterDao {
         .getLogger(CharacterDao.class);
     private final Connection connection;
     private final InventoryDao inventoryDao;
-    private Set<Character> characters;
+    public InventoryDao getInventoryDao() {
+		return inventoryDao;
+	}
+
+	private Set<Character> characters;
 
     public CharacterDao(String filename) {
         try {
