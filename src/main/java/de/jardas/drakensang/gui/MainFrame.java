@@ -2,7 +2,6 @@ package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.gui.inventory.wizard.NewItemWizard;
 import de.jardas.drakensang.model.Character;
 
 import java.awt.BorderLayout;
@@ -142,11 +141,11 @@ public class MainFrame extends JFrame {
 		saveButton.setEnabled(false);
 		toolbar.add(saveButton);
 
-		toolbar.add(new AbstractAction("Neuer Gegenstand") {
-			public void actionPerformed(ActionEvent e) {
-				new NewItemWizard(characterDao.getInventoryDao(), getCharacters()).setVisible(true);
-			}
-		});
+//		toolbar.add(new AbstractAction("Neuer Gegenstand") {
+//			public void actionPerformed(ActionEvent e) {
+//				new NewItemWizard(characterDao.getInventoryDao(), getCharacters()).setVisible(true);
+//			}
+//		});
 		
 		getContentPane().add(toolbar, BorderLayout.NORTH);
 		getContentPane().add(characterList, BorderLayout.WEST);

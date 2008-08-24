@@ -7,7 +7,7 @@ import de.jardas.drakensang.model.Money;
 
 public class MoneyRenderer extends InventoryItemRenderer {
 	@Override
-	protected String getInfoKey(InventoryItem item) {
+	public String getInfoKey(InventoryItem item) {
 		return null;
 	}
 	

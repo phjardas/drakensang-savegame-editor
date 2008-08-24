@@ -56,7 +56,7 @@ public class InventoryItemRenderer {
 		return components;
 	}
 
-	protected JComponent renderLabel(final InventoryItem item) {
+	public JComponent renderLabel(final InventoryItem item) {
 		return new InfoLabel(getNameKey(item), getInfoKey(item), new ImageIcon(
 				MainFrame.class.getResource(item.getIcon().toLowerCase()
 						+ ".png")));
@@ -66,11 +66,11 @@ public class InventoryItemRenderer {
 		return "lookat_" + item.getId();
 	}
 
-	protected String getInfoKey(final InventoryItem item) {
+	public String getInfoKey(final InventoryItem item) {
 		return "infoid_" + item.getId();
 	}
 
-	protected JComponent renderCounter(final InventoryItem item) {
+	public JComponent renderCounter(final InventoryItem item) {
 		if (item.getMaxCount() <= 1) {
 			return new JLabel("" + item.getCount());
 		}
@@ -86,7 +86,7 @@ public class InventoryItemRenderer {
 		return spinner;
 	}
 
-	protected JComponent renderSpecial(final InventoryItem item) {
+	public JComponent renderSpecial(final InventoryItem item) {
 		return null;
 	}
 

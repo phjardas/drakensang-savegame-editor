@@ -28,7 +28,7 @@ public class ArmorRenderer extends InventoryItemRenderer {
 	private static final int COLUMNS = 4;
 
 	@Override
-	protected JComponent renderSpecial(InventoryItem item) {
+	public JComponent renderSpecial(InventoryItem item) {
 		final Armor armor = (Armor) item;
 		JPanel panel = new JPanel();
 		Status status = new Status();

@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
 
 public class WeaponRenderer extends InventoryItemRenderer {
     @Override
-    protected JComponent renderSpecial(InventoryItem item) {
+    public JComponent renderSpecial(InventoryItem item) {
         final Weapon weapon = (Weapon) item;
         final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
 

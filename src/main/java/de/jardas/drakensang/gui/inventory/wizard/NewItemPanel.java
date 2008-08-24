@@ -5,6 +5,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.Collator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -20,33 +23,40 @@ import de.jardas.drakensang.model.InventoryItem;
 
 public class NewItemPanel extends JPanel {
 	private final InventoryDao inventoryDao;
+	private InventoryItem item;
 
 	public NewItemPanel(final InventoryDao inventoryDao,
 			final List<Character> characters) {
 		this.inventoryDao = inventoryDao;
-		setLayout(new GridBagLayout());
 
-		Insets insets = new Insets(3, 6, 3, 6);
-		int row = 0;
+		final JPanel detailsPanel = new JPanel();
+		detailsPanel.add(new JLabel("x"));
 
-		add(new JLabel("Wer soll den neuen Gegenstand erhalten?"),
-				new GridBagConstraints(0, row++, 1, 1, 0, 0,
-						GridBagConstraints.NORTHWEST,
-						GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		add(new JComboBox(new DefaultComboBoxModel(characters.toArray()) {
+		final JComboBox characterBox = new JComboBox(new DefaultComboBoxModel(
+				characters.toArray()) {
 			@Override
 			public Object getElementAt(int index) {
 				return getCharacterName(characters.get(index));
 			}
-		}), new GridBagConstraints(0, row++, 1, 1, 0, 0,
-				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-				insets, 0, 0));
+		});
 
-		add(new JLabel("Welche Art von Gegenstand möchtest du erzeugen?"),
-				new GridBagConstraints(0, row++, 1, 1, 0, 0,
-						GridBagConstraints.NORTHWEST,
-						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		final JComboBox templateBox = new JComboBox();
+
+		templateBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent evt) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					InventoryItem selected = ((TemplateModel) templateBox
+							.getModel()).getSelectedInventoryItem();
+					item = selected;
+
+					InventoryItemRenderer renderer = InventoryItemRenderer
+							.getRenderer(item);
+					
+					detailsPanel.removeAll();
+					detailsPanel.add(renderer.renderSpecial(item));
+				}
+			}
+		});
 
 		final JComboBox inventoryType = new JComboBox(new DefaultComboBoxModel(
 				InventoryItem.TYPES) {
@@ -56,7 +66,7 @@ public class NewItemPanel extends JPanel {
 						+ InventoryItem.TYPES[index].getSimpleName());
 			}
 		});
-		final JComboBox templateBox = new JComboBox();
+
 		inventoryType.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent evt) {
 				if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -67,6 +77,26 @@ public class NewItemPanel extends JPanel {
 				}
 			}
 		});
+
+		setLayout(new GridBagLayout());
+
+		Insets insets = new Insets(3, 6, 3, 6);
+		int row = 0;
+
+		add(new JLabel("Wer soll den neuen Gegenstand erhalten?"),
+				new GridBagConstraints(0, row++, 1, 1, 0, 0,
+						GridBagConstraints.NORTHWEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+
+		add(characterBox, new GridBagConstraints(0, row++, 1, 1, 0, 0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+				insets, 0, 0));
+
+		add(new JLabel("Welche Art von Gegenstand möchtest du erzeugen?"),
+				new GridBagConstraints(0, row++, 1, 1, 0, 0,
+						GridBagConstraints.NORTHWEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+
 		add(inventoryType, new GridBagConstraints(0, row++, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
 				insets, 0, 0));
@@ -79,6 +109,13 @@ public class NewItemPanel extends JPanel {
 				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
 				insets, 0, 0));
 
+		add(new JLabel("Details:"), new GridBagConstraints(0, row++, 1, 1, 0,
+				0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+				insets, 0, 0));
+
+		add(detailsPanel, new GridBagConstraints(0, row++, 1, 1, 0, 0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+				insets, 0, 0));
 	}
 
 	private String getCharacterName(Character character) {
@@ -91,10 +128,26 @@ public class NewItemPanel extends JPanel {
 
 		public TemplateModel(Class<? extends InventoryItem> itemClass) {
 			items = inventoryDao.loadInventory(itemClass);
+			Collections.sort(items, new Comparator<InventoryItem>() {
+				private final Collator collator = Collator.getInstance();
+
+				public int compare(InventoryItem o1, InventoryItem o2) {
+					return collator.compare(getName(o1), getName(o2));
+				}
+			});
 
 			for (InventoryItem item : items) {
 				addElement(new Item(item));
 			}
+		}
+
+		public InventoryItem getSelectedInventoryItem() {
+			return ((Item) getSelectedItem()).getItem();
+		}
+
+		private String getName(InventoryItem item) {
+			return Messages.get(InventoryItemRenderer.getRenderer(item)
+					.getNameKey(item));
 		}
 
 		private class Item {
@@ -107,9 +160,7 @@ public class NewItemPanel extends JPanel {
 
 			@Override
 			public String toString() {
-				String key = InventoryItemRenderer.getRenderer(item)
-						.getNameKey(item);
-				return Messages.get(key);
+				return getName(getItem());
 			}
 
 			public InventoryItem getItem() {

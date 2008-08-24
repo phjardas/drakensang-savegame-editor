@@ -23,8 +23,7 @@ import javax.swing.event.ChangeListener;
 
 
 public class ShieldRenderer extends InventoryItemRenderer {
-    @Override
-    protected JComponent renderSpecial(final InventoryItem item) {
+	public JComponent renderSpecial(final InventoryItem item) {
         final Shield shield = (Shield) item;
 
         final JSpinner atSpinner = new JSpinner(new SpinnerNumberModel(
@@ -59,7 +58,7 @@ public class ShieldRenderer extends InventoryItemRenderer {
     }
     
     @Override
-    protected String getInfoKey(InventoryItem item) {
+    public String getInfoKey(InventoryItem item) {
     	return Static.get("InfoIdentified", item.getId(), "Id", "_Template_Shield");
     }
 
