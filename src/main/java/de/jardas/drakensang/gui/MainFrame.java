@@ -2,6 +2,9 @@ package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.savegame.Savegame;
+import de.jardas.drakensang.gui.savegame.SavegameIcon;
+import de.jardas.drakensang.gui.savegame.SavegameService;
 import de.jardas.drakensang.model.Character;
 
 import java.awt.BorderLayout;
@@ -30,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,7 +41,6 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileSystemView;
 
 public class MainFrame extends JFrame {
 	private final JToolBar toolbar = new JToolBar();
@@ -50,7 +53,9 @@ public class MainFrame extends JFrame {
 	private JComponent defaultGlassPane;
 	private boolean busy;
 	private List<Character> characters;
-	private File savegame;
+	private Savegame savegame;
+	private JPanel left = new JPanel();
+	private JLabel savegameIcon = new JLabel("");
 
 	public MainFrame() {
 		super();
@@ -104,12 +109,7 @@ public class MainFrame extends JFrame {
 		fileChooser.setApproveButtonText(Messages.get("LoadGame"));
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-		File latest = getLatestSavegame();
-
-		if (latest != null) {
-			fileChooser.setCurrentDirectory(latest.getParentFile());
-		}
+		fileChooser.setCurrentDirectory(SavegameService.getSavesDirectory());
 
 		fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 			@Override
@@ -147,8 +147,12 @@ public class MainFrame extends JFrame {
 //			}
 //		});
 		
+		left.setLayout(new BorderLayout());
+		left.add(savegameIcon, BorderLayout.SOUTH);
+		left.add(characterList, BorderLayout.CENTER);
+		
 		getContentPane().add(toolbar, BorderLayout.NORTH);
-		getContentPane().add(characterList, BorderLayout.WEST);
+		getContentPane().add(left, BorderLayout.WEST);
 		getContentPane().add(characterPanel, BorderLayout.CENTER);
 		getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
@@ -181,6 +185,10 @@ public class MainFrame extends JFrame {
 	}
 
 	private void showLoadDialog() {
+		if (savegame != null) {
+			fileChooser.setCurrentDirectory(savegame.getFile().getParentFile());
+		}
+
 		int result = fileChooser.showDialog(MainFrame.this, null);
 
 		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
@@ -195,6 +203,11 @@ public class MainFrame extends JFrame {
 
 	public void loadSavegame(File file) {
 		setBusy(true);
+		
+		this.savegame = Savegame.load(file.getParentFile());
+		savegameIcon.setIcon(new SavegameIcon(this.savegame, 150));
+		
+		setTitle(savegame.getName() + " - " + Messages.get("title"));
 
 		characterDao = new CharacterDao(file.getAbsolutePath());
 
@@ -240,12 +253,9 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		saveButton.setEnabled(true);
-
 		characterList.setSelectedIndex(0);
-		this.savegame = file;
-		setTitle(file.getParentFile().getName() + " - " + Messages.get("title"));
-
+		saveButton.setEnabled(true);
+		
 		setBusy(false);
 	}
 
@@ -257,7 +267,7 @@ public class MainFrame extends JFrame {
 	public void save() {
 		characterDao.saveAll();
 		JOptionPane.showMessageDialog(this, MessageFormat.format(Messages
-				.get("GameSaved"), savegame.getAbsolutePath()), Messages
+				.get("GameSaved"), savegame.getFile().getAbsolutePath()), Messages
 				.get("SaveGame"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
@@ -265,21 +275,11 @@ public class MainFrame extends JFrame {
 		characterPanel.setCharacter(character);
 	}
 
-	private File getLatestSavegame() {
-		FileSystemView fw = fileChooser.getFileSystemView();
-		File documentsDir = fw.getDefaultDirectory();
-		File savedir = new File(documentsDir,
-				"Drakensang/profiles/default/save/");
-		File latest = new File(savedir, "continue_0/continue.dsa");
-
-		return latest.canRead() ? latest : null;
-	}
-
 	public void loadDefaultSavegame() {
-		File latest = getLatestSavegame();
+		Savegame latest = SavegameService.getLatestSavegame();
 
-		if (latest != null) {
-			loadSavegame(latest);
+		if (latest != null && latest.getFile() != null) {
+			loadSavegame(latest.getFile());
 		} else {
 			showLoadDialog();
 		}

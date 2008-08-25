@@ -4,5 +4,6 @@
 * Liste der letzten oder aller Savegames.
 
 + Dateinamen im Titel und beim Speichern anzeigen.
-+ Automatisch den Spielstand "continue" laden.
++ Automatisch den neuesten (zuletzt geänderten) Spielstand laden.
 + Geschlecht/Aussehen: Ungültige Kombinationen abfangen (z.B. männliche Amazone).
++ Anzeige des Spiel-Icons.
