@@ -11,6 +11,23 @@ public abstract class InventoryItem extends Persistable {
 	private boolean questItem;
 	private int value;
 	private String icon;
+	
+	private int weight;
+	private int pickingRange;
+	private String graphics;
+	private String physics;
+	private String lookAtText;
+	private String questId;
+	private String scriptPreset;
+	private String scriptOverride;
+	private String limitedScript;
+	private boolean canUse;
+	private int taBonus;
+	private String useTalent;
+	private boolean canDestroy;
+	
+	
+	
 
 	public InventoryItem() {
 		this(true);

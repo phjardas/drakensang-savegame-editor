@@ -15,91 +15,103 @@ import de.jardas.drakensang.model.Money;
 import de.jardas.drakensang.model.Recipe;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class InventoryItemDao<I extends InventoryItem> {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(InventoryItemDao.class);
-	private final Class<I> itemClass;
-	private final String table;
-	private final Connection connection;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(InventoryItemDao.class);
+    private final Class<I> itemClass;
+    private final String table;
+    private final Connection connection;
 
-	public InventoryItemDao(Connection connection, Class<I> itemClass,
-			String table) {
-		super();
-		this.connection = connection;
-		this.itemClass = itemClass;
-		this.table = table;
-	}
+    public InventoryItemDao(Connection connection, Class<I> itemClass,
+        String table) {
+        super();
+        this.connection = connection;
+        this.itemClass = itemClass;
+        this.table = table;
+    }
 
-	public Class<I> getItemClass() {
-		return this.itemClass;
-	}
+    public Class<I> getItemClass() {
+        return this.itemClass;
+    }
 
-	public boolean isApplicable(Class<? extends InventoryItem> clazz) {
-		return getItemClass().isAssignableFrom(clazz);
-	}
+    public boolean isApplicable(Class<?extends InventoryItem> clazz) {
+        return getItemClass().isAssignableFrom(clazz);
+    }
 
-	public I load(ResultSet results) throws SQLException {
-		I item;
+    public I load(ResultSet results) throws SQLException {
+        I item;
 
-		try {
-			item = getItemClass().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Error creating inventory item of type "
-					+ getItemClass().getName() + ": " + e, e);
-		}
+        try {
+            item = getItemClass().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating inventory item of type "
+                + getItemClass().getName() + ": " + e, e);
+        }
 
-		item.setGuid(results.getBytes("Guid"));
-		item.setId(results.getString("Id"));
-		item.setName(results.getString("Name"));
-		item.setIcon(results.getString("IconBrush"));
+        item.setGuid(results.getBytes("Guid"));
+        item.setId(results.getString("Id"));
+        item.setName(results.getString("Name"));
+        item.setIcon(results.getString("IconBrush"));
 
-		if (!Money.class.isAssignableFrom(getItemClass())) {
-			if (!Recipe.class.isAssignableFrom(getItemClass())) {
-				item.setQuestItem(results.getString("QuestId") != null
-						&& !"NONE".equalsIgnoreCase(results
-								.getString("QuestId")));
-			}
-			
-			item.setValue(results.getInt("Value"));
-		}
+        if (!Money.class.isAssignableFrom(getItemClass())) {
+            if (!Recipe.class.isAssignableFrom(getItemClass())) {
+                item.setQuestItem((results.getString("QuestId") != null)
+                    && !"NONE".equalsIgnoreCase(results.getString("QuestId")));
+            }
 
-		if (item.isCountable()) {
-			item.setCount(results.getInt("StackCount"));
-			item.setMaxCount(results.getInt("MaxStackCount"));
-		}
+            item.setValue(results.getInt("Value"));
+        }
 
-		return item;
-	}
+        if (item.isCountable()) {
+            item.setCount(results.getInt("StackCount"));
+            item.setMaxCount(results.getInt("MaxStackCount"));
+        }
 
-	public void save(InventoryItem item) throws SQLException {
-		UpdateStatementBuilder builder = new UpdateStatementBuilder(getTable(),
-				"guid = ?");
+        return item;
+    }
 
-		@SuppressWarnings("unchecked")
-		final I theItem = (I) item;
-		appendUpdateStatements(builder, theItem);
+    public void save(InventoryItem item) throws SQLException {
+        UpdateStatementBuilder builder = new UpdateStatementBuilder(getTable(),
+                "guid = ?");
 
-		builder.addParameter(ParameterType.Bytes, item.getGuid());
-		LOG.debug("Inventory update: " + builder);
+        @SuppressWarnings("unchecked")
+        final I theItem = (I) item;
+        appendUpdateStatements(builder, theItem);
 
-		builder.createStatement(connection).executeUpdate();
-	}
+        builder.addParameter(ParameterType.Bytes, item.getGuid());
+        LOG.debug("Inventory update: " + builder);
 
-	protected void appendUpdateStatements(UpdateStatementBuilder builder, I item) {
-		builder.append("Name = ?", item.getName());
-		builder.append("Id = ?", item.getId());
+        builder.createStatement(connection).executeUpdate();
+    }
 
-		if (item.isCountable()) {
-			builder
-					.append("StackCount = ?", ParameterType.Int, item
-							.getCount());
-		}
-	}
+    protected void appendUpdateStatements(UpdateStatementBuilder builder, I item) {
+        builder.append("Name = ?", item.getName());
+        builder.append("Id = ?", item.getId());
 
-	public String getTable() {
-		return this.table;
-	}
+        if (item.isCountable()) {
+            builder.append("StackCount = ?", ParameterType.Int, item.getCount());
+        }
+    }
+
+    public String getTable() {
+        return this.table;
+    }
+
+    public void create(InventoryItem item) {
+        LOG.warn("Creating inventory items is not supported yet: " + item);
+    }
+
+    public void delete(InventoryItem item) throws SQLException {
+        LOG.debug("Deleting " + item);
+
+        PreparedStatement stmt = connection.prepareStatement("delete from "
+                + getTable() + " where Guid = ?");
+        stmt.setBytes(1, item.getGuid());
+        stmt.executeUpdate();
+    }
 }

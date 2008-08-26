@@ -15,7 +15,7 @@ public class Character extends Persistable {
     private final Talente talente = new Talente();
     private final Sonderfertigkeiten sonderfertigkeiten = new Sonderfertigkeiten();
     private final Zauberfertigkeiten zauberfertigkeiten = new Zauberfertigkeiten();
-    private final Inventory inventory = new Inventory();
+    private final Inventory inventory = new Inventory(this);
     private Race race;
     private Culture culture;
     private Profession profession;

@@ -4,9 +4,11 @@ import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.ExceptionDialog;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
+import de.jardas.drakensang.util.WindowsRegistry;
 
 import java.io.File;
 
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
@@ -15,8 +17,11 @@ import javax.swing.filechooser.FileFilter;
 
 
 public final class Main {
-    private static final ResourceBundle BUNDLE = ResourceBundle
-        .getBundle(Main.class.getPackage().getName() + ".messages");
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(Main.class);
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Main.class.getPackage()
+                                                                                    .getName()
+            + ".messages");
     private static MainFrame frame = null;
 
     private Main() {
@@ -24,10 +29,12 @@ public final class Main {
     }
 
     public static MainFrame getFrame() {
-		return Main.frame;
-	}
+        return Main.frame;
+    }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+        LOG.info("Starting up!");
+
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
 
@@ -40,7 +47,7 @@ public final class Main {
             frame.setVisible(true);
             frame.loadDefaultSavegame();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Uncaught exception: " + e, e);
 
             if (frame != null) {
                 frame.setVisible(false);
@@ -48,8 +55,12 @@ public final class Main {
 
             new ExceptionDialog(frame, e).setVisible(true);
 
+            LOG.info("Shutting down...");
+            
             System.exit(1);
         }
+
+        LOG.info("Shutting down...");
     }
 
     private static void checkForUpdates() {
@@ -68,8 +79,7 @@ public final class Main {
                 showNewVersionAvailableDialog(newestVersion);
             }
         } catch (Exception e) {
-            System.err.println("Error checking for new version: " + e);
-            e.printStackTrace();
+            LOG.error("Error checking for new version: " + e, e);
         }
     }
 
@@ -101,17 +111,36 @@ public final class Main {
     private static void checkSettings() {
         Settings settings = Settings.getInstance();
 
+        LOG.debug("Testing connection to "
+            + Settings.getInstance().getDrakensangHome());
+
         if (!Messages.testConnection()) {
             Messages.resetConnection();
 
             File[] candidates = {
+                    (WindowsRegistry.getDrakensangHome() != null)
+                    ? new File(WindowsRegistry.getDrakensangHome()
+                        + "/drakensang.exe") : null,
                     new File("C:/Programme/Drakensang/drakensang.exe"),
+                    new File("D:/Programme/Drakensang/drakensang.exe"),
                     new File("C:/Program Files/Drakensang/drakensang.exe"),
+                    new File("D:/Program Files/Drakensang/drakensang.exe"),
+                    new File("C:/Spiele/Drakensang/drakensang.exe"),
+                    new File("D:/Spiele/Drakensang/drakensang.exe"),
+                    new File("C:/Games/Drakensang/drakensang.exe"),
+                    new File("D:/Games/Drakensang/drakensang.exe"),
                 };
 
+            LOG.debug("Drakensang home candidates: "
+                + Arrays.toString(candidates));
+
             for (File candidate : candidates) {
-                if (candidate.isFile()) {
+                if ((candidate != null) && candidate.isFile()) {
+                    LOG.debug("Found Drakensang home at "
+                        + candidate.getParentFile());
+
                     settings.setDrakensangHome(candidate.getParentFile());
+                    settings.save();
 
                     return;
                 }
@@ -159,6 +188,7 @@ public final class Main {
             return fileChooser.getSelectedFile().getParentFile();
         }
 
+        LOG.info("No Drakensang home selected, shutting down...");
         System.exit(0);
 
         return null;

@@ -8,10 +8,16 @@ import java.util.Set;
 public class Inventory {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
 			.getLogger(Inventory.class);
+	private final Character character;
 	private final Set<InventoryItem> items = new HashSet<InventoryItem>();
 	private final Set<InventoryItem> added = new HashSet<InventoryItem>();
 	private final Set<InventoryItem> deleted = new HashSet<InventoryItem>();
 	private final List<InventoryListener> listeners = new ArrayList<InventoryListener>();
+
+	public Inventory(final Character character) {
+		super();
+		this.character = character;
+	}
 
 	public Set<InventoryItem> getItems() {
 		return items;
@@ -62,6 +68,14 @@ public class Inventory {
 		this.listeners.remove(listener);
 	}
 
+	public Set<InventoryItem> getAddedItems() {
+		return this.added;
+	}
+
+	public Set<InventoryItem> getDeletedItems() {
+		return this.deleted;
+	}
+
 	@Override
 	public String toString() {
 		return items.toString();
@@ -70,5 +84,9 @@ public class Inventory {
 	public static interface InventoryListener {
 		void itemAdded(InventoryItem item);
 		void itemRemoved(InventoryItem item);
+	}
+
+	public Character getCharacter() {
+		return this.character;
 	}
 }

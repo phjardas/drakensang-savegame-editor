@@ -34,6 +34,7 @@ public class InventoryDao {
 			.getLogger(InventoryDao.class);
 	private final Set<InventoryItemDao<? extends InventoryItem>> itemDaos = new HashSet<InventoryItemDao<? extends InventoryItem>>();
 	private final Connection connection;
+	private static InventoryDao instance;
 
 	public InventoryDao(final Connection connection) {
 		super();
@@ -54,6 +55,8 @@ public class InventoryDao {
 				"_Instance_Recipe"));
 		itemDaos.add(new InventoryItemDao<Torch>(connection, Torch.class,
 				"_Instance_Torch"));
+		
+		instance = this;
 	}
 
 	public void loadInventory(Character character) throws SQLException {
@@ -138,5 +141,17 @@ public class InventoryDao {
 		for (InventoryItem item : inventory.getItems()) {
 			getInventoryItemDao(item.getClass()).save(item);
 		}
+		
+		for (InventoryItem item : inventory.getAddedItems()) {
+			getInventoryItemDao(item.getClass()).create(item);
+		}
+		
+		for (InventoryItem item : inventory.getDeletedItems()) {
+			getInventoryItemDao(item.getClass()).delete(item);
+		}
+	}
+
+	public static InventoryDao getInstance() {
+		return instance;
 	}
 }
