@@ -15,14 +15,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileSystemView;
+import de.jardas.drakensang.util.WindowsRegistry;
 
 public class SavegameService {
 	public static Savegame getLatestSavegame() {
 		List<Savegame> savegames = getSavegames();
 		Collections.sort(savegames, Collections.reverseOrder());
-		
+
 		return savegames.isEmpty() ? null : savegames.get(0);
 	}
 
@@ -33,12 +32,12 @@ public class SavegameService {
 				return pathname.isDirectory();
 			}
 		});
-		
+
 		List<Savegame> savegames = new ArrayList<Savegame>(files.length);
-		
+
 		for (File file : files) {
 			try {
-			savegames.add(Savegame.load(file));
+				savegames.add(Savegame.load(file));
 			} catch (IllegalArgumentException e) {
 				// ignore
 			}
@@ -47,8 +46,8 @@ public class SavegameService {
 	}
 
 	public static File getSavesDirectory() {
-		FileSystemView fw = new JFileChooser().getFileSystemView();
-		File documentsDir = fw.getDefaultDirectory();
+		File documentsDir = new File(WindowsRegistry
+				.getCurrentUserPersonalFolderPath());
 		File savedir = new File(documentsDir,
 				"Drakensang/profiles/default/save/");
 		return savedir;
