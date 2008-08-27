@@ -209,6 +209,10 @@ public class MainFrame extends JFrame {
 		
 		setTitle(savegame.getName() + " - " + Messages.get("title"));
 
+		if (characterDao != null) {
+			characterDao.close();
+		}
+		
 		characterDao = new CharacterDao(file.getAbsolutePath());
 
 		characters = new ArrayList<Character>(characterDao.getCharacters());

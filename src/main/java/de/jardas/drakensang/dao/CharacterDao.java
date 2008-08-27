@@ -203,4 +203,16 @@ public class CharacterDao {
             throw new RuntimeException("Error saving characters: " + e, e);
         }
     }
+    
+    public void close() {
+    	LOG.info("Closing connection.");
+    	
+    	if (this.connection != null) {
+    		try {
+				this.connection.close();
+			} catch (SQLException e) {
+				LOG.error("Error closing connection: " + e, e);
+			}
+    	}
+    }
 }
