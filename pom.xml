@@ -102,7 +102,6 @@
 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <!--
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -112,7 +111,6 @@
             </goals>
           </execution>
         </executions>
-        -->
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/assembly.xml</descriptor>
