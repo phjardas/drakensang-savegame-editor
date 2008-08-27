@@ -107,7 +107,8 @@ public class InventoryItemRenderer {
 			}
 		}));
 
-		return panel;
+		// FIXME löschen ist noch nicht so recht interessant.
+		return null;
 	}
 
 	protected String getItemName(String key) {
