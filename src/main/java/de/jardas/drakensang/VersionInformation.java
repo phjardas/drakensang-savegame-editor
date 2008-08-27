@@ -52,7 +52,11 @@ public class VersionInformation {
 
     public static VersionInformation getNewestVersion() {
         String content = loadVersionContent();
-        String[] tokens = content.split("\n+");
+        return load(content);
+    }
+
+	protected static VersionInformation load(String content) {
+		String[] tokens = content.split("\n+");
         String ver = tokens[0];
 
         String[] changes = new String[tokens.length - 1];
@@ -62,7 +66,7 @@ public class VersionInformation {
         }
 
         return new VersionInformation(ver, changes);
-    }
+	}
 
     private static String loadVersionContent() {
         try {
