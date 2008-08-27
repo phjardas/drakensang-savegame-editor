@@ -42,6 +42,7 @@ public class InventoryItemsPanel extends JPanel {
         JPanel panel = null;
         Class<?extends InventoryItem> currentClass = null;
 
+        /*
         add(new JButton(new AbstractAction("Gegenstand hinzufügen") {
                 public void actionPerformed(ActionEvent e) {
                     new NewItemDialog() {
@@ -54,7 +55,8 @@ public class InventoryItemsPanel extends JPanel {
             }),
             new GridBagConstraints(0, panelCount++, 1, 1, 1, 0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
-
+		*/
+        
         for (InventoryItem item : items) {
             if ((panel == null) || (currentClass != item.getClass())) {
                 panel = new JPanel();
