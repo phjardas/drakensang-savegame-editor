@@ -12,6 +12,7 @@ package de.jardas.drakensang.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Map;
 
 
 public final class WindowsRegistry {
@@ -21,8 +22,10 @@ public final class WindowsRegistry {
     private static final String REGSTR_TOKEN = "REG_SZ";
     private static final String PERSONAL_FOLDER = "\"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\"
         + "Explorer\\Shell Folders\" /v Personal";
-    private static final String DRAKENSANG_HOME = "\"Computer\\HKEY_CURRENT_USER\\Software\\DTP\\Drakensang\""
+    private static final String DRAKENSANG_HOME = "\"HKCU\\Software\\DTP\\Drakensang\""
         + " /v target_folder";
+    private static final String DRAKENSANG_LANG = "\"HKCU\\Software\\DTP\\Drakensang\""
+        + " /v language";
 
     private WindowsRegistry() {
         // utility class
@@ -34,6 +37,12 @@ public final class WindowsRegistry {
 
     public static String getDrakensangHome() {
         return getRegistryValue(DRAKENSANG_HOME);
+    }
+
+    public static String getDrakensangLanguage() {
+        String language = getRegistryValue(DRAKENSANG_LANG);
+        
+		return language != null ? language : "de";
     }
 
     public static String getRegistryValue(final String query) {
