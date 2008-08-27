@@ -34,7 +34,7 @@ public final class Main {
 
     public static void main(String[] args) {
         LOG.info("Starting up!");
-
+        
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
 
@@ -59,8 +59,6 @@ public final class Main {
             
             System.exit(1);
         }
-
-        LOG.info("Shutting down...");
     }
 
     private static void checkForUpdates() {
