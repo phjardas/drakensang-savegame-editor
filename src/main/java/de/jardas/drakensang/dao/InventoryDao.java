@@ -15,7 +15,6 @@ import de.jardas.drakensang.model.InventoryItem;
 import de.jardas.drakensang.model.Item;
 import de.jardas.drakensang.model.Jewelry;
 import de.jardas.drakensang.model.Key;
-import de.jardas.drakensang.model.Money;
 import de.jardas.drakensang.model.Recipe;
 import de.jardas.drakensang.model.Torch;
 
@@ -43,8 +42,7 @@ public class InventoryDao {
 		itemDaos.add(new WeaponDao(connection));
 		itemDaos.add(new ShieldDao(connection));
 		itemDaos.add(new ArmorDao(connection));
-		itemDaos.add(new InventoryItemDao<Money>(connection, Money.class,
-				"_Instance_Money"));
+		itemDaos.add(new MoneyDao(connection));
 		itemDaos.add(new InventoryItemDao<Item>(connection, Item.class,
 				"_Instance_Item"));
 		itemDaos.add(new InventoryItemDao<Jewelry>(connection, Jewelry.class,

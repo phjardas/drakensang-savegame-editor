@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.dao;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.model.Shield;
 
 import java.sql.Connection;
@@ -22,13 +23,18 @@ public class ShieldDao extends InventoryItemDao<Shield> {
     }
 
     @Override
-    public Shield load(ResultSet results) throws SQLException {
+    public Shield load(ResultSet results) {
         final Shield shield = super.load(results);
 
-        shield.setAttackeMod(results.getInt("WpATmod"));
-        shield.setParadeMod(results.getInt("WpPAmod"));
+        try {
+            shield.setAttackeMod(results.getInt("WpATmod"));
+            shield.setParadeMod(results.getInt("WpPAmod"));
 
-        return shield;
+            return shield;
+        } catch (SQLException e) {
+            throw new DrakensangException("Error loading " + shield + ": " + e,
+                e);
+        }
     }
 
     @Override

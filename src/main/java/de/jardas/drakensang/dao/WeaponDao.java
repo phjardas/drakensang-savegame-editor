@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.dao;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.model.Schaden;
 import de.jardas.drakensang.model.Weapon;
 import de.jardas.drakensang.model.Weapon.Type;
@@ -24,13 +25,20 @@ public class WeaponDao extends InventoryItemDao<Weapon> {
     }
 
     @Override
-    public Weapon load(ResultSet results) throws SQLException {
+    public Weapon load(ResultSet results) {
         final Weapon weapon = super.load(results);
-        weapon.setEquipmentType(Type.valueOf(results.getString("EquipmentType")));
-        weapon.setSchaden(new Schaden(results.getInt("WpW6"),
-                results.getInt("WpW6plus")));
 
-        return weapon;
+        try {
+            weapon.setEquipmentType(Type.valueOf(results.getString(
+                        "EquipmentType")));
+            weapon.setSchaden(new Schaden(results.getInt("WpW6"),
+                    results.getInt("WpW6plus")));
+
+            return weapon;
+        } catch (SQLException e) {
+            throw new DrakensangException("Error loading " + weapon + ": " + e,
+                e);
+        }
     }
 
     @Override
