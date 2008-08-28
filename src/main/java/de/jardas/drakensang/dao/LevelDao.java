@@ -31,8 +31,6 @@ public class LevelDao {
 
     public static List<Level> getLevels() {
         if (levels == null) {
-            LOG.debug("Loading levels...");
-
             try {
                 PreparedStatement stmt = SavegameDao.getConnection()
                                                     .prepareStatement("select * from _Instance_Levels");
