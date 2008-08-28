@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.dao.inventory;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.inventory.Inventory;
@@ -24,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,36 +52,52 @@ public class InventoryDao {
         ITEM_DAOS.add(new InventoryItemDao<Torch>(Torch.class, "_Instance_Torch"));
     }
 
-    public static void loadInventory(Character character)
-        throws SQLException {
+    public static List<InventoryItem> loadItems(byte[] storageGuid) {
+        List<InventoryItem> items = new ArrayList<InventoryItem>();
+
         for (InventoryItemDao<?extends InventoryItem> dao : ITEM_DAOS) {
-            loadInventory(character, dao.getItemClass());
+            items.addAll(loadItems(storageGuid, dao.getItemClass()));
         }
+
+        return items;
     }
 
-    private static void loadInventory(Character character,
-        Class<?extends InventoryItem> itemClass) throws SQLException {
+    private static Collection<InventoryItem> loadItems(byte[] storageGuid,
+        Class<?extends InventoryItem> itemClass) {
         InventoryItemDao<?extends InventoryItem> dao = getInventoryItemDao(itemClass);
         final String sql = "select * from " + dao.getTable()
             + " where StorageGuid = ?";
-        LOG.debug("Loading inventory for character " + character.getId() + ": "
-            + sql);
+        LOG.debug("Loading inventory for storage Guid "
+            + Arrays.toString(storageGuid) + ": " + sql);
 
-        PreparedStatement stmt = SavegameDao.getConnection()
-                                            .prepareStatement(sql);
-        stmt.setBytes(1, character.getGuid());
+        try {
+            PreparedStatement stmt = SavegameDao.getConnection()
+                                                .prepareStatement(sql);
+            stmt.setBytes(1, storageGuid);
 
-        ResultSet results = stmt.executeQuery();
-        List<InventoryItem> items = new ArrayList<InventoryItem>();
+            ResultSet results = stmt.executeQuery();
+            List<InventoryItem> items = new ArrayList<InventoryItem>();
 
-        while (results.next()) {
-            try {
-                final InventoryItem item = dao.load(results);
-                items.add(item);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            while (results.next()) {
+                try {
+                    final InventoryItem item = dao.load(results);
+                    items.add(item);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+
+            return items;
+        } catch (SQLException e) {
+            throw new DrakensangException("Error loading items of type "
+                + itemClass.getName() + " in storage Guid "
+                + Arrays.toString(storageGuid) + ": " + e, e);
         }
+    }
+
+    public static void loadInventory(Character character)
+        throws SQLException {
+        final List<InventoryItem> items = loadItems(character.getGuid());
 
         for (InventoryItem item : items) {
             character.getInventory().getItems().add(item);
@@ -143,5 +162,8 @@ public class InventoryDao {
         for (InventoryItem item : inventory.getDeletedItems()) {
             getInventoryItemDao(item.getClass()).delete(item);
         }
+    }
+
+    public static void findItemsInLevel(String level) {
     }
 }

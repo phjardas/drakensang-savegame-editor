@@ -91,6 +91,9 @@ public class InventoryItemDao<I extends InventoryItem> {
             item.setGraphics(results.getString("Graphics"));
             item.setPhysics(results.getString("Physics"));
             item.setLookAtText(results.getString("LookAtText"));
+            
+            item.setLevel(results.getString("_Level"));
+            item.setStorageGuid(results.getBytes("StorageGuid"));
 
             return item;
         } catch (SQLException e) {

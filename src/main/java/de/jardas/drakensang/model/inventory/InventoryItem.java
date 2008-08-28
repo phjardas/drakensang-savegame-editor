@@ -27,6 +27,9 @@ public abstract class InventoryItem extends Persistable {
     private int taBonus;
     private String useTalent;
     private boolean canDestroy;
+    
+    private String level;
+    private byte[] storageGuid;
 
     public InventoryItem() {
         this(true);
@@ -197,4 +200,20 @@ public abstract class InventoryItem extends Persistable {
     public void setWeight(int weight) {
         this.weight = weight;
     }
+
+	public String getLevel() {
+		return this.level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+	public byte[] getStorageGuid() {
+		return this.storageGuid;
+	}
+
+	public void setStorageGuid(byte[] storageGuid) {
+		this.storageGuid = storageGuid;
+	}
 }

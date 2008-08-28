@@ -39,7 +39,9 @@ public class SavegameDao {
                     + savegame.getFile());
             SavegameDao.savegame = savegame;
             SavegameDao.instance = this;
+            
             Guid.reset();
+            LevelDao.reset();
         } catch (Exception e) {
             throw new DrakensangException("Can't open database file '"
                 + savegame.getFile() + "': " + e, e);
