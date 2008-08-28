@@ -9,14 +9,13 @@ import javax.swing.JDialog;
 import javax.swing.JToolBar;
 
 import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.InventoryDao;
 import de.jardas.drakensang.model.Character;
 
 public class NewItemWizard extends JDialog {
 	private final JToolBar toolbar = new JToolBar();
 	private final NewItemPanel panel;
 	
-	public NewItemWizard(InventoryDao inventoryDao, List<Character> characters) {
+	public NewItemWizard(List<Character> characters) {
 		super(Main.getFrame(), "Neuer Gegenstand", true);
 		
 		setLayout(new BorderLayout());
@@ -37,7 +36,7 @@ public class NewItemWizard extends JDialog {
 		
 		add(toolbar, BorderLayout.SOUTH);
 		
-		panel = new NewItemPanel(inventoryDao, characters);
+		panel = new NewItemPanel(characters);
 		add(panel, BorderLayout.CENTER);
 		
 		pack();

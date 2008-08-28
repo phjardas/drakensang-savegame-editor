@@ -12,7 +12,6 @@ package de.jardas.drakensang.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Map;
 
 
 public final class WindowsRegistry {

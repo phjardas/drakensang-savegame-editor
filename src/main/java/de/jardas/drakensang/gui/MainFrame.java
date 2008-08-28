@@ -2,9 +2,9 @@ package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.gui.savegame.Savegame;
-import de.jardas.drakensang.gui.savegame.SavegameIcon;
-import de.jardas.drakensang.gui.savegame.SavegameService;
+import de.jardas.drakensang.dao.SavegameDao;
+import de.jardas.drakensang.model.savegame.Savegame;
+import de.jardas.drakensang.model.savegame.SavegameIcon;
 import de.jardas.drakensang.model.Character;
 
 import java.awt.BorderLayout;
@@ -45,7 +45,6 @@ import javax.swing.event.ListSelectionListener;
 public class MainFrame extends JFrame {
 	private final JToolBar toolbar = new JToolBar();
 	private final JFileChooser fileChooser = new JFileChooser();
-	private CharacterDao characterDao;
 	private JList characterList = new JList();
 	private CharacterPanel characterPanel = new CharacterPanel(this);
 	private JButton saveButton;
@@ -109,7 +108,7 @@ public class MainFrame extends JFrame {
 		fileChooser.setApproveButtonText(Messages.get("LoadGame"));
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fileChooser.setCurrentDirectory(SavegameService.getSavesDirectory());
+		fileChooser.setCurrentDirectory(SavegameDao.getSavesDirectory());
 
 		fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 			@Override
@@ -208,14 +207,9 @@ public class MainFrame extends JFrame {
 		savegameIcon.setIcon(new SavegameIcon(this.savegame, 150));
 		
 		setTitle(savegame.getName() + " - " + Messages.get("title"));
+		SavegameDao.open(savegame);
 
-		if (characterDao != null) {
-			characterDao.close();
-		}
-		
-		characterDao = new CharacterDao(file.getAbsolutePath());
-
-		characters = new ArrayList<Character>(characterDao.getCharacters());
+		characters = new ArrayList<Character>(CharacterDao.getCharacters());
 
 		Collections.sort(characters, new Comparator<Character>() {
 			private final Collator collator = Collator.getInstance();
@@ -269,7 +263,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void save() {
-		characterDao.saveAll();
+		CharacterDao.saveAll();
 		JOptionPane.showMessageDialog(this, MessageFormat.format(Messages
 				.get("GameSaved"), savegame.getFile().getAbsolutePath()), Messages
 				.get("SaveGame"), JOptionPane.INFORMATION_MESSAGE);
@@ -280,7 +274,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void loadDefaultSavegame() {
-		Savegame latest = SavegameService.getLatestSavegame();
+		Savegame latest = SavegameDao.getLatestSavegame();
 
 		if (latest != null && latest.getFile() != null) {
 			loadSavegame(latest.getFile());

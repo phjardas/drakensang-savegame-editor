@@ -9,8 +9,8 @@
  */
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Weapon;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Weapon;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;

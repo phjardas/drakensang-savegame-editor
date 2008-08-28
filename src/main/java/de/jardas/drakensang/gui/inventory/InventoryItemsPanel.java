@@ -1,13 +1,11 @@
 package de.jardas.drakensang.gui.inventory;
 
 import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Item;
+import de.jardas.drakensang.model.inventory.InventoryItem;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 
 import java.text.Collator;
 
@@ -18,9 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -55,8 +51,7 @@ public class InventoryItemsPanel extends JPanel {
             }),
             new GridBagConstraints(0, panelCount++, 1, 1, 1, 0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
-		*/
-        
+                */
         for (InventoryItem item : items) {
             if ((panel == null) || (currentClass != item.getClass())) {
                 panel = new JPanel();

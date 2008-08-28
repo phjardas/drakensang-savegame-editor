@@ -2,8 +2,8 @@ package de.jardas.drakensang.gui.inventory;
 
 import javax.swing.JComponent;
 
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Money;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Money;
 
 public class MoneyRenderer extends InventoryItemRenderer {
 	@Override

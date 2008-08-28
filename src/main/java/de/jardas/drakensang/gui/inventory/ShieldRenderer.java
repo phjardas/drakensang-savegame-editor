@@ -10,8 +10,8 @@
 package de.jardas.drakensang.gui.inventory;
 
 import de.jardas.drakensang.dao.Static;
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Shield;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Shield;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;

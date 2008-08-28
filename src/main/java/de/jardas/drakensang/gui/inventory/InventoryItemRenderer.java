@@ -29,7 +29,7 @@ import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
-import de.jardas.drakensang.model.InventoryItem;
+import de.jardas.drakensang.model.inventory.InventoryItem;
 
 public class InventoryItemRenderer {
 	private static InventoryItemRenderer[] RENDERERS = { new WeaponRenderer(),

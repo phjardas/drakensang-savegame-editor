@@ -1,8 +1,8 @@
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.model.Inventory;
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Inventory.InventoryListener;
+import de.jardas.drakensang.model.inventory.Inventory;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Inventory.InventoryListener;
 
 import java.awt.BorderLayout;
 

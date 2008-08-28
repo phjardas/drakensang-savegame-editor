@@ -10,10 +10,10 @@
 package de.jardas.drakensang.gui.inventory;
 
 import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.InventoryDao;
 import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.InventoryItem;
-import de.jardas.drakensang.model.Item;
+import de.jardas.drakensang.dao.inventory.InventoryDao;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Item;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -69,10 +69,8 @@ public abstract class NewItemDialog extends JDialog {
             List<Item> items = new ArrayList<Item>();
             Set<String> names = new HashSet<String>();
 
-            for (Iterator<InventoryItem> it = InventoryDao.getInstance()
-                                                          .loadInventory(Item.class)
-                                                          .iterator();
-                    it.hasNext();) {
+            for (Iterator<InventoryItem> it = InventoryDao.loadInventory(
+                        Item.class).iterator(); it.hasNext();) {
                 Item item = (Item) it.next();
                 String name = getName(item);
 

@@ -15,20 +15,17 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import de.jardas.drakensang.dao.InventoryDao;
+import de.jardas.drakensang.dao.Guid;
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.dao.inventory.InventoryDao;
 import de.jardas.drakensang.gui.inventory.InventoryItemRenderer;
 import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.InventoryItem;
+import de.jardas.drakensang.model.inventory.InventoryItem;
 
 public class NewItemPanel extends JPanel {
-	private final InventoryDao inventoryDao;
 	private InventoryItem item;
 
-	public NewItemPanel(final InventoryDao inventoryDao,
-			final List<Character> characters) {
-		this.inventoryDao = inventoryDao;
-
+	public NewItemPanel(final List<Character> characters) {
 		final JPanel detailsPanel = new JPanel();
 		detailsPanel.add(new JLabel("x"));
 
@@ -48,6 +45,7 @@ public class NewItemPanel extends JPanel {
 					InventoryItem selected = ((TemplateModel) templateBox
 							.getModel()).getSelectedInventoryItem();
 					item = selected;
+					item.setGuid(Guid.generateGuid());
 
 					InventoryItemRenderer renderer = InventoryItemRenderer
 							.getRenderer(item);
@@ -127,7 +125,7 @@ public class NewItemPanel extends JPanel {
 		private final List<InventoryItem> items;
 
 		public TemplateModel(Class<? extends InventoryItem> itemClass) {
-			items = inventoryDao.loadInventory(itemClass);
+			items = InventoryDao.loadInventory(itemClass);
 			Collections.sort(items, new Comparator<InventoryItem>() {
 				private final Collator collator = Collator.getInstance();
 

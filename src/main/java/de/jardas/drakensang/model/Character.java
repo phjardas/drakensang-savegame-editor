@@ -3,6 +3,9 @@ package de.jardas.drakensang.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import de.jardas.drakensang.model.inventory.Inventory;
+import de.jardas.drakensang.model.inventory.Money;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

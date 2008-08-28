@@ -21,8 +21,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.model.Armor;
-import de.jardas.drakensang.model.InventoryItem;
+import de.jardas.drakensang.model.inventory.Armor;
+import de.jardas.drakensang.model.inventory.InventoryItem;
 
 public class ArmorRenderer extends InventoryItemRenderer {
 	private static final int COLUMNS = 4;
