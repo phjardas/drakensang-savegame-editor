@@ -15,8 +15,12 @@ import de.jardas.drakensang.dao.UpdateStatementBuilder;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.inventory.Armor;
 import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Jewelry;
+import de.jardas.drakensang.model.inventory.Key;
 import de.jardas.drakensang.model.inventory.Money;
 import de.jardas.drakensang.model.inventory.Recipe;
+import de.jardas.drakensang.model.inventory.Shield;
+import de.jardas.drakensang.model.inventory.Torch;
 import de.jardas.drakensang.model.inventory.Weapon;
 
 import java.sql.PreparedStatement;
@@ -30,8 +34,7 @@ public class InventoryItemDao<I extends InventoryItem> {
     private final Class<I> itemClass;
     private final String table;
 
-    public InventoryItemDao(Class<I> itemClass,
-        String table) {
+    public InventoryItemDao(Class<I> itemClass, String table) {
         super();
         this.itemClass = itemClass;
         this.table = table;
@@ -91,7 +94,7 @@ public class InventoryItemDao<I extends InventoryItem> {
             item.setGraphics(results.getString("Graphics"));
             item.setPhysics(results.getString("Physics"));
             item.setLookAtText(results.getString("LookAtText"));
-            
+
             item.setLevel(results.getString("_Level"));
             item.setStorageGuid(results.getBytes("StorageGuid"));
 
@@ -110,7 +113,12 @@ public class InventoryItemDao<I extends InventoryItem> {
     protected boolean hasTaBonus() {
         return !Armor.class.isAssignableFrom(getItemClass())
         && !Weapon.class.isAssignableFrom(getItemClass())
-        && !Money.class.isAssignableFrom(getItemClass());
+        && !Money.class.isAssignableFrom(getItemClass())
+        && !Jewelry.class.isAssignableFrom(getItemClass())
+        && !Key.class.isAssignableFrom(getItemClass())
+        && !Recipe.class.isAssignableFrom(getItemClass())
+        && !Shield.class.isAssignableFrom(getItemClass())
+        && !Torch.class.isAssignableFrom(getItemClass());
     }
 
     public void save(InventoryItem item) throws SQLException {
@@ -147,7 +155,8 @@ public class InventoryItemDao<I extends InventoryItem> {
     public void delete(InventoryItem item) throws SQLException {
         LOG.debug("Deleting " + item);
 
-        PreparedStatement stmt = SavegameDao.getConnection().prepareStatement("delete from "
+        PreparedStatement stmt = SavegameDao.getConnection()
+                                            .prepareStatement("delete from "
                 + getTable() + " where Guid = ?");
         stmt.setBytes(1, item.getGuid());
         stmt.executeUpdate();
