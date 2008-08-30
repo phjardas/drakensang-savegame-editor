@@ -45,7 +45,8 @@ public final class Main {
             checkForUpdates();
 
             frame.setVisible(true);
-            frame.loadDefaultSavegame();
+            // frame.loadDefaultSavegame();
+            frame.showLoadDialog();
         } catch (Exception e) {
             LOG.error("Uncaught exception: " + e, e);
 
