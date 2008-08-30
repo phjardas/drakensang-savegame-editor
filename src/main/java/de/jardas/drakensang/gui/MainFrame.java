@@ -164,7 +164,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void showLoadDialog() {
+    public void showLoadDialog() {
         new LoadDialog(this,
             new SavegameListener() {
                 public void loadSavegame(Savegame savegame) {

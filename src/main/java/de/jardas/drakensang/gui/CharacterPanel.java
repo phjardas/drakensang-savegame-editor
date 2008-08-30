@@ -22,7 +22,6 @@ public class CharacterPanel extends JPanel {
     private ZauberPanel zauberPanel = new ZauberPanel();
     private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
     private InventoryPanel inventoryPanel = new InventoryPanel();
-    private ChestsPanel chestsPanel = new ChestsPanel();
 
     public CharacterPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -39,7 +38,6 @@ public class CharacterPanel extends JPanel {
         tabs.addTab(Messages.get("SpecialSkills"), new JScrollPane(sonderPanel));
         tabs.addTab(Messages.get("Spells"), new JScrollPane(zauberPanel));
         tabs.addTab(Messages.get("Inventory"), inventoryPanel);
-        tabs.addTab(Messages.get("Levels"), chestsPanel);
 
         setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
@@ -64,7 +62,6 @@ public class CharacterPanel extends JPanel {
         zauberPanel.setValues(character.getZauberfertigkeiten());
         sonderPanel.setValues(character.getSonderfertigkeiten());
         inventoryPanel.setInventory(character.getInventory());
-        chestsPanel.update();
 
         this.mainFrame.setBusy(false);
 

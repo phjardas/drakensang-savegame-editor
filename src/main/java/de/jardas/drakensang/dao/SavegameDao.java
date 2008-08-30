@@ -71,6 +71,9 @@ public class SavegameDao {
 				// ignore
 			}
 		}
+		
+		Collections.sort(savegames, Collections.reverseOrder());
+		
 		return savegames;
 	}
 

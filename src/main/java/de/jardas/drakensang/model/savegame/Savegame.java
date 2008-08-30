@@ -26,6 +26,7 @@ public class Savegame implements Comparable<Savegame> {
 	private String hero;
 	private Date changeDate;
 	private int level;
+	private String worldMap;
 
 	public Date getChangeDate() {
 		return this.changeDate;
@@ -67,6 +68,18 @@ public class Savegame implements Comparable<Savegame> {
 		this.level = level;
 	}
 
+	public String getWorldMap() {
+		return worldMap;
+	}
+
+	public void setWorldMap(String worldMap) {
+		this.worldMap = worldMap;
+	}
+	
+	public String getWorldMapKey() {
+		return "name_" + getWorldMap();
+	}
+	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -92,25 +105,32 @@ public class Savegame implements Comparable<Savegame> {
 		File infoFile = new File(game.getFile().getParentFile(), game.getFile()
 				.getName().replace(".dsa", ".nfo"));
 		byte[] data = loadFile(infoFile);
-		int offset = data[9];
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int part = 0;
 
-		for (int i = 16 + offset; i < data.length; i++) {
+		for (int i = 13; i < data.length; i++) {
 			int c = data[i];
 
-			if (part == 0 && (char) c == ',') {
+			if (part == 0 && c < 32) {
+				game.setWorldMap(new String(out.toByteArray()));
+				out.reset();
+				part++;
+			} else if (part == 1 && c != 0) {
+				out.reset();
+				out.write(c);
+				part++;
+			} else if (part == 2 && (char) c == ',') {
 				game.setHero(new String(out.toByteArray()));
 				out.reset();
 				part++;
-			} else if (part == 1 && c < 30) {
+			} else if (part == 3 && c < 32) {
 				String levelString = new String(out.toByteArray());
 				game.setLevel(Integer.parseInt(levelString
 						.replace("Level:", "").trim()));
 				out.reset();
 				part++;
-			} else if (part == 2 && c != 0) {
+			} else if (part == 4 && c != 0) {
 				out.reset();
 				out.write(c);
 				part++;

@@ -9,19 +9,21 @@
  */
 package de.jardas.drakensang.gui.load;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
 
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.text.DateFormat;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -33,6 +35,7 @@ public class SavegameListItem extends JPanel {
                 return DateFormat.getDateTimeInstance();
             }
         };
+        private Color regularBackground;
 
     public SavegameListItem(final Savegame savegame,
         final SavegameListener savegameListener) {
@@ -56,24 +59,43 @@ public class SavegameListItem extends JPanel {
             new GridBagConstraints(1, row++, 1, 1, 1, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
+        
+        add(new JLabel(Messages.get(savegame.getWorldMapKey())),
+        		new GridBagConstraints(1, row++, 1, 1, 1, 0,
+        				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+        				new Insets(3, 6, 3, 6), 0, 0));
 
         add(new JLabel(DATE_FORMAT.get().format(savegame.getChangeDate())),
             new GridBagConstraints(1, row++, 1, 1, 1, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
 
-        add(new JButton(new AbstractAction("laden") {
-                public void actionPerformed(ActionEvent e) {
-                    savegameListener.loadSavegame(savegame);
-                }
-            }),
-            new GridBagConstraints(1, row++, 1, 1, 1, 0,
-                GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE,
-                new Insets(3, 6, 3, 6), 0, 0));
-
         add(new JLabel(new SavegameIcon(savegame, 150)),
             new GridBagConstraints(0, 0, 1, row, 0, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
                 new Insets(6, 6, 6, 6), 0, 0));
+
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				savegameListener.loadSavegame(savegame);
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if (regularBackground == null) { 
+					regularBackground = getBackground();
+				}
+				
+				setBackground(Color.WHITE);
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setBackground(regularBackground);
+			}
+		});
     }
 }
