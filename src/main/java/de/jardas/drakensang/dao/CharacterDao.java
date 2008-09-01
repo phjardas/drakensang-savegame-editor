@@ -186,4 +186,9 @@ public class CharacterDao {
             throw new RuntimeException("Error saving characters: " + e, e);
         }
     }
+    
+    public static void reset() {
+    	LOG.debug("Resetting.");
+    	characters = null;
+    }
 }

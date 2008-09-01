@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.inventory.InventoryPanel;
 import de.jardas.drakensang.model.Character;
@@ -12,7 +13,8 @@ import javax.swing.JTabbedPane;
 
 
 public class CharacterPanel extends JPanel {
-    private final MainFrame mainFrame;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(CharacterPanel.class);
     private Character character;
     private JTabbedPane tabs = new JTabbedPane();
     private AttributePanel attributesPanel = new AttributePanel();
@@ -23,9 +25,7 @@ public class CharacterPanel extends JPanel {
     private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
     private InventoryPanel inventoryPanel = new InventoryPanel();
 
-    public CharacterPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-
+    public CharacterPanel() {
         attributesPanel.addChangeListener(new IntegerMapPanel.ChangeListener() {
                 public void valueChanged(String key, int value) {
                     talentePanel.onAttributeChange(key, value);
@@ -49,11 +49,16 @@ public class CharacterPanel extends JPanel {
 
     public void setCharacter(Character character) {
         if (character == this.character) {
+            LOG.debug("Not updating character currently being displayed: "
+                + character.getId());
+
             return;
         }
 
+        LOG.debug("Updating displayed character: " + character.getId());
+
         this.character = character;
-        this.mainFrame.setBusy(true);
+        Main.getFrame().setBusy(true);
 
         infoPanel.setCharacter(character);
         attributesPanel.setValues(character.getAttribute());
@@ -63,7 +68,7 @@ public class CharacterPanel extends JPanel {
         sonderPanel.setValues(character.getSonderfertigkeiten());
         inventoryPanel.setInventory(character.getInventory());
 
-        this.mainFrame.setBusy(false);
+        Main.getFrame().setBusy(false);
 
         repaint();
     }

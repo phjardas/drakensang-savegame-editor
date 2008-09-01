@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.gui.load;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.model.savegame.Savegame;
 
@@ -30,14 +31,14 @@ public class LoadDialog extends JDialog implements SavegameListener {
     private JButton abortButton;
 
     public LoadDialog(Frame owner, SavegameListener savegameListener) {
-        super(owner, "Spielstand laden", true);
+        super(owner, Messages.get("LoadGame"), true);
         this.savegameListener = savegameListener;
 
         setLayout(new BorderLayout());
 
         list = new SavegameListPanel(SavegameDao.getSavegames(), this);
 
-        abortButton = new JButton(new AbstractAction("Abbrechen") {
+        abortButton = new JButton(new AbstractAction(Messages.get("Cancel")) {
                     public void actionPerformed(ActionEvent e) {
                         setVisible(false);
                     }

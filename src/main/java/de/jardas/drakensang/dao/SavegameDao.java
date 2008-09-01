@@ -35,13 +35,13 @@ public class SavegameDao {
         
         try {
             LOG.debug("Opening savegame at " + savegame.getFile());
-            SavegameDao.connection = DriverManager.getConnection("jdbc:sqlite:/"
+            connection = DriverManager.getConnection("jdbc:sqlite:/"
                     + savegame.getFile());
             SavegameDao.savegame = savegame;
-            SavegameDao.instance = this;
             
             Guid.reset();
             LevelDao.reset();
+            CharacterDao.reset();
         } catch (Exception e) {
             throw new DrakensangException("Can't open database file '"
                 + savegame.getFile() + "': " + e, e);
@@ -86,7 +86,7 @@ public class SavegameDao {
 	}
 
     public static SavegameDao open(Savegame savegame) {
-        new SavegameDao(savegame);
+    	instance = new SavegameDao(savegame);
 
         return getInstance();
     }

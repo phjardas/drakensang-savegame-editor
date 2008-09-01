@@ -10,6 +10,7 @@ import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -43,9 +44,10 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class MainFrame extends JFrame {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(MainFrame.class);
     private final JToolBar toolbar = new JToolBar();
-    private JList characterList = new JList();
-    private CharacterPanel characterPanel = new CharacterPanel(this);
+    private CharacterPanel characterPanel = new CharacterPanel();
     private JButton saveButton;
     private JComponent glassPane = new JPanel();
     private JComponent defaultGlassPane;
@@ -57,13 +59,15 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         super();
-        setIconImage(Toolkit.getDefaultToolkit()
-                            .getImage(getClass()
-                                          .getResource("images/drakensang.png")));
         init();
     }
 
     private void init() {
+        LOG.debug("Initializing main frame.");
+
+        setIconImage(Toolkit.getDefaultToolkit()
+                            .getImage(getClass()
+                                          .getResource("images/drakensang.png")));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(Messages.get("title"));
         getContentPane().setLayout(new BorderLayout());
@@ -122,14 +126,8 @@ public class MainFrame extends JFrame {
         saveButton.setEnabled(false);
         toolbar.add(saveButton);
 
-        //		toolbar.add(new AbstractAction("Neuer Gegenstand") {
-        //			public void actionPerformed(ActionEvent e) {
-        //				new NewItemWizard(characterDao.getInventoryDao(), getCharacters()).setVisible(true);
-        //			}
-        //		});
         left.setLayout(new BorderLayout());
         left.add(savegameIcon, BorderLayout.SOUTH);
-        left.add(characterList, BorderLayout.CENTER);
 
         getContentPane().add(toolbar, BorderLayout.NORTH);
         getContentPane().add(left, BorderLayout.WEST);
@@ -138,6 +136,8 @@ public class MainFrame extends JFrame {
 
         setSize(800, 730);
         setLocationRelativeTo(null);
+
+        LOG.debug("Main frame initialized.");
     }
 
     public void setBusy(boolean busy) {
@@ -165,6 +165,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showLoadDialog() {
+        LOG.debug("Showing load dialog.");
         new LoadDialog(this,
             new SavegameListener() {
                 public void loadSavegame(Savegame savegame) {
@@ -174,6 +175,7 @@ public class MainFrame extends JFrame {
     }
 
     public void loadSavegame(Savegame savegame) {
+        LOG.debug("Loading " + savegame);
         setBusy(true);
 
         this.savegame = savegame;
@@ -184,6 +186,7 @@ public class MainFrame extends JFrame {
 
         characters = new ArrayList<Character>(CharacterDao.getCharacters());
 
+        LOG.debug("Sorting characters.");
         Collections.sort(characters,
             new Comparator<Character>() {
                 private final Collator collator = Collator.getInstance();
@@ -202,32 +205,48 @@ public class MainFrame extends JFrame {
                 }
             });
 
+        final JList characterList = new JList(new AbstractListModel() {
+                    public Object getElementAt(int index) {
+                        return getCharacterName(characters.get(index));
+                    }
+
+                    public int getSize() {
+                        return characters.size();
+                    }
+                });
+
         characterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        characterList.setModel(new AbstractListModel() {
-                public Object getElementAt(int index) {
-                    return getCharacterName(characters.get(index));
-                }
-
-                public int getSize() {
-                    return characters.size();
-                }
-            });
-
         characterList.addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
                     if ((characterList.getSelectedIndex() >= 0)
                             && (characterList.getSelectedIndex() < characters
                             .size())) {
-                        updateSelection(characters.get(
-                                characterList.getSelectedIndex()));
+                        Character character = characters.get(characterList
+                                .getSelectedIndex());
+                        LOG.debug("Character #"
+                            + characterList.getSelectedIndex() + " selected.");
+                        updateSelection(character);
                     }
                 }
             });
 
+        for (Component comp : left.getComponents()) {
+            if (comp instanceof JList) {
+                LOG.debug("Removing old character list.");
+                left.remove(comp);
+            }
+        }
+
+        left.add(characterList, BorderLayout.CENTER);
+
+        LOG.debug("Selecting first character.");
         characterList.setSelectedIndex(0);
         saveButton.setEnabled(true);
 
+        LOG.debug("Repainting.");
+        repaint();
+
+        LOG.debug("Loading complete: " + savegame);
         setBusy(false);
     }
 
@@ -256,9 +275,5 @@ public class MainFrame extends JFrame {
         } else {
             showLoadDialog();
         }
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
     }
 }
