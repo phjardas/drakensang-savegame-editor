@@ -39,7 +39,6 @@ public class SavegameDao {
                     + savegame.getFile());
             SavegameDao.savegame = savegame;
             
-            Guid.reset();
             LevelDao.reset();
             CharacterDao.reset();
         } catch (Exception e) {

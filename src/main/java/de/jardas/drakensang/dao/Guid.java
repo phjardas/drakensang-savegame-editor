@@ -11,15 +11,11 @@ package de.jardas.drakensang.dao;
 
 import de.jardas.drakensang.DrakensangException;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 
 
@@ -55,24 +51,14 @@ public class Guid {
             "_Instance__Environment", "TrapTable",
         };
     private static final Random RANDOM = new Random();
-    private static List<byte[]> guids;
-
-    private static List<byte[]> getGuids() {
-        if (guids == null) {
-            guids = collectIds();
-        }
-
-        return guids;
-    }
 
     public static byte[] generateGuid() {
         while (true) {
             byte[] id = new byte[16];
             RANDOM.nextBytes(id);
 
-            if (!getGuids().contains(id)) {
+            if (isAvailable(id)) {
                 LOG.debug("Generated Guid: " + Arrays.toString(id));
-                getGuids().add(id);
 
                 return id;
             }
@@ -81,75 +67,36 @@ public class Guid {
         }
     }
 
-    private static List<byte[]> collectIds() {
-        List<byte[]> ids = new ArrayList<byte[]>();
+    private static boolean isAvailable(byte[] id) {
+        LOG.debug("Validating availability of Guid " + Arrays.toString(id)
+            + ".");
 
-        for (String table : TABLES) {
-            try {
-                ids.addAll(collectIds(table));
-            } catch (SQLException e) {
-                throw new DrakensangException(
-                    "Error loading Guids from table '" + table + "': " + e, e);
-            }
-        }
+        try {
+            StringBuffer sql = new StringBuffer();
 
-        LOG.debug("Got a total of " + ids.size() + " Guids.");
-
-        Collections.sort(ids,
-            new Comparator<byte[]>() {
-                public int compare(byte[] o1, byte[] o2) {
-                    if (o1.length > o2.length) {
-                        return 1;
-                    }
-
-                    if (o1.length < o2.length) {
-                        return -1;
-                    }
-
-                    for (int i = 0; i < o1.length; i++) {
-                        if (o1[i] > o2[i]) {
-                            return 1;
-                        }
-
-                        if (o1[i] < o2[i]) {
-                            return -1;
-                        }
-                    }
-
-                    return 0;
+            for (String table : TABLES) {
+                if (sql.length() > 0) {
+                    sql.append(" union ");
                 }
-            });
 
-        byte[] previous = null;
-
-        for (byte[] id : ids) {
-            if ((previous != null) && previous.equals(id)) {
-                throw new DrakensangException("Duplicate Guid found: "
-                    + Arrays.toString(id));
+                sql.append("select Guid from ").append(table);
             }
 
-            previous = id;
+            String query = "select count(*) from (" + sql + ") where Guid = ?";
+            PreparedStatement stmt = SavegameDao.getConnection()
+                                                .prepareStatement(query);
+            stmt.setBytes(1, id);
+
+            ResultSet result = stmt.executeQuery();
+
+            if (!result.next()) {
+                return true;
+            }
+
+            return result.getInt(1) == 0;
+        } catch (SQLException e) {
+            throw new DrakensangException("Error validating Guid "
+                + Arrays.toString(id) + ": " + e, e);
         }
-
-        return ids;
-    }
-
-    private static List<byte[]> collectIds(String table)
-        throws SQLException {
-        Statement stmt = SavegameDao.getConnection().createStatement();
-        ResultSet result = stmt.executeQuery("select Guid from " + table);
-        List<byte[]> ids = new ArrayList<byte[]>();
-
-        while (result.next()) {
-            ids.add(result.getBytes("Guid"));
-        }
-
-        LOG.debug("Loaded " + ids.size() + " Guids from table '" + table + "'.");
-
-        return ids;
-    }
-
-    public static void reset() {
-        guids = null;
     }
 }
