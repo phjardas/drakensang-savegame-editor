@@ -71,8 +71,7 @@ public class AdvantagesPanel extends JPanel {
                 public void stateChanged(ChangeEvent e) {
                     if (box.isSelected()) {
                         getCharacter().getAdvantages().add(advantage);
-                    } else if (!getCharacter().getAdvantages()
-                                        .contains(advantage)) {
+                    } else {
                         getCharacter().getAdvantages().remove(advantage);
                     }
                 }

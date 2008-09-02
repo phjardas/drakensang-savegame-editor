@@ -6,8 +6,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import de.jardas.drakensang.model.inventory.Inventory;
 import de.jardas.drakensang.model.inventory.Money;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -31,7 +30,7 @@ public class Character extends Persistable {
     private CasterRace casterRace;
     private int lebensenergieBonus;
     private int astralenergieBonus;
-    private final List<Advantage> advantages = new ArrayList<Advantage>();
+    private final Set<Advantage> advantages = new HashSet<Advantage>();
     private int level;
 
     public boolean isPlayerCharacter() {
@@ -239,7 +238,7 @@ public class Character extends Persistable {
         + getProfession().getMagieresistenzModifikator();
     }
 
-    public List<Advantage> getAdvantages() {
+    public Set<Advantage> getAdvantages() {
         return this.advantages;
     }
 
