@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -22,17 +23,32 @@ public class Messages {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
         .getLogger(Messages.class);
     private static final Map<String, String> CACHE = new HashMap<String, String>();
+    private static final String BUNDLE_NAME = Main.class.getPackage().getName()
+        + ".messages";
     private static Connection connection;
 
     static {
-        ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                   .getName()
-                + ".messages");
-        Enumeration<String> keys = bundle.getKeys();
+        final Locale locale = Locale.getDefault();
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Loading resources for locale '" + locale + "' from '"
+                + BUNDLE_NAME + "'.");
+        }
+
+        final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
+                locale);
+        final Enumeration<String> keys = bundle.getKeys();
 
         while (keys.hasMoreElements()) {
             final String key = keys.nextElement();
-            cache(key, bundle.getString(key));
+            final String value = bundle.getString(key);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Caching message '" + key + "' with value '" + value
+                    + "'.");
+            }
+
+            cache(key, value);
         }
     }
 

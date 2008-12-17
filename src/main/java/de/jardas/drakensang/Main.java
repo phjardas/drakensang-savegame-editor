@@ -9,6 +9,7 @@ import de.jardas.drakensang.util.WindowsRegistry;
 import java.io.File;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
@@ -21,7 +22,7 @@ public final class Main {
         .getLogger(Main.class);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Main.class.getPackage()
                                                                                     .getName()
-            + ".messages");
+            + ".messages", Locale.getDefault());
     private static MainFrame frame = null;
 
     private Main() {
@@ -34,7 +35,7 @@ public final class Main {
 
     public static void main(String[] args) {
         LOG.info("Starting up!");
-        
+
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
 
@@ -56,7 +57,7 @@ public final class Main {
             new ExceptionDialog(frame, e).setVisible(true);
 
             LOG.info("Shutting down...");
-            
+
             System.exit(1);
         }
     }
