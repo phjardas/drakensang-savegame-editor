@@ -126,8 +126,7 @@ public class Savegame implements Comparable<Savegame> {
 				part++;
 			} else if (part == 3 && c < 32) {
 				String levelString = new String(out.toByteArray());
-				game.setLevel(Integer.parseInt(levelString
-						.replace("Level:", "").trim()));
+				game.setLevel(Integer.parseInt(levelString.split(":")[1].trim()));
 				out.reset();
 				part++;
 			} else if (part == 4 && c != 0) {
