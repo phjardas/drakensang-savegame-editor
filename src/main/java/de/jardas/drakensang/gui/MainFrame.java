@@ -125,6 +125,13 @@ public class MainFrame extends JFrame {
                 });
         saveButton.setEnabled(false);
         toolbar.add(saveButton);
+        
+        toolbar.add(new JButton(new AbstractAction(Messages.get("about.button"),
+        		new ImageIcon(getClass().getResource("images/about.gif"))) {
+        	public void actionPerformed(ActionEvent e) {
+        		new AboutDialog(MainFrame.this).setVisible(true);
+        	}
+        }));
 
         left.setLayout(new BorderLayout());
         left.add(savegameIcon, BorderLayout.SOUTH);
