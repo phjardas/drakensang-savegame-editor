@@ -4,11 +4,10 @@ import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.ExceptionDialog;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
-import de.jardas.drakensang.util.WindowsRegistry;
+import de.jardas.drakensang.util.DrakensangHomeFinder;
 
 import java.io.File;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -18,11 +17,10 @@ import javax.swing.filechooser.FileFilter;
 
 
 public final class Main {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(Main.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Main.class);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                                    .getName()
-            + ".messages", Locale.getDefault());
+                                                                                    .getName() +
+            ".messages", Locale.getDefault());
     private static MainFrame frame = null;
 
     private Main() {
@@ -64,14 +62,12 @@ public final class Main {
 
     private static void checkForUpdates() {
         try {
-            VersionInformation newestVersion = VersionInformation
-                .getNewestVersion();
+            VersionInformation newestVersion = VersionInformation.getNewestVersion();
             Settings settings = Settings.getInstance();
 
-            if (!newestVersion.getVersion().equals(getCurrentVersion())
-                    && !newestVersion.getVersion()
-                                         .equals(settings
-                        .getLatestVersionInformation())) {
+            if (!newestVersion.getVersion().equals(getCurrentVersion()) &&
+                    !newestVersion.getVersion()
+                                      .equals(settings.getLatestVersionInformation())) {
                 settings.setLatestVersionInformation(newestVersion.getVersion());
                 settings.save();
 
@@ -84,8 +80,8 @@ public final class Main {
 
     private static String getCurrentVersion() {
         ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                   .getName()
-                + ".version");
+                                                                   .getName() +
+                ".version");
 
         return bundle.getString("version");
     }
@@ -103,46 +99,30 @@ public final class Main {
         msg.append("\nVisit http://www.jardas.de/drakensang/ to download it.");
 
         JOptionPane.showMessageDialog(frame, msg.toString(),
-            "Drakensang Savegame Editor " + newestVersion.getVersion()
-            + " available", JOptionPane.INFORMATION_MESSAGE);
+            "Drakensang Savegame Editor " + newestVersion.getVersion() +
+            " available", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static void checkSettings() {
-        Settings settings = Settings.getInstance();
+        final Settings settings = Settings.getInstance();
 
-        LOG.debug("Testing connection to "
-            + Settings.getInstance().getDrakensangHome());
+        LOG.debug("Setting locale to '" + settings.getLocale() + "'.");
+        Locale.setDefault(settings.getLocale());
+        Messages.reload();
+
+        LOG.debug("Testing connection to " +
+            Settings.getInstance().getDrakensangHome());
 
         if (!Messages.testConnection()) {
             Messages.resetConnection();
 
-            File[] candidates = {
-                    (WindowsRegistry.getDrakensangHome() != null)
-                    ? new File(WindowsRegistry.getDrakensangHome()
-                        + "/drakensang.exe") : null,
-                    new File("C:/Programme/Drakensang/drakensang.exe"),
-                    new File("D:/Programme/Drakensang/drakensang.exe"),
-                    new File("C:/Program Files/Drakensang/drakensang.exe"),
-                    new File("D:/Program Files/Drakensang/drakensang.exe"),
-                    new File("C:/Spiele/Drakensang/drakensang.exe"),
-                    new File("D:/Spiele/Drakensang/drakensang.exe"),
-                    new File("C:/Games/Drakensang/drakensang.exe"),
-                    new File("D:/Games/Drakensang/drakensang.exe"),
-                };
+            final File home = DrakensangHomeFinder.findDrakensangHome();
 
-            LOG.debug("Drakensang home candidates: "
-                + Arrays.toString(candidates));
+            if (home != null) {
+                settings.setDrakensangHome(home);
+                settings.save();
 
-            for (File candidate : candidates) {
-                if ((candidate != null) && candidate.isFile()) {
-                    LOG.debug("Found Drakensang home at "
-                        + candidate.getParentFile());
-
-                    settings.setDrakensangHome(candidate.getParentFile());
-                    settings.save();
-
-                    return;
-                }
+                return;
             }
         }
 
@@ -167,12 +147,11 @@ public final class Main {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(new File("c:/Program Files"));
 
-        fileChooser.removeChoosableFileFilter(fileChooser
-            .getChoosableFileFilters()[0]);
+        fileChooser.removeChoosableFileFilter(fileChooser.getChoosableFileFilters()[0]);
         fileChooser.setFileFilter(new FileFilter() {
                 public boolean accept(File f) {
-                    return f.isDirectory()
-                    || f.getName().equals("drakensang.exe");
+                    return f.isDirectory() ||
+                    f.getName().equals("drakensang.exe");
                 }
 
                 public String getDescription() {

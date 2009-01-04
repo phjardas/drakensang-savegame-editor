@@ -20,19 +20,22 @@ import java.util.ResourceBundle;
 
 
 public class Messages {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(Messages.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Messages.class);
     private static final Map<String, String> CACHE = new HashMap<String, String>();
-    private static final String BUNDLE_NAME = Main.class.getPackage().getName()
-        + ".messages";
+    private static final String BUNDLE_NAME = Main.class.getPackage().getName() +
+        ".messages";
     private static Connection connection;
 
     static {
-        final Locale locale = Locale.getDefault();
+    	reload();
+    }
 
+    public static void reload() {
+    	final Locale locale = Locale.getDefault();
+    	
         if (LOG.isInfoEnabled()) {
-            LOG.info("Loading resources for locale '" + locale + "' from '"
-                + BUNDLE_NAME + "'.");
+            LOG.info("Loading resources for locale '" + locale + "' from '" +
+                BUNDLE_NAME + "'.");
         }
 
         final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
@@ -44,8 +47,8 @@ public class Messages {
             final String value = bundle.getString(key);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Caching message '" + key + "' with value '" + value
-                    + "'.");
+                LOG.debug("Caching message '" + key + "' with value '" + value +
+                    "'.");
             }
 
             cache(key, value);
@@ -74,8 +77,8 @@ public class Messages {
             return DriverManager.getConnection(url);
         } catch (SQLException e) {
             throw new RuntimeException(
-                "Error opening localization connection to " + localeFile + ": "
-                + e, e);
+                "Error opening localization connection to " + localeFile +
+                ": " + e, e);
         }
     }
 
@@ -108,12 +111,12 @@ public class Messages {
 
     public static String get(String col, String key, String idCol, String table) {
         try {
-            LOG.debug("Loading " + col + " from " + table + " where " + idCol
-                + " = '" + key + "'.");
+            LOG.debug("Loading " + col + " from " + table + " where " + idCol +
+                " = '" + key + "'.");
 
             PreparedStatement stmt = getConnection()
-                                         .prepareStatement("select " + col
-                    + " from " + table + " where " + idCol + " = ?");
+                                         .prepareStatement("select " + col +
+                    " from " + table + " where " + idCol + " = ?");
             stmt.setString(1, key);
 
             ResultSet result = stmt.executeQuery();

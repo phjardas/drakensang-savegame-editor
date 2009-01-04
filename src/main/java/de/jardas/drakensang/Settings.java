@@ -7,17 +7,18 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Locale;
 import java.util.Properties;
 
 
 public class Settings {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(Settings.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Settings.class);
     private static final File SETTINGS_FILE = new File(System.getProperty(
                 "user.home"), ".drakensang-editor/settings.properties");
     private static Settings instance;
     private File drakensangHome;
     private String latestVersionInformation;
+    private Locale locale = Locale.getDefault();
 
     public static synchronized Settings getInstance() {
         if (instance == null) {
@@ -43,6 +44,14 @@ public class Settings {
         this.latestVersionInformation = latestVersionInformation;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
     public synchronized void save() {
         Properties props = new Properties();
         props.setProperty("drakensang.home",
@@ -51,6 +60,10 @@ public class Settings {
         if (getLatestVersionInformation() != null) {
             props.setProperty("latestVersionInformation",
                 getLatestVersionInformation());
+        }
+
+        if (getLocale() != null) {
+            props.setProperty("locale", getLocale().toString());
         }
 
         try {
@@ -81,6 +94,10 @@ public class Settings {
             if (props.get("latestVersionInformation") != null) {
                 settings.setLatestVersionInformation(props.getProperty(
                         "latestVersionInformation"));
+            }
+
+            if (props.get("locale") != null) {
+                settings.setLocale(new Locale(props.getProperty("locale")));
             }
         } catch (IOException e) {
             LOG.info("No settings found at " + SETTINGS_FILE + ": " + e);
