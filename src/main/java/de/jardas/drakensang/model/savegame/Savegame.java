@@ -9,175 +9,178 @@
  */
 package de.jardas.drakensang.model.savegame;
 
+import de.jardas.drakensang.DrakensangException;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.util.Date;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import de.jardas.drakensang.DrakensangException;
 
 public class Savegame implements Comparable<Savegame> {
-	private File file;
-	private String name;
-	private String hero;
-	private Date changeDate;
-	private int level;
-	private String worldMap;
+    private File file;
+    private String name;
+    private String hero;
+    private Date changeDate;
+    private int level;
+    private String worldMap;
 
-	public Date getChangeDate() {
-		return this.changeDate;
-	}
+    public Date getChangeDate() {
+        return this.changeDate;
+    }
 
-	public void setChangeDate(Date changeDate) {
-		this.changeDate = changeDate;
-	}
+    public void setChangeDate(Date changeDate) {
+        this.changeDate = changeDate;
+    }
 
-	public File getFile() {
-		return this.file;
-	}
+    public File getFile() {
+        return this.file;
+    }
 
-	public void setFile(File file) {
-		this.file = file;
-	}
+    public void setFile(File file) {
+        this.file = file;
+    }
 
-	public String getHero() {
-		return this.hero;
-	}
+    public String getHero() {
+        return this.hero;
+    }
 
-	public void setHero(String hero) {
-		this.hero = hero;
-	}
+    public void setHero(String hero) {
+        this.hero = hero;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getLevel() {
-		return level;
-	}
+    public int getLevel() {
+        return level;
+    }
 
-	public void setLevel(int level) {
-		this.level = level;
-	}
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
-	public String getWorldMap() {
-		return worldMap;
-	}
+    public String getWorldMap() {
+        return worldMap;
+    }
 
-	public void setWorldMap(String worldMap) {
-		this.worldMap = worldMap;
-	}
-	
-	public String getWorldMapKey() {
-		return "name_" + getWorldMap();
-	}
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    public void setWorldMap(String worldMap) {
+        this.worldMap = worldMap;
+    }
 
-	public int compareTo(Savegame o) {
-		if (o == this) {
-			return 0;
-		}
+    public String getWorldMapKey() {
+        return "name_" + getWorldMap();
+    }
 
-		if ((o == null) || (o.getChangeDate() == null)) {
-			return -1;
-		}
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
-		if (getChangeDate() == null) {
-			return 1;
-		}
+    public int compareTo(Savegame o) {
+        if (o == this) {
+            return 0;
+        }
 
-		return getChangeDate().compareTo(o.getChangeDate());
-	}
+        if ((o == null) || (o.getChangeDate() == null)) {
+            return -1;
+        }
 
-	private static void loadInfoFile(Savegame game) {
-		File infoFile = new File(game.getFile().getParentFile(), game.getFile()
-				.getName().replace(".dsa", ".nfo"));
-		byte[] data = loadFile(infoFile);
+        if (getChangeDate() == null) {
+            return 1;
+        }
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		int part = 0;
+        return getChangeDate().compareTo(o.getChangeDate());
+    }
 
-		for (int i = 13; i < data.length; i++) {
-			int c = data[i];
+    private static void loadInfoFile(Savegame game) {
+        File infoFile = new File(game.getFile().getParentFile(),
+                game.getFile().getName().replace(".dsa", ".nfo"));
+        byte[] data = loadFile(infoFile);
 
-			if (part == 0 && c < 32) {
-				game.setWorldMap(new String(out.toByteArray()));
-				out.reset();
-				part++;
-			} else if (part == 1 && c != 0) {
-				out.reset();
-				out.write(c);
-				part++;
-			} else if (part == 2 && (char) c == ',') {
-				game.setHero(new String(out.toByteArray()));
-				out.reset();
-				part++;
-			} else if (part == 3 && c < 32) {
-				String levelString = new String(out.toByteArray());
-				game.setLevel(Integer.parseInt(levelString.split(":")[1].trim()));
-				out.reset();
-				part++;
-			} else if (part == 4 && c != 0) {
-				out.reset();
-				out.write(c);
-				part++;
-			} else {
-				out.write(c);
-			}
-		}
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int part = 0;
 
-		game.setName(new String(out.toByteArray()));
-	}
+        for (int i = 13; i < data.length; i++) {
+            int c = data[i];
 
-	private static byte[] loadFile(File infoFile) {
-		try {
-			FileInputStream fis = new FileInputStream(infoFile);
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			int i;
+            if ((part == 0) && (c < 34)) {
+                game.setWorldMap(new String(out.toByteArray()));
+                out.reset();
+                part++;
+            } else if ((part == 1) && (c != 0)) {
+                out.reset();
+                out.write(c);
+                part++;
+            } else if ((part == 2) && ((char) c == ',')) {
+                game.setHero(new String(out.toByteArray()));
+                out.reset();
+                part++;
+            } else if ((part == 3) && (c < 32)) {
+                String levelString = new String(out.toByteArray());
+                game.setLevel(Integer.parseInt(levelString.split(":")[1].trim()));
+                out.reset();
+                part++;
+            } else if ((part == 4) && (c != 0)) {
+                out.reset();
+                out.write(c);
+                part++;
+            } else {
+                out.write(c);
+            }
+        }
 
-			while ((i = fis.read()) > -1) {
-				out.write(i);
-			}
+        game.setName(new String(out.toByteArray()));
+    }
 
-			fis.close();
-			return out.toByteArray();
-		} catch (IOException e) {
-			throw new DrakensangException("Error reading from " + infoFile
-					+ ": " + e, e);
-		}
-	}
+    private static byte[] loadFile(File infoFile) {
+        try {
+            FileInputStream fis = new FileInputStream(infoFile);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int i;
 
-	public static Savegame load(File directory) {
-		final File[] files = directory.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".dsa");
-			}
-		});
+            while ((i = fis.read()) > -1) {
+                out.write(i);
+            }
 
-		if ((files == null) || (files.length != 1)) {
-			throw new IllegalArgumentException("No savegame found at "
-					+ directory);
-		}
+            fis.close();
 
-		File file = files[0];
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new DrakensangException("Error reading from " + infoFile
+                + ": " + e, e);
+        }
+    }
 
-		final Savegame game = new Savegame();
-		game.setFile(file);
-		game.setChangeDate(new Date(file.lastModified()));
-		loadInfoFile(game);
+    public static Savegame load(File directory) {
+        final File[] files = directory.listFiles(new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.endsWith(".dsa");
+                    }
+                });
 
-		return game;
-	}
+        if ((files == null) || (files.length != 1)) {
+            throw new IllegalArgumentException("No savegame found at "
+                + directory);
+        }
+
+        File file = files[0];
+
+        final Savegame game = new Savegame();
+        game.setFile(file);
+        game.setChangeDate(new Date(file.lastModified()));
+        loadInfoFile(game);
+
+        return game;
+    }
 }
