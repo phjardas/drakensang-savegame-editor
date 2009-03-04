@@ -122,7 +122,7 @@ public class ArmorRenderer extends InventoryItemRenderer {
         Status status) {
         Insets insets = new Insets(3, 6, 3, 6);
 
-        parent.add(new InfoLabel(access.getNameKey(), access.getDescriptionKey()),
+        parent.add(new InfoLabel(access.getNameKey(), null),
             new GridBagConstraints(2 * status.getColumn(), status.getRow(), 1,
                 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 insets, 0, 0));
@@ -162,10 +162,6 @@ public class ArmorRenderer extends InventoryItemRenderer {
 
         public String getNameKey() {
             return "armor." + name;
-        }
-
-        public String getDescriptionKey() {
-            return "armor." + name + ".description";
         }
     }
 

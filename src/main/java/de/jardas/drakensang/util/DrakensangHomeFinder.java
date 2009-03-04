@@ -9,7 +9,7 @@ import java.util.List;
 public class DrakensangHomeFinder {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DrakensangHomeFinder.class);
     private static final String[] DRIVES = { "C", "D", "E", "F", };
-    private static final String[] PROGRAMS = { "Programme", "Program Files", };
+    private static final String[] PROGRAMS = { "Programme", "Program Files", "Program Files (x86)", };
 
     public static File findDrakensangHome() {
         final List<File> candidates = collectCandidates();
