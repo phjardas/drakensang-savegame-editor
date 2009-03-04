@@ -202,7 +202,7 @@ public class CharacterInfoPanel extends JPanel {
 				new Insets(3, 6, 3, 6), 0, 0));
 
 		final JSpinner level = new JSpinner(new SpinnerNumberModel(character
-				.getLevel(), 1, 20, 1));
+				.getLevel(), 1, 40, 1));
 		level.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				character.setLevel(((Number) level.getValue()).intValue());
