@@ -9,6 +9,7 @@
  */
 package de.jardas.drakensang.gui.inventory;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.inventory.InventoryItem;
 import de.jardas.drakensang.model.inventory.Weapon;
 
@@ -60,7 +61,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
 
     private String getSchadenText(Weapon weapon) {
         return " (" + weapon.getSchaden().getMinimum() + "-"
-        + weapon.getSchaden().getMaximum() + " TP)";
+        + weapon.getSchaden().getMaximum() + " " + Messages.get("TP") + ")";
     }
 
     @Override

@@ -91,7 +91,7 @@ public class CharacterInfoPanel extends JPanel {
 		int row = 0;
 		final JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Werte"));
+		panel.setBorder(BorderFactory.createTitledBorder(Messages.get("BaseValues")));
 		add(panel, new GridBagConstraints(1, 0, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
 				new Insets(3, 6, 3, 6), 0, 0));
@@ -147,7 +147,7 @@ public class CharacterInfoPanel extends JPanel {
 		int row = 0;
 		final JPanel magicPanel = new JPanel();
 		magicPanel.setLayout(new GridBagLayout());
-		magicPanel.setBorder(BorderFactory.createTitledBorder("Magie"));
+		magicPanel.setBorder(BorderFactory.createTitledBorder(Messages.get("Magic")));
 		add(magicPanel, new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
 				new Insets(3, 6, 3, 6), 0, 0));
@@ -196,7 +196,7 @@ public class CharacterInfoPanel extends JPanel {
 		int row = 0;
 		final JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Zahlen"));
+		panel.setBorder(BorderFactory.createTitledBorder(Messages.get("MiscFigures")));
 		add(panel, new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
 				new Insets(3, 6, 3, 6), 0, 0));
@@ -249,7 +249,7 @@ public class CharacterInfoPanel extends JPanel {
 
 		final JPanel archetypePanel = new JPanel();
 		archetypePanel.setLayout(new GridBagLayout());
-		archetypePanel.setBorder(BorderFactory.createTitledBorder("Archetyp"));
+		archetypePanel.setBorder(BorderFactory.createTitledBorder(Messages.get("Archetype")));
 		add(archetypePanel, new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
 				new Insets(3, 6, 3, 6), 0, 0));

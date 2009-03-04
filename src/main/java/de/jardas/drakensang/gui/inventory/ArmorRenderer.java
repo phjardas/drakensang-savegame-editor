@@ -9,180 +9,185 @@
  */
 package de.jardas.drakensang.gui.inventory;
 
+import de.jardas.drakensang.gui.InfoLabel;
+import de.jardas.drakensang.model.inventory.Armor;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.model.inventory.Armor;
-import de.jardas.drakensang.model.inventory.InventoryItem;
 
 public class ArmorRenderer extends InventoryItemRenderer {
-	private static final int COLUMNS = 4;
+    private static final int COLUMNS = 4;
 
-	@Override
-	public JComponent renderSpecial(InventoryItem item) {
-		final Armor armor = (Armor) item;
-		JPanel panel = new JPanel();
-		Status status = new Status();
-		panel.setLayout(new GridBagLayout());
+    @Override
+    public JComponent renderSpecial(InventoryItem item) {
+        final Armor armor = (Armor) item;
+        JPanel panel = new JPanel();
+        Status status = new Status();
+        panel.setLayout(new GridBagLayout());
 
-		addSpinner(new ArmorAccess("Ko") {
-			public int getValue() {
-				return armor.getRuestungKopf();
-			}
+        addSpinner(new ArmorAccess("head") {
+                public int getValue() {
+                    return armor.getRuestungKopf();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungKopf(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungKopf(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("Br") {
-			public int getValue() {
-				return armor.getRuestungBrust();
-			}
+        addSpinner(new ArmorAccess("breast") {
+                public int getValue() {
+                    return armor.getRuestungBrust();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungBrust(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungBrust(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("Ru") {
-			public int getValue() {
-				return armor.getRuestungRuecken();
-			}
+        addSpinner(new ArmorAccess("back") {
+                public int getValue() {
+                    return armor.getRuestungRuecken();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungRuecken(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungRuecken(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("Ba") {
-			public int getValue() {
-				return armor.getRuestungBauch();
-			}
+        addSpinner(new ArmorAccess("stomach") {
+                public int getValue() {
+                    return armor.getRuestungBauch();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungBauch(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungBauch(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("LA") {
-			public int getValue() {
-				return armor.getRuestungArmLinks();
-			}
+        addSpinner(new ArmorAccess("leftarm") {
+                public int getValue() {
+                    return armor.getRuestungArmLinks();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungArmLinks(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungArmLinks(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("RA") {
-			public int getValue() {
-				return armor.getRuestungArmRechts();
-			}
+        addSpinner(new ArmorAccess("rightarm") {
+                public int getValue() {
+                    return armor.getRuestungArmRechts();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungArmRechts(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungArmRechts(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("LB") {
-			public int getValue() {
-				return armor.getRuestungBeinLinks();
-			}
+        addSpinner(new ArmorAccess("leftleg") {
+                public int getValue() {
+                    return armor.getRuestungBeinLinks();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungBeinLinks(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungBeinLinks(value);
+                }
+            }, panel, status);
 
-		addSpinner(new ArmorAccess("RB") {
-			public int getValue() {
-				return armor.getRuestungBeinRechts();
-			}
+        addSpinner(new ArmorAccess("rightleg") {
+                public int getValue() {
+                    return armor.getRuestungBeinRechts();
+                }
 
-			public void setValue(int value) {
-				armor.setRuestungBeinRechts(value);
-			}
-		}, panel, status);
+                public void setValue(int value) {
+                    armor.setRuestungBeinRechts(value);
+                }
+            }, panel, status);
 
-		return panel;
-	}
+        return panel;
+    }
 
-	private void addSpinner(final ArmorAccess access, JComponent parent,
-			Status status) {
-		Insets insets = new Insets(3, 6, 3, 6);
+    private void addSpinner(final ArmorAccess access, JComponent parent,
+        Status status) {
+        Insets insets = new Insets(3, 6, 3, 6);
 
-		parent
-				.add(new JLabel(access.getName()), new GridBagConstraints(
-						2 * status.getColumn(), status.getRow(), 1, 1, 0, 0,
-						GridBagConstraints.WEST, GridBagConstraints.NONE,
-						insets, 0, 0));
+        parent.add(new InfoLabel(access.getNameKey(), access.getDescriptionKey()),
+            new GridBagConstraints(2 * status.getColumn(), status.getRow(), 1,
+                1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                insets, 0, 0));
 
-		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(access
-				.getValue(), 0, 100, 1));
-		parent.add(spinner, new GridBagConstraints(2 * status.getColumn() + 1,
-				status.getRow(), 1, 1, 0, 0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, insets, 0, 0));
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+                    access.getValue(), 0, 100, 1));
+        parent.add(spinner,
+            new GridBagConstraints((2 * status.getColumn()) + 1,
+                status.getRow(), 1, 1, 0, 0, GridBagConstraints.WEST,
+                GridBagConstraints.NONE, insets, 0, 0));
 
-		spinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				access.setValue(((Number) spinner.getValue()).intValue());
-			}
-		});
+        spinner.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    access.setValue(((Number) spinner.getValue()).intValue());
+                }
+            });
 
-		status.advance();
-	}
+        status.advance();
+    }
 
-	@Override
-	public boolean isApplicable(InventoryItem item) {
-		return item instanceof Armor;
-	}
+    @Override
+    public boolean isApplicable(InventoryItem item) {
+        return item instanceof Armor;
+    }
 
-	private static abstract class ArmorAccess {
-		private final String name;
+    private static abstract class ArmorAccess {
+        private final String name;
 
-		public ArmorAccess(String name) {
-			super();
-			this.name = name;
-		}
+        public ArmorAccess(String name) {
+            super();
+            this.name = name;
+        }
 
-		public abstract int getValue();
+        public abstract int getValue();
 
-		public abstract void setValue(int value);
+        public abstract void setValue(int value);
 
-		public String getName() {
-			return name;
-		}
-	}
+        public String getNameKey() {
+            return "armor." + name;
+        }
 
-	private static class Status {
-		private int column = 0;
-		private int row = 0;
+        public String getDescriptionKey() {
+            return "armor." + name + ".description";
+        }
+    }
 
-		public int getColumn() {
-			return column;
-		}
+    private static class Status {
+        private int column = 0;
+        private int row = 0;
 
-		public int getRow() {
-			return row;
-		}
+        public int getColumn() {
+            return column;
+        }
 
-		public void advance() {
-			column++;
+        public int getRow() {
+            return row;
+        }
 
-			if (column >= COLUMNS) {
-				column = 0;
-				row++;
-			}
-		}
-	}
+        public void advance() {
+            column++;
+
+            if (column >= COLUMNS) {
+                column = 0;
+                row++;
+            }
+        }
+    }
 }
