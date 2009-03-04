@@ -67,7 +67,11 @@ public class InventoryItemDao<I extends InventoryItem> {
             if (!Money.class.isAssignableFrom(getItemClass())) {
                 item.setWeight(results.getInt("Gew"));
                 item.setValue(results.getInt("Value"));
-                item.setQuestId(results.getString("QuestId"));
+                
+                if (hasQuestId()) {
+                	item.setQuestId(results.getString("QuestId"));
+                }
+                
                 item.setScriptPreset(results.getString("ScriptPreset"));
                 item.setScriptOverride(results.getString("ScriptOverride"));
                 item.setLimitedScript(results.getString("LimitedScript"));

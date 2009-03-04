@@ -17,7 +17,6 @@ import de.jardas.drakensang.model.inventory.InventoryItem;
 import de.jardas.drakensang.model.inventory.Item;
 import de.jardas.drakensang.model.inventory.Jewelry;
 import de.jardas.drakensang.model.inventory.Key;
-import de.jardas.drakensang.model.inventory.Recipe;
 import de.jardas.drakensang.model.inventory.Torch;
 
 import java.sql.PreparedStatement;
@@ -47,8 +46,7 @@ public class InventoryDao {
         ITEM_DAOS.add(new InventoryItemDao<Jewelry>(Jewelry.class,
                 "_Instance_Jewelry"));
         ITEM_DAOS.add(new InventoryItemDao<Key>(Key.class, "_Instance_Key"));
-        ITEM_DAOS.add(new InventoryItemDao<Recipe>(Recipe.class,
-                "_Instance_Recipe"));
+        ITEM_DAOS.add(new RecipeDao());
         ITEM_DAOS.add(new InventoryItemDao<Torch>(Torch.class, "_Instance_Torch"));
     }
 
