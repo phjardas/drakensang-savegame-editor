@@ -40,7 +40,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
             });
 
         final JSpinner addSpinner = new JSpinner(new SpinnerNumberModel(
-                    weapon.getSchaden().getAddition(), 0, 100, 1));
+                    weapon.getSchaden().getAddition(), -100, 100, 1));
         addSpinner.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     weapon.getSchaden()
@@ -52,7 +52,7 @@ public class WeaponRenderer extends InventoryItemRenderer {
         final JPanel panel = new JPanel();
 
         panel.add(diceSpinner);
-        panel.add(new JLabel("W6+"));
+        panel.add(new JLabel(Messages.get("D6") + "+"));
         panel.add(addSpinner);
         panel.add(schadenLabel);
 
