@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.IntegerMap;
 
@@ -137,7 +138,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
         Status status, JComponent special) {
         final JComponent label = createLabel(key);
         final JComponent spinner = createField(key, value);
-
         Insets insets = new Insets(3, 6, 3, 6);
         parent.add(label,
             new GridBagConstraints(status.getColumn(), status.getRow(), 1, 1,
@@ -161,20 +161,25 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     }
 
     protected JComponent createField(final String key, int value) {
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
-                    -1000, 100, 1));
-        spinner.addChangeListener(new javax.swing.event.ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    final int val = ((Number) spinner.getValue()).intValue();
-                    handleChange(key, val);
+        try {
+            final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+                        value, -1000, 100, 1));
+            spinner.addChangeListener(new javax.swing.event.ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        final int val = ((Number) spinner.getValue()).intValue();
+                        handleChange(key, val);
 
-                    for (ChangeListener changeListener : changeListeners) {
-                        changeListener.valueChanged(key, val);
+                        for (ChangeListener changeListener : changeListeners) {
+                            changeListener.valueChanged(key, val);
+                        }
                     }
-                }
-            });
+                });
 
-        return spinner;
+            return spinner;
+        } catch (IllegalArgumentException e) {
+            throw new DrakensangException("Error adding field '" + key
+                + "' with value " + value + ": " + e, e);
+        }
     }
 
     protected InfoLabel createLabel(final String key) {
@@ -194,9 +199,9 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     protected String getInfoKey(String key) {
         return null;
     }
-    
+
     protected ImageIcon getInfoIcon(String key) {
-    	return null;
+        return null;
     }
 
     protected void handleChange(String key, int value) {

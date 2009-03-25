@@ -9,6 +9,8 @@
  */
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.Main;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -50,7 +52,10 @@ public class ExceptionDialog extends JDialog {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         URL url = new URL(
-                                    "httpx://www.jardas.de/drakensang/report.php?stacktrace="
+                                    "http://www.jardas.de/drakensang/report.php?version="
+                                    + URLEncoder.encode(
+                                        Main.getCurrentVersion(), "utf-8")
+                                    + "&stacktrace="
                                     + URLEncoder.encode(trace.toString(),
                                         "utf-8"));
                         url.getContent();

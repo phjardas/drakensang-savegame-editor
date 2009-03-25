@@ -46,19 +46,23 @@ public final class Main {
             frame.setVisible(true);
             frame.showLoadDialog();
         } catch (Exception e) {
-            LOG.error("Uncaught exception: " + e, e);
-
-            if (frame != null) {
-                frame.setVisible(false);
-            }
-
-            new ExceptionDialog(frame, e).setVisible(true);
-
-            LOG.info("Shutting down...");
-
-            System.exit(1);
+            handleException(e);
         }
     }
+
+	public static void handleException(Exception e) {
+		LOG.error("Uncaught exception: " + e, e);
+
+		if (frame != null) {
+		    frame.setVisible(false);
+		}
+
+		new ExceptionDialog(frame, e).setVisible(true);
+
+		LOG.info("Shutting down...");
+
+		System.exit(1);
+	}
 
     private static void checkForUpdates() {
         try {
@@ -78,7 +82,7 @@ public final class Main {
         }
     }
 
-    private static String getCurrentVersion() {
+    public static String getCurrentVersion() {
         ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
                                                                    .getName() +
                 ".version");

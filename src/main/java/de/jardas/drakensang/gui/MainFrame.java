@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.SavegameDao;
@@ -125,13 +126,13 @@ public class MainFrame extends JFrame {
                 });
         saveButton.setEnabled(false);
         toolbar.add(saveButton);
-        
+
         toolbar.add(new JButton(new AbstractAction(Messages.get("about.button"),
-        		new ImageIcon(getClass().getResource("images/about.gif"))) {
-        	public void actionPerformed(ActionEvent e) {
-        		new AboutDialog(MainFrame.this).setVisible(true);
-        	}
-        }));
+                    new ImageIcon(getClass().getResource("images/about.gif"))) {
+                public void actionPerformed(ActionEvent e) {
+                    new AboutDialog(MainFrame.this).setVisible(true);
+                }
+            }));
 
         left.setLayout(new BorderLayout());
         left.add(savegameIcon, BorderLayout.SOUTH);
@@ -271,7 +272,11 @@ public class MainFrame extends JFrame {
     }
 
     private void updateSelection(Character character) {
-        characterPanel.setCharacter(character);
+        try {
+            characterPanel.setCharacter(character);
+        } catch (RuntimeException e) {
+            Main.handleException(e);
+        }
     }
 
     public void loadDefaultSavegame() {
