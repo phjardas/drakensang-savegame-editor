@@ -28,7 +28,9 @@ public class Character extends Persistable {
     private CharacterSet characterSet;
     private CasterType casterType;
     private CasterRace casterRace;
+    private int lebensenergie;
     private int lebensenergieBonus;
+    private int astralenergie;
     private int astralenergieBonus;
     private final Set<Advantage> advantages = new HashSet<Advantage>();
     private int level;
@@ -201,7 +203,22 @@ public class Character extends Persistable {
             + getAttribute().get("FF") + getAttribute().get("KK")) / 5);
     }
 
-    public int getLebensenergie() {
+	public int getLebensenergie() {
+		return lebensenergie;
+	}
+
+	public void setLebensenergie(int lebensenergie) {
+		this.lebensenergie = lebensenergie;
+	}
+
+	public int getAstralenergie() {
+		return astralenergie;
+	}
+
+	public void setAstralenergie(int astralenergie) {
+		this.astralenergie = astralenergie;
+	}
+    public int getLebensenergieMax() {
         int basis = (int) Math.round((double) (getAttribute().get("KO")
                 + getAttribute().get("KO") + getAttribute().get("KK")) / 2);
 
@@ -220,7 +237,7 @@ public class Character extends Persistable {
         + getProfession().getAusdauerModifikator();
     }
 
-    public int getAstralenergie() {
+    public int getAstralenergieMax() {
         int basis = (int) Math.round((double) (getAttribute().get("MU")
                 + getAttribute().get("IN") + getAttribute().get("CH")) / 2);
 

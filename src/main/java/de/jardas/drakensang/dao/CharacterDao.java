@@ -88,7 +88,9 @@ public class CharacterDao {
             c.setCasterType(CasterType.valueOf(result.getString("CasterType")));
             c.setCasterRace(CasterRace.valueOf(result.getString("CasterRace")));
 
+            c.setLebensenergie(result.getInt("LE"));
             c.setLebensenergieBonus(result.getInt("LEBonus"));
+            c.setAstralenergie(result.getInt("AE"));
             c.setAstralenergieBonus(result.getInt("AEBonus"));
 
             c.getAttribute().load(result);
@@ -141,7 +143,9 @@ public class CharacterDao {
         builder.append("'IsMagicUser' = ?", character.isMagician() ? 1 : 0);
         builder.append("'CasterType' = ?", character.getCasterType().name());
         builder.append("'CasterRace' = ?", character.getCasterRace().name());
+        builder.append("'LE' = ?", character.getLebensenergie());
         builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
+        builder.append("'AE' = ?", character.getAstralenergie());
         builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
         builder.append("'Advantages' = ?",
             Advantage.serialize(character.getAdvantages()));
