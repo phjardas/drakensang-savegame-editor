@@ -27,8 +27,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class InventoryItemDao<I extends InventoryItem> {
+
+public abstract class InventoryItemDao<I extends InventoryItem> {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
         .getLogger(InventoryItemDao.class);
     private final Class<I> itemClass;
@@ -67,11 +72,11 @@ public class InventoryItemDao<I extends InventoryItem> {
             if (!Money.class.isAssignableFrom(getItemClass())) {
                 item.setWeight(results.getInt("Gew"));
                 item.setValue(results.getInt("Value"));
-                
+
                 if (hasQuestId()) {
-                	item.setQuestId(results.getString("QuestId"));
+                    item.setQuestId(results.getString("QuestId"));
                 }
-                
+
                 item.setScriptPreset(results.getString("ScriptPreset"));
                 item.setScriptOverride(results.getString("ScriptOverride"));
                 item.setLimitedScript(results.getString("LimitedScript"));
@@ -153,16 +158,49 @@ public class InventoryItemDao<I extends InventoryItem> {
     }
 
     public void create(InventoryItem item) {
+    	// FIXME creation of inventory items
         LOG.warn("Creating inventory items is not supported yet: " + item);
     }
 
     public void delete(InventoryItem item) throws SQLException {
         LOG.debug("Deleting " + item);
 
-        PreparedStatement stmt = SavegameDao.getConnection()
-                                            .prepareStatement("delete from "
+        final PreparedStatement stmt = SavegameDao.getConnection()
+                                                  .prepareStatement("delete from "
                 + getTable() + " where Guid = ?");
         stmt.setBytes(1, item.getGuid());
         stmt.executeUpdate();
+    }
+
+    public List<I> loadInventory() {
+        final List<I> items = new ArrayList<I>();
+        final String sql = "select * from " + getTable();
+
+        try {
+            final PreparedStatement stmt = SavegameDao.getConnection()
+                                                      .prepareStatement(sql);
+            final ResultSet results = stmt.executeQuery();
+            final Set<String> names = new HashSet<String>();
+
+            while (results.next()) {
+                final I item = load(results);
+
+                if (names.contains(item.getName())) {
+                    continue;
+                }
+
+                items.add(item);
+                names.add(item.getName());
+            }
+        } catch (SQLException e) {
+            throw new DrakensangException(
+                "Error loading inventory items of type "
+                + itemClass.getSimpleName() + ": " + e, e);
+        }
+
+        LOG.debug("Loaded " + items.size() + " inventory items of type "
+            + itemClass.getSimpleName() + ".");
+
+        return items;
     }
 }

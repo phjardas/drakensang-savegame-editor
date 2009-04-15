@@ -14,10 +14,6 @@ import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.inventory.Inventory;
 import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Item;
-import de.jardas.drakensang.model.inventory.Jewelry;
-import de.jardas.drakensang.model.inventory.Key;
-import de.jardas.drakensang.model.inventory.Torch;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,12 +38,11 @@ public class InventoryDao {
         ITEM_DAOS.add(new ShieldDao());
         ITEM_DAOS.add(new ArmorDao());
         ITEM_DAOS.add(new MoneyDao());
-        ITEM_DAOS.add(new InventoryItemDao<Item>(Item.class, "_Instance_Item"));
-        ITEM_DAOS.add(new InventoryItemDao<Jewelry>(Jewelry.class,
-                "_Instance_Jewelry"));
-        ITEM_DAOS.add(new InventoryItemDao<Key>(Key.class, "_Instance_Key"));
+        ITEM_DAOS.add(new ItemDao());
+        ITEM_DAOS.add(new JewelryDao());
+        ITEM_DAOS.add(new KeyDao());
         ITEM_DAOS.add(new RecipeDao());
-        ITEM_DAOS.add(new InventoryItemDao<Torch>(Torch.class, "_Instance_Torch"));
+        ITEM_DAOS.add(new TorchDao());
     }
 
     public static List<InventoryItem> loadItems(byte[] storageGuid) {
@@ -103,34 +98,19 @@ public class InventoryDao {
         }
     }
 
-    public static List<InventoryItem> loadInventory(
-        Class<?extends InventoryItem> itemClass) {
-        List<InventoryItem> items = new ArrayList<InventoryItem>();
-        InventoryItemDao<?extends InventoryItem> dao = getInventoryItemDao(itemClass);
-        final String sql = "select * from " + dao.getTable();
+    public static List<Class<?extends InventoryItem>> getInventoryItemTypes() {
+        final List<Class<?extends InventoryItem>> ret = new ArrayList<Class<?extends InventoryItem>>();
 
-        try {
-            PreparedStatement stmt = SavegameDao.getConnection()
-                                                .prepareStatement(sql);
-
-            ResultSet results = stmt.executeQuery();
-
-            while (results.next()) {
-                try {
-                    final InventoryItem item = dao.load(results);
-                    items.add(item);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error loading inventory items: " + e, e);
+        for (InventoryItemDao<?extends InventoryItem> dao : ITEM_DAOS) {
+            ret.add(dao.getItemClass());
         }
 
-        LOG.debug("Loaded " + items.size() + " inventory items of type "
-            + itemClass.getSimpleName() + ".");
+        return ret;
+    }
 
-        return items;
+    public static <I extends InventoryItem> List<I> loadInventory(
+        Class<I> itemClass) {
+        return getInventoryItemDao(itemClass).loadInventory();
     }
 
     private static <I extends InventoryItem> InventoryItemDao<I> getInventoryItemDao(

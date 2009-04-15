@@ -46,7 +46,7 @@ public class Inventory {
 		deleted.remove(item);
 		
 		for (InventoryListener listener : this.listeners) {
-			listener.itemRemoved(item);
+			listener.itemAdded(item);
 		}
 	}
 

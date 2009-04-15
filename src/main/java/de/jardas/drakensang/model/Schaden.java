@@ -9,6 +9,9 @@
  */
 package de.jardas.drakensang.model;
 
+import de.jardas.drakensang.dao.Messages;
+
+
 public class Schaden {
     private int diceMultiplier;
     private int addition;
@@ -46,7 +49,12 @@ public class Schaden {
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(getDiceMultiplier()).append("W6");
+
+        if (getDiceMultiplier() > 1) {
+            buffer.append(getDiceMultiplier());
+        }
+
+        buffer.append(Messages.get("D6"));
 
         if (getAddition() != 0) {
             if (getAddition() > 0) {
@@ -55,9 +63,6 @@ public class Schaden {
 
             buffer.append(getAddition());
         }
-
-        buffer.append(" (").append(getMinimum()).append("-").append(getMaximum())
-              .append(")");
 
         return buffer.toString();
     }

@@ -3,10 +3,6 @@ package de.jardas.drakensang.model.inventory;
 import de.jardas.drakensang.model.Persistable;
 
 public abstract class InventoryItem extends Persistable {
-    public static final Class<?>[] TYPES = {
-            Armor.class, Jewelry.class, Key.class, Money.class, Recipe.class,
-            Shield.class, Torch.class, Weapon.class,
-        };
     private final boolean countable;
     private Inventory inventory;
     private int count;

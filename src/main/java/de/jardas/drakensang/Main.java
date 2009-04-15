@@ -5,6 +5,7 @@ import de.jardas.drakensang.gui.ExceptionDialog;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
 import de.jardas.drakensang.util.DrakensangHomeFinder;
+import de.jardas.drakensang.util.VersionChecker;
 
 import java.io.File;
 
@@ -43,7 +44,6 @@ public final class Main {
             frame = new MainFrame();
 
             checkForUpdates();
-
             frame.setVisible(true);
             frame.showLoadDialog();
         } catch (Exception e) {
@@ -66,23 +66,29 @@ public final class Main {
     }
 
     private static void checkForUpdates() {
-        try {
-            VersionInformation newestVersion = VersionInformation
-                .getNewestVersion();
-            Settings settings = Settings.getInstance();
+        final VersionChecker checker = new VersionChecker() {
+                @Override
+                protected void onNewVersionDetected(
+                    VersionInformation newestVersion) {
+                    StringBuilder msg = new StringBuilder();
+                    msg.append("Version ").append(newestVersion.getVersion())
+                       .append(" is now available!\n\n");
 
-            if (!newestVersion.getVersion().equals(getCurrentVersion())
-                    && !newestVersion.getVersion()
-                                         .equals(settings
-                        .getLatestVersionInformation())) {
-                settings.setLatestVersionInformation(newestVersion.getVersion());
-                settings.save();
+                    for (String change : newestVersion.getChangelog()) {
+                        msg.append("- ").append(change).append("\n");
+                    }
 
-                showNewVersionAvailableDialog(newestVersion);
-            }
-        } catch (Exception e) {
-            LOG.error("Error checking for new version: " + e, e);
-        }
+                    msg.append(
+                        "\nVisit http://www.jardas.de/drakensang/ to download it.");
+
+                    JOptionPane.showMessageDialog(getFrame(), msg.toString(),
+                        "Drakensang Savegame Editor "
+                        + newestVersion.getVersion() + " available",
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+            };
+
+        new Thread(checker).run();
     }
 
     public static String getCurrentVersion() {
@@ -91,23 +97,6 @@ public final class Main {
                 + ".version");
 
         return bundle.getString("version");
-    }
-
-    private static void showNewVersionAvailableDialog(
-        VersionInformation newestVersion) {
-        StringBuilder msg = new StringBuilder();
-        msg.append("Version ").append(newestVersion.getVersion())
-           .append(" is now available!\n\n");
-
-        for (String change : newestVersion.getChangelog()) {
-            msg.append("- ").append(change).append("\n");
-        }
-
-        msg.append("\nVisit http://www.jardas.de/drakensang/ to download it.");
-
-        JOptionPane.showMessageDialog(frame, msg.toString(),
-            "Drakensang Savegame Editor " + newestVersion.getVersion()
-            + " available", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static void checkSettings() {

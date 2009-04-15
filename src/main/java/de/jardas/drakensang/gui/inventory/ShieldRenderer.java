@@ -22,10 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class ShieldRenderer extends InventoryItemRenderer {
-	public JComponent renderSpecial(final InventoryItem item) {
-        final Shield shield = (Shield) item;
-
+public class ShieldRenderer extends InventoryItemRenderer<Shield> {
+    public JComponent renderSpecial(final Shield shield) {
         final JSpinner atSpinner = new JSpinner(new SpinnerNumberModel(
                     shield.getAttackeMod(), -10, 10, 1));
         atSpinner.addChangeListener(new ChangeListener() {
@@ -51,15 +49,21 @@ public class ShieldRenderer extends InventoryItemRenderer {
 
         return panel;
     }
-    
+
     @Override
-    public String getNameKey(InventoryItem item) {
-    	return Static.get("LookAtText", item.getId(), "Id", "_Template_Shield");
+    public String getNameKey(Shield item) {
+        return Static.get("LookAtText", item.getId(), "Id", "_Template_Shield");
     }
-    
+
     @Override
-    public String getInfoKey(InventoryItem item) {
-    	return Static.get("InfoIdentified", item.getId(), "Id", "_Template_Shield");
+    public String getInfoKey(Shield item) {
+        return Static.get("InfoIdentified", item.getId(), "Id",
+            "_Template_Shield");
+    }
+
+    @Override
+    public String renderInlineInfo(Shield item) {
+        return item.getAttackeMod() + "/" + item.getParadeMod();
     }
 
     @Override

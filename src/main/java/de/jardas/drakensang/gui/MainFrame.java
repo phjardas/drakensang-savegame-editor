@@ -4,6 +4,7 @@ import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.CharacterDao;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.SavegameDao;
+import de.jardas.drakensang.gui.inventory.wizard.NewItemWizard;
 import de.jardas.drakensang.gui.load.LoadDialog;
 import de.jardas.drakensang.gui.load.SavegameListener;
 import de.jardas.drakensang.model.Character;
@@ -50,6 +51,7 @@ public class MainFrame extends JFrame {
     private final JToolBar toolbar = new JToolBar();
     private CharacterPanel characterPanel = new CharacterPanel();
     private JButton saveButton;
+    private JButton inventoryWizardButton;
     private JComponent glassPane = new JPanel();
     private JComponent defaultGlassPane;
     private boolean busy;
@@ -133,6 +135,15 @@ public class MainFrame extends JFrame {
                     new AboutDialog(MainFrame.this).setVisible(true);
                 }
             }));
+
+        inventoryWizardButton = new JButton(new AbstractAction(Messages.get(
+                        "wizard.item.toolbarbutton")) {
+                    public void actionPerformed(ActionEvent e) {
+                        new NewItemWizard(MainFrame.this);
+                    }
+                });
+        inventoryWizardButton.setEnabled(false);
+        toolbar.add(inventoryWizardButton);
 
         left.setLayout(new BorderLayout());
         left.add(savegameIcon, BorderLayout.SOUTH);
@@ -250,6 +261,7 @@ public class MainFrame extends JFrame {
         LOG.debug("Selecting first character.");
         characterList.setSelectedIndex(0);
         saveButton.setEnabled(true);
+        inventoryWizardButton.setEnabled(true);
 
         LOG.debug("Repainting.");
         repaint();

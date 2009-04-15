@@ -38,20 +38,6 @@ public class InventoryItemsPanel extends JPanel {
         JPanel panel = null;
         Class<?extends InventoryItem> currentClass = null;
 
-        /*
-        add(new JButton(new AbstractAction("Gegenstand hinzufügen") {
-                public void actionPerformed(ActionEvent e) {
-                    new NewItemDialog() {
-                            @Override
-                            protected void itemAdded(Item item) {
-                                System.out.println("Item added: " + item);
-                            }
-                        };
-                }
-            }),
-            new GridBagConstraints(0, panelCount++, 1, 1, 1, 0,
-                GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
-                */
         for (InventoryItem item : items) {
             if ((panel == null) || (currentClass != item.getClass())) {
                 panel = new JPanel();
@@ -99,7 +85,8 @@ public class InventoryItemsPanel extends JPanel {
         return Messages.get("inventorygroup." + currentClass.getSimpleName());
     }
 
-    private InventoryItemRenderer getRenderer(InventoryItem item) {
+    private <I extends InventoryItem> InventoryItemRenderer<I> getRenderer(
+        I item) {
         return InventoryItemRenderer.getRenderer(item);
     }
 

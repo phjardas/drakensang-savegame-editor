@@ -22,10 +22,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class WeaponRenderer extends InventoryItemRenderer {
+public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
     @Override
-    public JComponent renderSpecial(InventoryItem item) {
-        final Weapon weapon = (Weapon) item;
+    public JComponent renderSpecial(final Weapon weapon) {
         final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
 
         final JSpinner diceSpinner = new JSpinner(new SpinnerNumberModel(
@@ -62,6 +61,11 @@ public class WeaponRenderer extends InventoryItemRenderer {
     private String getSchadenText(Weapon weapon) {
         return " (" + weapon.getSchaden().getMinimum() + "-"
         + weapon.getSchaden().getMaximum() + " " + Messages.get("TP") + ")";
+    }
+
+    @Override
+    public String renderInlineInfo(Weapon weapon) {
+        return weapon.getSchaden().toString();
     }
 
     @Override

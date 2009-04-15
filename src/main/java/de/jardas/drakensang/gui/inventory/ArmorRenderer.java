@@ -25,12 +25,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class ArmorRenderer extends InventoryItemRenderer {
+public class ArmorRenderer extends InventoryItemRenderer<Armor> {
     private static final int COLUMNS = 4;
 
     @Override
-    public JComponent renderSpecial(InventoryItem item) {
-        final Armor armor = (Armor) item;
+    public JComponent renderSpecial(final Armor armor) {
         JPanel panel = new JPanel();
         Status status = new Status();
         panel.setLayout(new GridBagLayout());
