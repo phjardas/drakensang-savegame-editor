@@ -73,7 +73,6 @@ public class CharacterInfoPanel extends JPanel {
 
         int row = 0;
         addArchetypeFields(row++);
-        addMagicFields(row++);
         addNumberFields(row++);
         addDerivedFields();
 
@@ -159,57 +158,6 @@ public class CharacterInfoPanel extends JPanel {
         fernkampfBasis.setText(String.valueOf(character.getFernkampfBasis()));
         ausdauerMax.setText(String.valueOf(character.getAusdauer()));
         magieresistenz.setText(String.valueOf(character.getMagieresistenz()));
-    }
-
-    private void addMagicFields(int panelRow) {
-        int row = 0;
-        final JPanel magicPanel = new JPanel();
-        magicPanel.setLayout(new GridBagLayout());
-        magicPanel.setBorder(BorderFactory.createTitledBorder(Messages.get(
-                    "Magic")));
-        add(magicPanel,
-            new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-                new Insets(3, 6, 3, 6), 0, 0));
-
-        final JCheckBox magician = new JCheckBox();
-        magician.setSelected(character.isMagician());
-        magician.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    character.setMagician(magician.isSelected());
-                }
-            });
-        addInput(magicPanel, "Magician", magician, row++);
-
-        final EnumComboBox<CasterType> casterType = new EnumComboBox<CasterType>(CasterType
-                .values(), character.getCasterType()) {
-                protected void valueChanged(CasterType item) {
-                    character.setCasterType(item);
-                }
-
-                protected String toString(CasterType item) {
-                    if (item == CasterType.none) {
-                        return "CasterType.none";
-                    }
-
-                    return super.toString(item);
-                }
-            };
-
-        addInput(magicPanel, "CasterType", casterType, row++);
-
-        final EnumComboBox<CasterRace> casterRace = new EnumComboBox<CasterRace>(CasterRace
-                .values(), character.getCasterRace()) {
-                protected void valueChanged(CasterRace item) {
-                    character.setCasterRace(item);
-                }
-
-                protected boolean accept(CasterRace item) {
-                    return item != CasterRace.dwarf;
-                }
-            };
-
-        addInput(magicPanel, "CasterRace", casterRace, row++);
     }
 
     private void addNumberFields(int panelRow) {
@@ -371,6 +319,45 @@ public class CharacterInfoPanel extends JPanel {
 
             addInput(archetypePanel, "CharacterSet", appearanceCombo, row++);
         }
+
+        final JCheckBox magician = new JCheckBox();
+        magician.setSelected(character.isMagician());
+        magician.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setMagician(magician.isSelected());
+                }
+            });
+        addInput(archetypePanel, "Magician", magician, row++);
+
+        final EnumComboBox<CasterType> casterType = new EnumComboBox<CasterType>(CasterType
+                .values(), character.getCasterType()) {
+                protected void valueChanged(CasterType item) {
+                    character.setCasterType(item);
+                }
+
+                protected String toString(CasterType item) {
+                    if (item == CasterType.none) {
+                        return "CasterType.none";
+                    }
+
+                    return super.toString(item);
+                }
+            };
+
+        addInput(archetypePanel, "CasterType", casterType, row++);
+
+        final EnumComboBox<CasterRace> casterRace = new EnumComboBox<CasterRace>(CasterRace
+                .values(), character.getCasterRace()) {
+                protected void valueChanged(CasterRace item) {
+                    character.setCasterRace(item);
+                }
+
+                protected boolean accept(CasterRace item) {
+                    return item != CasterRace.dwarf;
+                }
+            };
+
+        addInput(archetypePanel, "CasterRace", casterRace, row++);
     }
 
     private void updateAppearances() {
