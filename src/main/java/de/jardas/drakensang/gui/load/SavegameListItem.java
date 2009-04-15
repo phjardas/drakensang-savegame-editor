@@ -35,7 +35,8 @@ public class SavegameListItem extends JPanel {
                 return DateFormat.getDateTimeInstance();
             }
         };
-        private Color regularBackground;
+
+    private Color regularBackground;
 
     public SavegameListItem(final Savegame savegame,
         final SavegameListener savegameListener) {
@@ -45,7 +46,8 @@ public class SavegameListItem extends JPanel {
 
         int row = 0;
 
-        add(new JLabel(savegame.getName()),
+        add(new JLabel(savegame.getName() + " ("
+                + savegame.getDirectory().getName() + ")"),
             new GridBagConstraints(1, row++, 1, 1, 1, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
@@ -59,11 +61,11 @@ public class SavegameListItem extends JPanel {
             new GridBagConstraints(1, row++, 1, 1, 1, 0,
                 GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
                 new Insets(3, 6, 3, 6), 0, 0));
-        
+
         add(new JLabel(Messages.get(savegame.getWorldMapKey())),
-        		new GridBagConstraints(1, row++, 1, 1, 1, 0,
-        				GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-        				new Insets(3, 6, 3, 6), 0, 0));
+            new GridBagConstraints(1, row++, 1, 1, 1, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
 
         add(new JLabel(DATE_FORMAT.get().format(savegame.getChangeDate())),
             new GridBagConstraints(1, row++, 1, 1, 1, 0,
@@ -76,26 +78,26 @@ public class SavegameListItem extends JPanel {
                 new Insets(6, 6, 6, 6), 0, 0));
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				savegameListener.loadSavegame(savegame);
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				if (regularBackground == null) { 
-					regularBackground = getBackground();
-				}
-				
-				setBackground(Color.WHITE);
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				setBackground(regularBackground);
-			}
-		});
+
+        addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    savegameListener.loadSavegame(savegame);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (regularBackground == null) {
+                        regularBackground = getBackground();
+                    }
+
+                    setBackground(Color.WHITE);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    setBackground(regularBackground);
+                }
+            });
     }
 }

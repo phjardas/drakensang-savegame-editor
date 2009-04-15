@@ -23,6 +23,7 @@ import java.util.Date;
 
 
 public class Savegame implements Comparable<Savegame> {
+	private File directory;
     private File file;
     private String name;
     private String hero;
@@ -82,25 +83,33 @@ public class Savegame implements Comparable<Savegame> {
         return "name_" + getWorldMap();
     }
 
+	public File getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(File directory) {
+		this.directory = directory;
+	}
+	
+	public int compareTo(Savegame o) {
+		if (o == this) {
+			return 0;
+		}
+		
+		if ((o == null) || (o.getChangeDate() == null)) {
+			return -1;
+		}
+		
+		if (getChangeDate() == null) {
+			return 1;
+		}
+		
+		return getChangeDate().compareTo(o.getChangeDate());
+	}
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    public int compareTo(Savegame o) {
-        if (o == this) {
-            return 0;
-        }
-
-        if ((o == null) || (o.getChangeDate() == null)) {
-            return -1;
-        }
-
-        if (getChangeDate() == null) {
-            return 1;
-        }
-
-        return getChangeDate().compareTo(o.getChangeDate());
     }
 
     private static void loadInfoFile(Savegame game) {
@@ -177,6 +186,7 @@ public class Savegame implements Comparable<Savegame> {
         File file = files[0];
 
         final Savegame game = new Savegame();
+        game.setDirectory(directory);
         game.setFile(file);
         game.setChangeDate(new Date(file.lastModified()));
         loadInfoFile(game);
