@@ -17,10 +17,11 @@ import javax.swing.filechooser.FileFilter;
 
 
 public final class Main {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Main.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+        .getLogger(Main.class);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                                    .getName() +
-            ".messages", Locale.getDefault());
+                                                                                    .getName()
+            + ".messages", Locale.getDefault());
     private static MainFrame frame = null;
 
     private Main() {
@@ -32,7 +33,7 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        LOG.info("Starting up!");
+        LOG.info("Starting up Drakensang Savegame Editor");
 
         try {
             Class.forName("SQLite.JDBCDriver").newInstance();
@@ -50,28 +51,30 @@ public final class Main {
         }
     }
 
-	public static void handleException(Exception e) {
-		LOG.error("Uncaught exception: " + e, e);
+    public static void handleException(Exception e) {
+        LOG.error("Uncaught exception: " + e, e);
 
-		if (frame != null) {
-		    frame.setVisible(false);
-		}
+        if (frame != null) {
+            frame.setVisible(false);
+        }
 
-		new ExceptionDialog(frame, e).setVisible(true);
+        new ExceptionDialog(frame, e).setVisible(true);
 
-		LOG.info("Shutting down...");
+        LOG.info("Shutting down...");
 
-		System.exit(1);
-	}
+        System.exit(1);
+    }
 
     private static void checkForUpdates() {
         try {
-            VersionInformation newestVersion = VersionInformation.getNewestVersion();
+            VersionInformation newestVersion = VersionInformation
+                .getNewestVersion();
             Settings settings = Settings.getInstance();
 
-            if (!newestVersion.getVersion().equals(getCurrentVersion()) &&
-                    !newestVersion.getVersion()
-                                      .equals(settings.getLatestVersionInformation())) {
+            if (!newestVersion.getVersion().equals(getCurrentVersion())
+                    && !newestVersion.getVersion()
+                                         .equals(settings
+                        .getLatestVersionInformation())) {
                 settings.setLatestVersionInformation(newestVersion.getVersion());
                 settings.save();
 
@@ -84,8 +87,8 @@ public final class Main {
 
     public static String getCurrentVersion() {
         ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                   .getName() +
-                ".version");
+                                                                   .getName()
+                + ".version");
 
         return bundle.getString("version");
     }
@@ -103,19 +106,14 @@ public final class Main {
         msg.append("\nVisit http://www.jardas.de/drakensang/ to download it.");
 
         JOptionPane.showMessageDialog(frame, msg.toString(),
-            "Drakensang Savegame Editor " + newestVersion.getVersion() +
-            " available", JOptionPane.INFORMATION_MESSAGE);
+            "Drakensang Savegame Editor " + newestVersion.getVersion()
+            + " available", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static void checkSettings() {
         final Settings settings = Settings.getInstance();
-
-        LOG.debug("Setting locale to '" + settings.getLocale() + "'.");
-        Locale.setDefault(settings.getLocale());
-        Messages.reload();
-
-        LOG.debug("Testing connection to " +
-            Settings.getInstance().getDrakensangHome());
+        LOG.debug("Testing connection to "
+            + Settings.getInstance().getDrakensangHome());
 
         if (!Messages.testConnection()) {
             Messages.resetConnection();
@@ -132,13 +130,19 @@ public final class Main {
 
         while (!Messages.testConnection()) {
             Messages.resetConnection();
-            settings.setDrakensangHome(getDrakensangHome(settings));
+            settings.setDrakensangHome(locateDrakensangHome(settings));
         }
+
+        final Locale locale = Messages.guessLocale();
+
+        LOG.debug("Setting locale to '" + locale + "'.");
+        Locale.setDefault(locale);
+        Messages.reload();
 
         settings.save();
     }
 
-    private static File getDrakensangHome(Settings settings) {
+    private static File locateDrakensangHome(Settings settings) {
         JOptionPane.showMessageDialog(null,
             InfoLabel.addNewLines(BUNDLE.getString("drakensang.home.info")),
             BUNDLE.getString("drakensang.home.title"),
@@ -151,11 +155,12 @@ public final class Main {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(new File("c:/Program Files"));
 
-        fileChooser.removeChoosableFileFilter(fileChooser.getChoosableFileFilters()[0]);
+        fileChooser.removeChoosableFileFilter(fileChooser
+            .getChoosableFileFilters()[0]);
         fileChooser.setFileFilter(new FileFilter() {
                 public boolean accept(File f) {
-                    return f.isDirectory() ||
-                    f.getName().equals("drakensang.exe");
+                    return f.isDirectory()
+                    || f.getName().equals("drakensang.exe");
                 }
 
                 public String getDescription() {
