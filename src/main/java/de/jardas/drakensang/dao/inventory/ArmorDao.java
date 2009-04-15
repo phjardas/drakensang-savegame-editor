@@ -1,12 +1,3 @@
-/*
- * ArmorDao.java
- *
- * Version $Revision$ $Date$
- *
- * This file is part of the Abu Dhabi eGovernment Portal.
- *
- * Copyright 2007-2008 ]init[ AG, Berlin, Germany.
- */
 package de.jardas.drakensang.dao.inventory;
 
 import de.jardas.drakensang.DrakensangException;
@@ -19,6 +10,22 @@ import java.sql.SQLException;
 
 
 public class ArmorDao extends InventoryItemDao<Armor> {
+    private static final String[] FIELDS = {
+            "_ID", "_Level", "_Layers", "Transform", "Id", "Graphics", "Physics",
+            "GfxSkin", "Name", "LookAtText", "EquipmentType", "RSKo", "RSBr",
+            "RSRu", "RSBa", "RSLA", "RSRA", "RSLB", "RSRB", "ArMaterial",
+            "ArTyp", "ArGes", "ArBE", "QuestId", "Gew", "PickingRange", "Value",
+            "ScriptPreset", "ScriptOverride", "LimitedScript", "PermanentEffect",
+            "IconBrush", "Arme", "Haende", "Torso", "Beine", "Fuesse", "Haare",
+            "LookAtUnidentified", "IdentificationTalent", "InfoUnIdentified",
+            "InfoIdentified", "IdentificationDifficulty", "IsIdentified",
+            "Robable", "PickingHeight", "UseAnim", "CanUse", "Race", "Sex",
+            "StorageGUID", "Lootable", "VelocityVector", "PhysicCategory",
+            "StorageSlotId", "SoundUI", "IsTradeItem", "InventoryType",
+            "IsEquiped", "EquipmentSlotId", "LocalizeLookAtText", "IsMagical",
+            "CanDestroy", "UseTalent", "EntityDiscovered",
+        };
+
     public ArmorDao() {
         super(Armor.class, "_Instance_Armor");
     }
@@ -40,7 +47,7 @@ public class ArmorDao extends InventoryItemDao<Armor> {
 
             return armor;
         } catch (SQLException e) {
-            throw new DrakensangException("Error loading " + armor + ": " + e, e);
+            throw new DrakensangException("Error loading ", e);
         }
     }
 
@@ -58,5 +65,10 @@ public class ArmorDao extends InventoryItemDao<Armor> {
         builder.append("RsRA = ?", item.getRuestungArmRechts());
         builder.append("RsLB = ?", item.getRuestungBeinLinks());
         builder.append("RsRB = ?", item.getRuestungBeinRechts());
+    }
+
+    @Override
+    protected String[] getFields() {
+        return FIELDS;
     }
 }

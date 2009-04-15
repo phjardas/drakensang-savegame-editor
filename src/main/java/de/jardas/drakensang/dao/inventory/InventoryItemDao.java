@@ -1,18 +1,11 @@
-/*
- * InventoryItemDao.java
- *
- * Version $Revision$ $Date$
- *
- * This file is part of the Abu Dhabi eGovernment Portal.
- *
- * Copyright 2007-2008 ]init[ AG, Berlin, Germany.
- */
 package de.jardas.drakensang.dao.inventory;
 
 import de.jardas.drakensang.DrakensangException;
+import de.jardas.drakensang.dao.Guid;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.dao.UpdateStatementBuilder;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.model.inventory.Ammo;
 import de.jardas.drakensang.model.inventory.Armor;
 import de.jardas.drakensang.model.inventory.InventoryItem;
 import de.jardas.drakensang.model.inventory.Jewelry;
@@ -116,7 +109,8 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
 
     protected boolean hasQuestId() {
         return !Recipe.class.isAssignableFrom(getItemClass())
-        && !Money.class.isAssignableFrom(getItemClass());
+        && !Money.class.isAssignableFrom(getItemClass())
+        && !Ammo.class.isAssignableFrom(getItemClass());
     }
 
     protected boolean hasTaBonus() {
@@ -127,6 +121,7 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
         && !Key.class.isAssignableFrom(getItemClass())
         && !Recipe.class.isAssignableFrom(getItemClass())
         && !Shield.class.isAssignableFrom(getItemClass())
+        && !Ammo.class.isAssignableFrom(getItemClass())
         && !Torch.class.isAssignableFrom(getItemClass());
     }
 
@@ -157,9 +152,31 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
         return this.table;
     }
 
-    public void create(InventoryItem item) {
-    	// FIXME creation of inventory items
+    // FIXME creation of inventory items
+    public void create(InventoryItem item) throws SQLException {
+        LOG.debug("Creating " + item);
         LOG.warn("Creating inventory items is not supported yet: " + item);
+
+        final StringBuffer sql = new StringBuffer();
+        sql.append("insert into '").append(getTable());
+        sql.append("' (select ? as 'Guid', ? as 'StorageGuid'");
+
+        for (String field : getFields()) {
+            if (!"Guid".equalsIgnoreCase(field) && !"StorageGuid".equals(field)) {
+                sql.append(", '").append(field).append("'");
+            }
+        }
+
+        sql.append(" from '").append(getTable());
+        sql.append("' where 'Guid'=?)");
+        System.out.println(sql);
+
+        final PreparedStatement stmt = SavegameDao.getConnection()
+                                                  .prepareStatement(sql.toString());
+        stmt.setBytes(1, Guid.generateGuid());
+        stmt.setBytes(2, item.getInventory().getCharacter().getGuid());
+        stmt.setBytes(3, item.getGuid());
+        stmt.executeUpdate();
     }
 
     public void delete(InventoryItem item) throws SQLException {
@@ -203,4 +220,6 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
 
         return items;
     }
+
+    protected abstract String[] getFields();
 }

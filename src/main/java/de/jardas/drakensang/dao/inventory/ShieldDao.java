@@ -1,12 +1,3 @@
-/*
- * ShieldDao.java
- *
- * Version $Revision$ $Date$
- *
- * This file is part of the Abu Dhabi eGovernment Portal.
- *
- * Copyright 2007-2008 ]init[ AG, Berlin, Germany.
- */
 package de.jardas.drakensang.dao.inventory;
 
 import de.jardas.drakensang.DrakensangException;
@@ -18,6 +9,22 @@ import java.sql.SQLException;
 
 
 public class ShieldDao extends InventoryItemDao<Shield> {
+    private static final String[] FIELDS = {
+            "Guid", "_ID", "_Level", "_Layers", "Transform", "Id", "Graphics",
+            "Physics", "Name", "LookAtText", "EquipmentType", "Gew", "WpINI",
+            "Value", "WpATmod", "WpPAmod", "QuestId", "PickingRange",
+            "WpAmmoCategory", "MaxStackCount", "StackCount", "ScriptPreset",
+            "ScriptOverride", "LimitedScript", "PermanentEffect", "CanUse",
+            "CanDestroy", "IconBrush", "LookAtUnidentified",
+            "IdentificationTalent", "InfoUnIdentified", "InfoIdentified",
+            "IdentificationDifficulty", "IsIdentified", "Lootable", "Robable",
+            "PickingHeight", "UseAnim", "SoundSet", "ArMaterial", "StorageGUID",
+            "VelocityVector", "PhysicCategory", "StorageSlotId", "SoundUI",
+            "IsTradeItem", "InventoryType", "IsEquiped", "EquipmentSlotId",
+            "SpellTargetOffset", "LocalizeLookAtText", "IsMagical",
+            "IsSplitting", "InfiniteStack", "UseTalent", "EntityDiscovered",
+        };
+
     public ShieldDao() {
         super(Shield.class, "_Instance_Shield");
     }
@@ -32,8 +39,7 @@ public class ShieldDao extends InventoryItemDao<Shield> {
 
             return shield;
         } catch (SQLException e) {
-            throw new DrakensangException("Error loading " + shield + ": " + e,
-                e);
+            throw new DrakensangException("Error loading ", e);
         }
     }
 
@@ -44,5 +50,10 @@ public class ShieldDao extends InventoryItemDao<Shield> {
 
         builder.append("WpATmod = ?", item.getAttackeMod());
         builder.append("WpPAmod = ?", item.getParadeMod());
+    }
+
+    @Override
+    protected String[] getFields() {
+        return FIELDS;
     }
 }

@@ -1,6 +1,5 @@
 package de.jardas.drakensang.gui.inventory.wizard;
 
-import de.jardas.drakensang.dao.Guid;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.wizard.Wizard;
 import de.jardas.drakensang.model.Character;
@@ -47,7 +46,6 @@ public class NewItemWizard extends Wizard {
     }
 
     private void save() {
-        item.setGuid(Guid.generateGuid());
         getCharacter().getInventory().add(item);
     }
 

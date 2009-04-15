@@ -1,12 +1,3 @@
-/*
- * WeaponDao.java
- *
- * Version $Revision$ $Date$
- *
- * This file is part of the Abu Dhabi eGovernment Portal.
- *
- * Copyright 2007-2008 ]init[ AG, Berlin, Germany.
- */
 package de.jardas.drakensang.dao.inventory;
 
 import de.jardas.drakensang.DrakensangException;
@@ -20,6 +11,26 @@ import java.sql.SQLException;
 
 
 public class WeaponDao extends InventoryItemDao<Weapon> {
+    private static final String[] FIELDS = {
+            "Guid", "_ID", "_Level", "_Layers", "Transform", "Id", "Graphics",
+            "IsCharGraphics", "AnimSet", "Physics", "Name", "LookAtText",
+            "EquipmentType", "WeaponAnimGroup", "AlternativeWeaponAnimGroup",
+            "TaAttr", "SoundSet", "WpW6", "WpW6plus", "WpTPKK1", "WpTPKK2",
+            "Gew", "WpLg", "WpBF", "WpINI", "Value", "WpATmod", "WpPAmod",
+            "WpDK", "WpATRange", "WpReload", "WpD1", "WpTP1", "WpTP2", "WpTP3",
+            "WpTP4", "WpTP5", "QuestId", "PickingRange", "WpAmmoCategory",
+            "WpAmmoGraphicsAttr", "MaxStackCount", "StackCount", "ScriptPreset",
+            "ScriptOverride", "LimitedScript", "PermanentEffect", "CanUse",
+            "CanDestroy", "IconBrush", "LookAtUnidentified",
+            "IdentificationTalent", "InfoUnIdentified", "InfoIdentified",
+            "IdentificationDifficulty", "IsIdentified", "IsMagical", "Robable",
+            "PickingHeight", "UseAnim", "Characteristica", "SoundUI",
+            "StorageGUID", "Lootable", "VelocityVector", "PhysicCategory",
+            "StorageSlotId", "IsTradeItem", "InventoryType", "IsEquiped",
+            "EquipmentSlotId", "SpellTargetOffset", "LocalizeLookAtText",
+            "IsSplitting", "InfiniteStack", "UseTalent", "EntityDiscovered",
+        };
+
     public WeaponDao() {
         super(Weapon.class, "_Instance_Weapon");
     }
@@ -36,8 +47,7 @@ public class WeaponDao extends InventoryItemDao<Weapon> {
 
             return weapon;
         } catch (SQLException e) {
-            throw new DrakensangException("Error loading " + weapon + ": " + e,
-                e);
+            throw new DrakensangException("Error loading ", e);
         }
     }
 
@@ -48,5 +58,10 @@ public class WeaponDao extends InventoryItemDao<Weapon> {
 
         builder.append("WpW6 = ?", item.getSchaden().getDiceMultiplier());
         builder.append("WpW6plus = ?", item.getSchaden().getAddition());
+    }
+
+    @Override
+    protected String[] getFields() {
+        return FIELDS;
     }
 }

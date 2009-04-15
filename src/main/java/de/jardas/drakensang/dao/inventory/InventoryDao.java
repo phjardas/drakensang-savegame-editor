@@ -1,12 +1,3 @@
-/*
- * InventoryDao.java
- *
- * Version $Revision$ $Date$
- *
- * This file is part of the Abu Dhabi eGovernment Portal.
- *
- * Copyright 2007-2008 ]init[ AG, Berlin, Germany.
- */
 package de.jardas.drakensang.dao.inventory;
 
 import de.jardas.drakensang.DrakensangException;
@@ -37,6 +28,7 @@ public class InventoryDao {
         ITEM_DAOS.add(new WeaponDao());
         ITEM_DAOS.add(new ShieldDao());
         ITEM_DAOS.add(new ArmorDao());
+        ITEM_DAOS.add(new AmmoDao());
         ITEM_DAOS.add(new MoneyDao());
         ITEM_DAOS.add(new ItemDao());
         ITEM_DAOS.add(new JewelryDao());
