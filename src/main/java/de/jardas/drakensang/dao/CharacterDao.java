@@ -14,6 +14,9 @@ import de.jardas.drakensang.model.Profession;
 import de.jardas.drakensang.model.Race;
 import de.jardas.drakensang.model.Sex;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,8 +26,7 @@ import java.util.Set;
 
 
 public class CharacterDao {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(CharacterDao.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CharacterDao.class);
     private static Set<Character> characters;
 
     public static synchronized Set<Character> getCharacters() {
@@ -59,8 +61,8 @@ public class CharacterDao {
         while (result.next()) {
             String name = result.getString("Name");
 
-            if (name.contains("fake") || name.startsWith("loc")
-                    || name.contains("cutscene")) {
+            if (name.contains("fake") || name.startsWith("loc") ||
+                    name.contains("cutscene")) {
                 LOG.debug("Skipping character " + name + ".");
 
                 continue;
@@ -93,6 +95,12 @@ public class CharacterDao {
             c.setAstralenergie(result.getInt("AE"));
             c.setAstralenergieBonus(result.getInt("AEBonus"));
 
+            c.setSneakSpeed(round(result.getDouble("SneakSpeed"), 4));
+            c.setWalkSpeed(round(result.getDouble("WalkSpeed"), 4));
+            c.setRunSpeed(round(result.getDouble("RunSpeed"), 4));
+            c.setCurrentSpeed(round(result.getDouble("CurrentSpeed"), 4));
+            c.setMaxVelocity(round(result.getDouble("MaxVelocity"), 4));
+
             c.getAttribute().load(result);
             c.getTalente().load(result);
             c.getSonderfertigkeiten().load(result);
@@ -109,6 +117,11 @@ public class CharacterDao {
         }
 
         return items;
+    }
+
+    private static double round(double input, int precision) {
+        return BigDecimal.valueOf(input).round(new MathContext(precision))
+                         .doubleValue();
     }
 
     private static void loadAdvantages(Character c, ResultSet result)
@@ -149,6 +162,11 @@ public class CharacterDao {
         builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
         builder.append("'Advantages' = ?",
             Advantage.serialize(character.getAdvantages()));
+        builder.append("'SneakSpeed' = ?", character.getSneakSpeed());
+        builder.append("'WalkSpeed' = ?", character.getWalkSpeed());
+        builder.append("'RunSpeed' = ?", character.getRunSpeed());
+        builder.append("'CurrentSpeed' = ?", character.getCurrentSpeed());
+        builder.append("'MaxVelocity' = ?", character.getMaxVelocity());
 
         if (character.isPlayerCharacter()) {
             builder.append("'CharacterSet' = ?",
@@ -190,9 +208,9 @@ public class CharacterDao {
             throw new RuntimeException("Error saving characters: " + e, e);
         }
     }
-    
+
     public static void reset() {
-    	LOG.debug("Resetting.");
-    	characters = null;
+        LOG.debug("Resetting.");
+        characters = null;
     }
 }

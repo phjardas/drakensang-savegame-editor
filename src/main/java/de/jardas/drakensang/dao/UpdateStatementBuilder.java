@@ -36,6 +36,10 @@ public class UpdateStatementBuilder {
 	public void append(String sql, int value) {
 		append(sql, ParameterType.Int, value);
 	}
+	
+	public void append(String sql, double value) {
+		append(sql, ParameterType.Double, value);
+	}
 
 	public void append(String sql, String value) {
 		append(sql, ParameterType.String, value);
@@ -115,6 +119,12 @@ public class UpdateStatementBuilder {
 			public void set(PreparedStatement stmt, int index, Object value)
 					throws SQLException {
 				stmt.setBytes(index, (byte[]) value);
+			}
+		}, Double {
+			@Override
+			public void set(PreparedStatement stmt, int index, Object value)
+					throws SQLException {
+				stmt.setDouble(index, (Double) value);
 			}
 		};
 

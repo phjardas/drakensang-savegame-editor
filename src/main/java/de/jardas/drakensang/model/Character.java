@@ -32,6 +32,11 @@ public class Character extends Persistable {
     private int lebensenergieBonus;
     private int astralenergie;
     private int astralenergieBonus;
+    private double sneakSpeed;
+    private double walkSpeed;
+    private double runSpeed;
+    private double currentSpeed;
+    private double maxVelocity;
     private final Set<Advantage> advantages = new HashSet<Advantage>();
     private int level;
 
@@ -267,7 +272,47 @@ public class Character extends Persistable {
         this.level = level;
     }
 
-    @Override
+    public double getSneakSpeed() {
+		return sneakSpeed;
+	}
+
+	public void setSneakSpeed(double sneakSpeed) {
+		this.sneakSpeed = sneakSpeed;
+	}
+
+	public double getWalkSpeed() {
+		return walkSpeed;
+	}
+
+	public void setWalkSpeed(double walkSpeed) {
+		this.walkSpeed = walkSpeed;
+	}
+
+	public double getRunSpeed() {
+		return runSpeed;
+	}
+
+	public void setRunSpeed(double runSpeed) {
+		this.runSpeed = runSpeed;
+	}
+
+	public double getCurrentSpeed() {
+		return currentSpeed;
+	}
+
+	public void setCurrentSpeed(double currentSpeed) {
+		this.currentSpeed = currentSpeed;
+	}
+
+	public double getMaxVelocity() {
+		return maxVelocity;
+	}
+
+	public void setMaxVelocity(double maxVelocity) {
+		this.maxVelocity = maxVelocity;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
             ToStringStyle.MULTI_LINE_STYLE).toString();

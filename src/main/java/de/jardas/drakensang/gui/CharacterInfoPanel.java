@@ -104,8 +104,7 @@ public class CharacterInfoPanel extends JPanel {
                     character.getLebensenergieBonus(), -100, 100, 1));
         leBonus.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    character.setLebensenergieBonus(((Number) leBonus.getValue())
-                        .intValue());
+                    character.setLebensenergieBonus(((Number) leBonus.getValue()).intValue());
                     updateDerivedFields();
                 }
             });
@@ -126,8 +125,7 @@ public class CharacterInfoPanel extends JPanel {
                     character.getAstralenergieBonus(), -100, 100, 1));
         aeBonus.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    character.setAstralenergieBonus(((Number) aeBonus.getValue())
-                        .intValue());
+                    character.setAstralenergieBonus(((Number) aeBonus.getValue()).intValue());
                     updateDerivedFields();
                 }
             });
@@ -152,15 +150,30 @@ public class CharacterInfoPanel extends JPanel {
     }
 
     private void addNumberFields(int panelRow) {
+        final JPanel container = new JPanel();
+        container.setLayout(new GridBagLayout());
+        add(container,
+            new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
+
+        container.add(createMiscFields(container),
+            new GridBagConstraints(0, 0, 1, 1, .5, .5,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
+
+        container.add(createSpeedFields(container),
+            new GridBagConstraints(1, 0, 1, 1, .5, .5,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                new Insets(3, 6, 3, 6), 0, 0));
+    }
+
+    private JComponent createMiscFields(JPanel container) {
         int row = 0;
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder(Messages.get(
                     "MiscFigures")));
-        add(panel,
-            new GridBagConstraints(0, panelRow, 1, 1, 0, 0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
-                new Insets(3, 6, 3, 6), 0, 0));
 
         final JSpinner level = new JSpinner(new SpinnerNumberModel(
                     character.getLevel(), 1, 40, 1));
@@ -175,8 +188,7 @@ public class CharacterInfoPanel extends JPanel {
                     character.getAbenteuerpunkte(), 0, 100000, 1));
         xp.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    character.setAbenteuerpunkte(((Number) xp.getValue())
-                        .intValue());
+                    character.setAbenteuerpunkte(((Number) xp.getValue()).intValue());
                 }
             });
         addInput(panel, "XP", xp, row++);
@@ -185,8 +197,7 @@ public class CharacterInfoPanel extends JPanel {
                     character.getSteigerungspunkte(), 0, 100000, 1));
         up.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    character.setSteigerungspunkte(((Number) up.getValue())
-                        .intValue());
+                    character.setSteigerungspunkte(((Number) up.getValue()).intValue());
                 }
             });
         addInput(panel, "UpgradeXP", up, row++);
@@ -196,13 +207,53 @@ public class CharacterInfoPanel extends JPanel {
                         character.getMoneyAmount(), 0, 9999999, 1));
             money.addChangeListener(new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
-                        character.setMoneyAmount(((Number) money.getValue())
-                            .intValue());
+                        character.setMoneyAmount(((Number) money.getValue()).intValue());
                     }
                 });
 
             addInput(panel, "Money", money, row++);
         }
+
+        return panel;
+    }
+
+    private JComponent createSpeedFields(JPanel container) {
+        int row = 0;
+        final JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(Messages.get(
+                    "SpeedFields")));
+
+        final JSpinner sneak = new JSpinner(new SpinnerNumberModel(
+                    character.getSneakSpeed(), 0, 100, .1));
+        sneak.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setSneakSpeed(((Number) sneak.getValue()).doubleValue());
+                }
+            });
+        addInput(panel, "SneakSpeed", sneak, row++);
+
+        final JSpinner walk = new JSpinner(new SpinnerNumberModel(
+                    character.getWalkSpeed(), 0, 100, .1));
+        walk.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setWalkSpeed(((Number) walk.getValue()).doubleValue());
+                }
+            });
+        addInput(panel, "WalkSpeed", walk, row++);
+
+        final JSpinner run = new JSpinner(new SpinnerNumberModel(
+                    character.getRunSpeed(), 0, 100, .1));
+        run.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    character.setRunSpeed(((Number) run.getValue()).doubleValue());
+                    character.setCurrentSpeed(character.getRunSpeed());
+                    character.setMaxVelocity(character.getRunSpeed());
+                }
+            });
+        addInput(panel, "RunSpeed", run, row++);
+
+        return panel;
     }
 
     private void addArchetypeFields(int panelRow) {
@@ -247,8 +298,8 @@ public class CharacterInfoPanel extends JPanel {
                     new Insets(3, 6, 3, 6), 0, 0));
         }
 
-        final EnumComboBox<Culture> culture = new EnumComboBox<Culture>(Culture
-                .values(), character.getCulture()) {
+        final EnumComboBox<Culture> culture = new EnumComboBox<Culture>(Culture.values(),
+                character.getCulture()) {
                 protected void valueChanged(Culture item) {
                     character.setCulture(item);
                     updateDerivedFields();
@@ -257,8 +308,8 @@ public class CharacterInfoPanel extends JPanel {
 
         addInput(archetypePanel, "Culture", culture, row++);
 
-        final EnumComboBox<Profession> profession = new EnumComboBox<Profession>(Profession
-                .values(), character.getProfession()) {
+        final EnumComboBox<Profession> profession = new EnumComboBox<Profession>(Profession.values(),
+                character.getProfession()) {
                 protected void valueChanged(Profession item) {
                     character.setProfession(item);
                     updateDerivedFields();
@@ -272,11 +323,10 @@ public class CharacterInfoPanel extends JPanel {
                 protected void valueChanged(Sex item)
                     throws ChangeRejectedException {
                     if (character.getCharacterSet().getArchetype(item) == null) {
-                        String message = MessageFormat
-                            .format(Messages.get("error.sexAppearance.message"),
+                        String message = MessageFormat.format(Messages.get(
+                                    "error.sexAppearance.message"),
                                 Messages.get(character.getCharacterSet()
-                                                      .getArchetype(character
-                                        .getSex())));
+                                                      .getArchetype(character.getSex())));
                         String title = Messages.get("error.sexAppearance.title");
                         throw new ChangeRejectedException(message, title);
                     }
@@ -320,8 +370,8 @@ public class CharacterInfoPanel extends JPanel {
             });
         addInput(archetypePanel, "Magician", magician, row++);
 
-        final EnumComboBox<CasterType> casterType = new EnumComboBox<CasterType>(CasterType
-                .values(), character.getCasterType()) {
+        final EnumComboBox<CasterType> casterType = new EnumComboBox<CasterType>(CasterType.values(),
+                character.getCasterType()) {
                 protected void valueChanged(CasterType item) {
                     character.setCasterType(item);
                 }
@@ -337,8 +387,8 @@ public class CharacterInfoPanel extends JPanel {
 
         addInput(archetypePanel, "CasterType", casterType, row++);
 
-        final EnumComboBox<CasterRace> casterRace = new EnumComboBox<CasterRace>(CasterRace
-                .values(), character.getCasterRace()) {
+        final EnumComboBox<CasterRace> casterRace = new EnumComboBox<CasterRace>(CasterRace.values(),
+                character.getCasterRace()) {
                 protected void valueChanged(CasterRace item) {
                     character.setCasterRace(item);
                 }
@@ -365,8 +415,8 @@ public class CharacterInfoPanel extends JPanel {
     }
 
     private ImageIcon createPicture() {
-        String url = character.getCharacterSet().getIcon(character.getSex())
-            + ".png";
+        String url = character.getCharacterSet().getIcon(character.getSex()) +
+            ".png";
 
         return new ImageIcon(getClass().getResource(url));
     }
