@@ -21,6 +21,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import java.io.File;
+
 import java.text.Collator;
 import java.text.MessageFormat;
 
@@ -46,8 +48,7 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class MainFrame extends JFrame {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(MainFrame.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(MainFrame.class);
     private final JToolBar toolbar = new JToolBar();
     private CharacterPanel characterPanel = new CharacterPanel();
     private JButton saveButton;
@@ -238,13 +239,11 @@ public class MainFrame extends JFrame {
         characterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         characterList.addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
-                    if ((characterList.getSelectedIndex() >= 0)
-                            && (characterList.getSelectedIndex() < characters
-                            .size())) {
-                        Character character = characters.get(characterList
-                                .getSelectedIndex());
-                        LOG.debug("Character #"
-                            + characterList.getSelectedIndex() + " selected.");
+                    if ((characterList.getSelectedIndex() >= 0) &&
+                            (characterList.getSelectedIndex() < characters.size())) {
+                        Character character = characters.get(characterList.getSelectedIndex());
+                        LOG.debug("Character #" +
+                            characterList.getSelectedIndex() + " selected.");
                         updateSelection(character);
                     }
                 }
@@ -277,11 +276,17 @@ public class MainFrame extends JFrame {
     }
 
     public void save() {
+        final File backup = SavegameDao.createBackup();
         CharacterDao.saveAll();
-        JOptionPane.showMessageDialog(this,
-            MessageFormat.format(Messages.get("GameSaved"),
-                savegame.getFile().getAbsolutePath()),
-            Messages.get("SaveGame"), JOptionPane.INFORMATION_MESSAGE);
+
+        final String message = (backup != null)
+            ? MessageFormat.format(Messages.get("GameSavedWithBackup"),
+                savegame.getFile().getAbsolutePath(), backup.getAbsolutePath())
+            : MessageFormat.format(Messages.get("GameSaved"),
+                savegame.getFile().getAbsolutePath());
+
+        JOptionPane.showMessageDialog(this, message, Messages.get("SaveGame"),
+            JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void updateSelection(Character character) {

@@ -11,13 +11,16 @@ import java.util.Properties;
 
 
 public class Settings {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(Settings.class);
-    private static final File SETTINGS_FILE = new File(System.getProperty(
-                "user.home"), ".drakensang-editor/settings.properties");
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Settings.class);
+    private static final File SETTINGS_DIRECTORY = new File(System.getProperty(
+                "user.home"), ".drakensang-editor");
+    private static final File SETTINGS_FILE = new File(SETTINGS_DIRECTORY,
+            "settings.properties");
     private static Settings instance;
     private File drakensangHome;
     private String latestVersionInformation;
+    private boolean createBackupOnSave = true;
+    private File backupDirectory = new File(SETTINGS_DIRECTORY, "backups");
 
     public static synchronized Settings getInstance() {
         if (instance == null) {
@@ -43,6 +46,22 @@ public class Settings {
         this.latestVersionInformation = latestVersionInformation;
     }
 
+    public boolean isCreateBackupOnSave() {
+        return createBackupOnSave;
+    }
+
+    public void setCreateBackupOnSave(boolean createBackupOnSave) {
+        this.createBackupOnSave = createBackupOnSave;
+    }
+
+    public File getBackupDirectory() {
+        return backupDirectory;
+    }
+
+    public void setBackupDirectory(File backupDirectory) {
+        this.backupDirectory = backupDirectory;
+    }
+
     public synchronized void save() {
         Properties props = new Properties();
         props.setProperty("drakensang.home",
@@ -51,6 +70,14 @@ public class Settings {
         if (getLatestVersionInformation() != null) {
             props.setProperty("latestVersionInformation",
                 getLatestVersionInformation());
+        }
+
+        props.setProperty("backups.enabled",
+            Boolean.toString(isCreateBackupOnSave()));
+
+        if (getBackupDirectory() != null) {
+            props.setProperty("backups.directory",
+                getBackupDirectory().getAbsolutePath());
         }
 
         try {
@@ -81,6 +108,16 @@ public class Settings {
             if (props.get("latestVersionInformation") != null) {
                 settings.setLatestVersionInformation(props.getProperty(
                         "latestVersionInformation"));
+            }
+
+            if (props.get("backups.directory") != null) {
+                settings.setBackupDirectory(new File(props.getProperty(
+                            "backups.directory")));
+            }
+
+            if (props.get("backups.enabled") != null) {
+                settings.setCreateBackupOnSave(Boolean.parseBoolean(
+                        props.getProperty("backups.enabled")));
             }
         } catch (IOException e) {
             LOG.info("No settings found at " + SETTINGS_FILE + ": " + e);

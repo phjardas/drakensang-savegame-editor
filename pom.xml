@@ -17,6 +17,12 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.sqlite</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>1.20080420</version>
