@@ -8,6 +8,14 @@
   <version>1.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Drakensang Savegame Editor</name>
+  <description>Drakensang Savegame Editor allows you to
+      manipulate most of the character data contained in Drakensang save
+      games.</description>
+  <url>http://www.jardas.de/drakensang/</url>
+  <organization>
+    <name>Philipp Jardas</name>
+    <url>http://www.jardas.de/</url>
+  </organization>
 
   <dependencies>
     <dependency>
