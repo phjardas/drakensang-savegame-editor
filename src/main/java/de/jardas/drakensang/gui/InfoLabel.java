@@ -56,7 +56,7 @@ public class InfoLabel extends JComponent {
 
 		if (infoKey != null) {
 			try {
-				final String info = addNewLines(Messages.getRequired(infoKey));
+				final String info = addNewLines(localize ? Messages.getRequired(infoKey) : infoKey);
 
 				JComponent anchor = new JLabel("?");
 				anchor.setForeground(Color.BLUE);

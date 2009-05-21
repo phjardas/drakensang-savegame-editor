@@ -1,10 +1,12 @@
 package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.DrakensangException;
+import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Advantage;
 import de.jardas.drakensang.model.Advantage.Effect;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.Modification;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -42,27 +47,61 @@ public class AdvantagesPanel extends JPanel {
     }
 
     private void addAdvantageFields() {
-        List<Advantage> advantages = new ArrayList<Advantage>(Arrays.asList(
+        final List<Advantage> advantages = new ArrayList<Advantage>(Arrays.asList(
                     Advantage.values()));
         Collections.sort(advantages,
             new Comparator<Advantage>() {
                 private final Collator collator = Collator.getInstance();
 
                 public int compare(Advantage o1, Advantage o2) {
-                    return collator.compare(getName(o1), getName(o2));
+                    return collator.compare(o1.getName(), o2.getName());
                 }
             });
+
+        final Map<Modification, Boolean> modificationVisibility = new HashMap<Modification, Boolean>();
+
+        for (Modification mod : Modification.values()) {
+            modificationVisibility.put(mod, false);
+        }
+
+        for (Advantage advantage : advantages) {
+            if (advantage.isPartOfModification() &&
+                    character.getAdvantages().contains(advantage)) {
+                modificationVisibility.put(advantage.getModification(), true);
+            }
+        }
+
+        displayInfoForUnknownModification(advantages);
 
         int row = 0;
 
         for (Advantage advantage : advantages) {
-            addAdvantageField(advantage, row++);
+            if (!advantage.isPartOfModification() ||
+                    modificationVisibility.get(advantage.getModification())) {
+                addAdvantageField(advantage, row++);
+            }
+        }
+    }
+
+    private void displayInfoForUnknownModification(List<Advantage> advantages) {
+        for (Advantage advantage : advantages) {
+            if (character.getAdvantages().contains(advantage) &&
+                    advantage.isUnknownModification()) {
+                JOptionPane.showMessageDialog(Main.getFrame(),
+                    InfoLabel.addNewLines(Messages.get("mod.unknown.message")),
+                    Messages.get("mod.unknown.title"),
+                    JOptionPane.WARNING_MESSAGE | JOptionPane.OK_OPTION);
+
+                return;
+            }
         }
     }
 
     private void addAdvantageField(final Advantage advantage, int row) {
         final JCheckBox box = new JCheckBox();
-        box.setSelected(getCharacter().getAdvantages().contains(advantage));
+        boolean selected = getCharacter().getAdvantages().contains(advantage);
+
+        box.setSelected(selected);
         box.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (box.isSelected()) {
@@ -85,11 +124,11 @@ public class AdvantagesPanel extends JPanel {
             new GridBagConstraints(0, row, 1, 1, 0, 0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
 
-        add(new InfoLabel(advantage.getNameKey(), advantage.getInfoKey()),
+        add(new InfoLabel(advantage.getName(), advantage.getInfo(), false),
             new GridBagConstraints(1, row, 1, 1, 0, 0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
 
-        StringBuffer effects = new StringBuffer();
+        final StringBuffer effects = new StringBuffer();
 
         for (Effect effect : advantage.getEffects()) {
             if (effects.length() > 0) {
@@ -113,10 +152,6 @@ public class AdvantagesPanel extends JPanel {
                 box.setEnabled(enabled);
             }
         }
-    }
-
-    private String getName(Advantage adv) {
-        return Messages.get(adv.getNameKey());
     }
 
     public Character getCharacter() {
