@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -20,6 +19,12 @@
     <dependency>
       <groupId>org.sqlite</groupId>
       <artifactId>sqlite-jdbc</artifactId>
+      <version>1.20080420</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.sqlite</groupId>
+      <artifactId>sqlite-jdbc-jni-win</artifactId>
       <version>1.20080420</version>
     </dependency>
 
@@ -76,7 +81,7 @@
         </excludes>
       </resource>
     </resources>
-  	
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -122,6 +127,35 @@
           </archive>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo.webstart</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+      </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>webstart-maven-plugin</artifactId>
+          <configuration>
+            <jnlp>
+              <mainClass>de.jardas.drakensang.WebStart</mainClass>
+            </jnlp>
+            <sign>
+              <keystore>../../src/jnlp/jnlp.jks</keystore>
+              <keypass>bluejeans</keypass>
+              <storepass>bluejeans</storepass>
+              <storetype>jks</storetype>
+              <alias>drakensang</alias>
+              <verify>true</verify>
+            </sign>
+            <verbose>true</verbose>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
