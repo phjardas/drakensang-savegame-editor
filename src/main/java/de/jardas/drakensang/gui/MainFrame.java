@@ -142,6 +142,7 @@ public class MainFrame extends JFrame {
                         new NewItemWizard(MainFrame.this);
                     }
                 });
+        inventoryWizardButton.setVisible(false);
         inventoryWizardButton.setEnabled(false);
         toolbar.add(inventoryWizardButton);
 
