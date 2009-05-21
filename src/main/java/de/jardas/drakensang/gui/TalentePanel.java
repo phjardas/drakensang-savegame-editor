@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.Static;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.Talente;
@@ -71,7 +72,7 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
                     attBuffer.append(", ");
                 }
 
-                attBuffer.append(attr);
+                attBuffer.append(Messages.get(attr + "Short"));
                 attBuffer.append("=");
                 attBuffer.append(getCharacter().getAttribute().get(attr));
             }
