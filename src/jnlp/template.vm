@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="6.0+" version="0.1-SNAPSHOT"
+<jnlp spec="6.0+" version="$project.Version"
   codebase="http://www.jardas.de/drakensang/webstart" href="$outputFile">
-  
   <information>
-    <title>Drakensang Savegame Editor</title>
-    <vendor>Philipp Jardas</vendor>
-    <homepage href="http://www.jardas.de/drakensang/" />
-    <description>Drakensang Savegame Editor</description>
+    <title>$project.Name</title>
+    <vendor>$project.Organization.Name</vendor>
+    <homepage href="$project.Url" />
+    <description>$project.Description</description>
     <offline-allowed />
   </information>
-  
+
   <security>
     <all-permissions />
   </security>
-  
+
   <resources os="Windows">
     <java version="1.5+" />
-    <property name="jnlp.versionEnabled" value="true"/>
     $dependencies
-    <nativelib href="sqlite-jdbc-jni-win-1.20080420.jar" />
+    <property name="jnlp.versionEnabled" value="true" />
   </resources>
-  
+
   <application-desc main-class="$mainClass" />
 </jnlp> 

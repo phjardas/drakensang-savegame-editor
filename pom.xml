@@ -31,15 +31,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.sqlite</groupId>
+      <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>1.20080420</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sqlite</groupId>
-      <artifactId>sqlite-jdbc-jni-win</artifactId>
-      <version>1.20080420</version>
+      <version>3.6.7</version>
     </dependency>
 
     <dependency>

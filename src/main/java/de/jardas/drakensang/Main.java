@@ -37,7 +37,7 @@ public final class Main {
         LOG.info("Starting up Drakensang Savegame Editor");
 
         try {
-            Class.forName("SQLite.JDBCDriver").newInstance();
+            Class.forName("org.sqlite.JDBC");
 
             checkSettings();
 
