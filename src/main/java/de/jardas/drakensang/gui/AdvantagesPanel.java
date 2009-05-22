@@ -4,8 +4,8 @@ import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.Advantage;
-import de.jardas.drakensang.model.Advantage.Effect;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.Effect;
 import de.jardas.drakensang.model.Modification;
 
 import java.awt.GridBagConstraints;

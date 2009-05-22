@@ -3,10 +3,8 @@ package de.jardas.drakensang.model;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.Static;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import java.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -134,97 +132,99 @@ public enum Advantage {
     dadv_battle_magic_penalty(Modification.ERGOS_FIXPACK),
     adv_summoning_magic_bonus(Modification.ERGOS_FIXPACK),
     dadv_summoning_magic_penalty(Modification.ERGOS_FIXPACK),
-    
+
     /* From Damar's Battle Magic */
     zz_ae_bonus_med(Modification.DRAMARS_BATTLE_MAGIC),
-    zz_ae_bonus_small(Modification.DRAMARS_BATTLE_MAGIC),
-    ;
-
+    zz_ae_bonus_small(Modification.DRAMARS_BATTLE_MAGIC);
+	
     private final Effect[] effects;
     private final Modification modification;
 
     private Advantage() {
-    	this(null);
+        this(null);
     }
-    
+
     private Advantage(Modification modification) {
-    	this.modification = modification;
-    	effects = loadEffects(name());
+        this.modification = modification;
+        effects = loadEffects(name());
     }
 
     private static Effect[] loadEffects(String name) {
-    	try {
-        final String[] tokens = Static.get("AttributeModifier", name, "Id",
-                "_Template_Advantages").trim().split("\\s*;\\s*");
-        List<Effect> effects = new ArrayList<Effect>(tokens.length);
+        try {
+            final String[] tokens = Static.get("AttributeModifier", name, "Id",
+                    "_Template_Advantages").trim().split("\\s*;\\s*");
+            List<Effect> effects = new ArrayList<Effect>(tokens.length);
 
-        for (String token : tokens) {
-            if (token.trim().length() == 0) {
-                continue;
+            for (String token : tokens) {
+                if (token.trim().length() == 0) {
+                    continue;
+                }
+
+                final String[] nameAndMod = token.split(":");
+
+                String targetName = nameAndMod[0];
+                EffectTarget targetType = EffectTarget.getTargetType(targetName);
+                int modifier = Integer.valueOf(nameAndMod[1].startsWith("+")
+                        ? nameAndMod[1].substring(1) : nameAndMod[1]);
+                effects.add(new Effect(targetType, targetName, modifier));
             }
 
-            final String[] nameAndMod = token.split(":");
+            return effects.toArray(new Effect[effects.size()]);
+        } catch (MissingResourceException e) {
+            System.err.println("Error loading effects for advantage " + name +
+                ": " + e);
 
-            String targetName = nameAndMod[0];
-            EffectTarget targetType = EffectTarget.getTargetType(targetName);
-            int modifier = Integer.valueOf(nameAndMod[1].startsWith("+")
-                    ? nameAndMod[1].substring(1) : nameAndMod[1]);
-            effects.add(new Effect(targetType, targetName, modifier));
+            return new Effect[0];
         }
-
-        return effects.toArray(new Effect[effects.size()]);
-    	} catch (MissingResourceException e) {
-    		System.err.println("Error loading effects for advantage " + name + ": " + e);
-    		
-    		return new Effect[0];
-    	}
     }
 
     public String getNameKey() {
         return Static.get("Name", name(), "Id", "_Template_Advantages");
     }
-    
+
     public boolean isUnknownModification() {
-    	if (!isPartOfModification()) {
-    		return false;
-    	}
-    	
-    	try {
-    		Messages.get(getNameKey());
-    		
-    		return false;
-    	} catch (MissingResourceException e) {
-    		return true;
-    	}
+        if (!isPartOfModification()) {
+            return false;
+        }
+
+        try {
+            Messages.get(getNameKey());
+
+            return false;
+        } catch (MissingResourceException e) {
+            return true;
+        }
     }
-    
+
     public String getName() {
-    	try {
-    		return Messages.get(getNameKey());
-    	} catch (MissingResourceException e) {
-    		if (isPartOfModification()) {
-    			final String pattern = Messages.get("advantage.unknown");
-    			return MessageFormat.format(pattern, name(), Messages.get("mod." + getModification()));
-    		}
-    		
-    		throw e;
-    	}
+        try {
+            return Messages.get(getNameKey());
+        } catch (MissingResourceException e) {
+            if (isPartOfModification()) {
+                final String pattern = Messages.get("advantage.unknown");
+
+                return MessageFormat.format(pattern, name(),
+                    Messages.get("mod." + getModification()));
+            }
+
+            throw e;
+        }
     }
 
     public String getInfoKey() {
         return Static.get("Description", name(), "Id", "_Template_Advantages");
     }
-    
+
     public String getInfo() {
-    	try {
-    		return Messages.get(getInfoKey());
-    	} catch (MissingResourceException e) {
-    		if (isPartOfModification()) {
-    			return null;
-    		}
-    		
-    		throw e;
-    	}
+        try {
+            return Messages.get(getInfoKey());
+        } catch (MissingResourceException e) {
+            if (isPartOfModification()) {
+                return null;
+            }
+
+            throw e;
+        }
     }
 
     public Effect[] getEffects() {
@@ -232,14 +232,14 @@ public enum Advantage {
     }
 
     public Modification getModification() {
-		return modification;
-	}
-    
-    public boolean isPartOfModification() {
-    	return getModification() != null;
+        return modification;
     }
 
-	public static String serialize(Collection<Advantage> advantages) {
+    public boolean isPartOfModification() {
+        return getModification() != null;
+    }
+
+    public static String serialize(Collection<Advantage> advantages) {
         final StringBuffer out = new StringBuffer();
 
         for (Advantage advantage : advantages) {
@@ -251,108 +251,5 @@ public enum Advantage {
         }
 
         return out.toString();
-    }
-
-    public static class Effect {
-        private final EffectTarget targetType;
-        private final String targetName;
-        private final int modifier;
-
-        public Effect(final EffectTarget targetType, final String targetName,
-            final int modifier) {
-            super();
-            this.targetType = targetType;
-            this.targetName = targetName;
-            this.modifier = modifier;
-        }
-
-        public int getModifier() {
-            return this.modifier;
-        }
-
-        public String getTargetName() {
-            return this.targetName;
-        }
-
-        public EffectTarget getTargetType() {
-            return this.targetType;
-        }
-
-        public String getTargetNameKey() {
-            switch (getTargetType()) {
-            case Talent:
-                return Talente.getNameKey(getTargetName());
-
-            case MagicResistance:
-                return "Magieresistenz";
-
-            case Life:
-                return "LE";
-
-            case Mana:
-                return "AE";
-
-            case Endurance:
-                return "AU";
-
-            default:
-                return getTargetName();
-            }
-        }
-
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this);
-        }
-    }
-    public static enum EffectTarget {Attribute,
-        Talent,
-        MagicResistance,
-        Life,
-        LifeRegeneration,
-        Mana,
-        ManaRegeneration,
-        Endurance,
-        EnduranceRegeneration;
-        public static EffectTarget getTargetType(String name) {
-            if (ArrayUtils.contains(de.jardas.drakensang.model.Attribute.KEYS,
-                        name)) {
-                return Attribute;
-            }
-
-            if ("MR".equals(name)) {
-                return MagicResistance;
-            }
-
-            if ("LEmax".equals(name)) {
-                return Life;
-            }
-
-            if ("Reg_LE".equals(name)) {
-                return LifeRegeneration;
-            }
-
-            if ("AEmax".equals(name)) {
-                return Mana;
-            }
-
-            if ("Reg_AE".equals(name)) {
-                return ManaRegeneration;
-            }
-
-            if ("AUmax".equals(name)) {
-                return Endurance;
-            }
-
-            if ("Reg_AU".equals(name)) {
-                return EnduranceRegeneration;
-            }
-
-            if (name.startsWith("Ta")) {
-                return Talent;
-            }
-
-            return null;
-        }
     }
 }

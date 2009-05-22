@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="6.0+" version="$project.Version"
+<jnlp spec="6.0+" version="1.5-SNAPSHOT"
   codebase="http://www.jardas.de/drakensang/webstart" href="$outputFile">
   <information>
-    <title>$project.Name</title>
-    <vendor>$project.Organization.Name</vendor>
-    <homepage href="$project.Url" />
-    <description>$project.Description</description>
+    <title>Drakensang Savegame Editor</title>
+    <vendor>Philipp Jardas</vendor>
+    <homepage href="http://www.jardas.de/drakensang/" />
     <offline-allowed />
   </information>
 

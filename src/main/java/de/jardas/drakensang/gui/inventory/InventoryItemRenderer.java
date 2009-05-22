@@ -25,6 +25,7 @@ import javax.swing.event.ChangeListener;
 
 
 public abstract class InventoryItemRenderer<I extends InventoryItem> {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(InventoryItemRenderer.class);
     private static List<InventoryItemRenderer<?extends InventoryItem>> RENDERERS =
         new ArrayList<InventoryItemRenderer<?extends InventoryItem>>();
 
@@ -62,9 +63,19 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 
     public JComponent renderLabel(final I item) {
         return new InfoLabel(getNameKey(item), getInfoKey(item),
-            new ImageIcon(MainFrame.class.getResource(item.getIcon()
-                                                          .toLowerCase()
-                    + ".png")));
+            renderIcon(item));
+    }
+
+    private ImageIcon renderIcon(final I item) {
+        try {
+            return new ImageIcon(MainFrame.class.getResource(item.getIcon()
+                                                                 .toLowerCase() +
+                    ".png"));
+        } catch (Exception e) {
+            LOG.warn("Error rendering icon for " + item.getIcon() + ": " + e, e);
+
+            return null;
+        }
     }
 
     public String renderInlineInfo(final I item) {
