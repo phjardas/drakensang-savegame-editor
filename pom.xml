@@ -150,7 +150,7 @@
           <artifactId>webstart-maven-plugin</artifactId>
           <configuration>
             <jnlp>
-              <mainClass>de.jardas.drakensang.WebStart</mainClass>
+              <mainClass>de.jardas.drakensang.Main</mainClass>
               <outputFile>drakensang-savegame-editor-${pom.version}.jnlp</outputFile>
             </jnlp>
             <sign>
