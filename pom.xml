@@ -151,6 +151,7 @@
           <configuration>
             <jnlp>
               <mainClass>de.jardas.drakensang.WebStart</mainClass>
+              <outputFilename>drakensang-savegame-editor-${pom.version}.jnlp</outputFilename>
             </jnlp>
             <sign>
               <keystore>../../src/jnlp/jnlp.jks</keystore>

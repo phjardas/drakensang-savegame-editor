@@ -1,9 +1,0 @@
-* Beruf beeinflusst Steigerungskosten und Maximalwerte der Talente.
-* Gegenstände erstellen, löschen und zwischen den Charakteren verschieben.
-* Backups der Spielstände beim Speichern anlegen.
-* Liste der letzten oder aller Savegames.
-
-+ Dateinamen im Titel und beim Speichern anzeigen.
-+ Automatisch den neuesten (zuletzt geänderten) Spielstand laden.
-+ Geschlecht/Aussehen: Ungültige Kombinationen abfangen (z.B. männliche Amazone).
-+ Anzeige des Spiel-Icons.
