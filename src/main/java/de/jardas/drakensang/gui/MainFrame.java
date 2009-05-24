@@ -143,6 +143,11 @@ public class MainFrame extends JFrame {
                                 @Override
                                 public void onLocaleChosen(Locale locale) {
                                     setVisible(false);
+
+                                    if (Locale.getDefault().equals(locale)) {
+                                        return;
+                                    }
+
                                     Main.setUserLocale(locale);
                                     JOptionPane.showMessageDialog(MainFrame.this,
                                         WordWrap.addNewlines(Messages.get(
@@ -267,7 +272,7 @@ public class MainFrame extends JFrame {
                 });
         characterList.setCellRenderer(new ListCellRenderer() {
                 public Component getListCellRendererComponent(JList list,
-                    Object value, int index, boolean isSelected,
+                    Object value, int index, boolean selected,
                     boolean cellHasFocus) {
                     final Character ch = characters.get(index);
                     final JLabel label = new JLabel(getCharacterName(ch));
@@ -280,6 +285,10 @@ public class MainFrame extends JFrame {
 
                     if (!ch.isPartyMember()) {
                         label.setFont(label.getFont().deriveFont(Font.PLAIN));
+                    }
+                    
+                    if (selected) {
+                    	label.setBackground(Color.GRAY);
                     }
 
                     return label;
