@@ -7,7 +7,9 @@ import de.jardas.drakensang.dao.UpdateStatementBuilder;
 import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.inventory.Ammo;
 import de.jardas.drakensang.model.inventory.Armor;
+import de.jardas.drakensang.model.inventory.EquipmentSlot;
 import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Item;
 import de.jardas.drakensang.model.inventory.Jewelry;
 import de.jardas.drakensang.model.inventory.Key;
 import de.jardas.drakensang.model.inventory.Money;
@@ -15,6 +17,8 @@ import de.jardas.drakensang.model.inventory.Recipe;
 import de.jardas.drakensang.model.inventory.Shield;
 import de.jardas.drakensang.model.inventory.Torch;
 import de.jardas.drakensang.model.inventory.Weapon;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,8 +31,7 @@ import java.util.Set;
 
 
 public abstract class InventoryItemDao<I extends InventoryItem> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(InventoryItemDao.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(InventoryItemDao.class);
     private final Class<I> itemClass;
     private final String table;
 
@@ -52,8 +55,8 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
         try {
             item = getItemClass().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Error creating inventory item of type "
-                + getItemClass().getName() + ": " + e, e);
+            throw new RuntimeException("Error creating inventory item of type " +
+                getItemClass().getName() + ": " + e, e);
         }
 
         try {
@@ -61,6 +64,15 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
             item.setId(results.getString("Id"));
             item.setName(results.getString("Name"));
             item.setIcon(results.getString("IconBrush"));
+
+            if (isEquipable()) {
+                final String slot = results.getString("EquipmentSlotID");
+
+                if (StringUtils.isNotEmpty(slot)) {
+                    item.setSlot(EquipmentSlot.valueOf(results.getString(
+                                "EquipmentSlotID")));
+                }
+            }
 
             if (!Money.class.isAssignableFrom(getItemClass())) {
                 item.setWeight(results.getInt("Gew"));
@@ -79,8 +91,8 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
             }
 
             if (hasQuestId()) {
-                item.setQuestItem((results.getString("QuestId") != null)
-                    && !"NONE".equalsIgnoreCase(results.getString("QuestId")));
+                item.setQuestItem((results.getString("QuestId") != null) &&
+                    !"NONE".equalsIgnoreCase(results.getString("QuestId")));
             }
 
             if (hasTaBonus()) {
@@ -102,27 +114,34 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
 
             return item;
         } catch (SQLException e) {
-            throw new DrakensangException("Error loading inventory item "
-                + getItemClass().getName() + ": " + e);
+            throw new DrakensangException("Error loading inventory item " +
+                getItemClass().getName() + ": " + e);
         }
     }
 
+    private boolean isEquipable() {
+        return !Recipe.class.isAssignableFrom(getItemClass()) &&
+        !Item.class.isAssignableFrom(getItemClass()) &&
+        !Money.class.isAssignableFrom(getItemClass()) &&
+        !Key.class.isAssignableFrom(getItemClass());
+    }
+
     protected boolean hasQuestId() {
-        return !Recipe.class.isAssignableFrom(getItemClass())
-        && !Money.class.isAssignableFrom(getItemClass())
-        && !Ammo.class.isAssignableFrom(getItemClass());
+        return !Recipe.class.isAssignableFrom(getItemClass()) &&
+        !Money.class.isAssignableFrom(getItemClass()) &&
+        !Ammo.class.isAssignableFrom(getItemClass());
     }
 
     protected boolean hasTaBonus() {
-        return !Armor.class.isAssignableFrom(getItemClass())
-        && !Weapon.class.isAssignableFrom(getItemClass())
-        && !Money.class.isAssignableFrom(getItemClass())
-        && !Jewelry.class.isAssignableFrom(getItemClass())
-        && !Key.class.isAssignableFrom(getItemClass())
-        && !Recipe.class.isAssignableFrom(getItemClass())
-        && !Shield.class.isAssignableFrom(getItemClass())
-        && !Ammo.class.isAssignableFrom(getItemClass())
-        && !Torch.class.isAssignableFrom(getItemClass());
+        return !Armor.class.isAssignableFrom(getItemClass()) &&
+        !Weapon.class.isAssignableFrom(getItemClass()) &&
+        !Money.class.isAssignableFrom(getItemClass()) &&
+        !Jewelry.class.isAssignableFrom(getItemClass()) &&
+        !Key.class.isAssignableFrom(getItemClass()) &&
+        !Recipe.class.isAssignableFrom(getItemClass()) &&
+        !Shield.class.isAssignableFrom(getItemClass()) &&
+        !Ammo.class.isAssignableFrom(getItemClass()) &&
+        !Torch.class.isAssignableFrom(getItemClass());
     }
 
     public void save(InventoryItem item) throws SQLException {
@@ -162,7 +181,8 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
         sql.append("' (select ? as 'Guid', ? as 'StorageGuid'");
 
         for (String field : getFields()) {
-            if (!"Guid".equalsIgnoreCase(field) && !"StorageGuid".equals(field)) {
+            if (!"Guid".equalsIgnoreCase(field) &&
+                    !"StorageGuid".equals(field)) {
                 sql.append(", '").append(field).append("'");
             }
         }
@@ -183,8 +203,8 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
         LOG.debug("Deleting " + item);
 
         final PreparedStatement stmt = SavegameDao.getConnection()
-                                                  .prepareStatement("delete from "
-                + getTable() + " where Guid = ?");
+                                                  .prepareStatement("delete from " +
+                getTable() + " where Guid = ?");
         stmt.setBytes(1, item.getGuid());
         stmt.executeUpdate();
     }
@@ -211,12 +231,12 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
             }
         } catch (SQLException e) {
             throw new DrakensangException(
-                "Error loading inventory items of type "
-                + itemClass.getSimpleName() + ": " + e, e);
+                "Error loading inventory items of type " +
+                itemClass.getSimpleName() + ": " + e, e);
         }
 
-        LOG.debug("Loaded " + items.size() + " inventory items of type "
-            + itemClass.getSimpleName() + ".");
+        LOG.debug("Loaded " + items.size() + " inventory items of type " +
+            itemClass.getSimpleName() + ".");
 
         return items;
     }

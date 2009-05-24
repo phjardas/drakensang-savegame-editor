@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 public class InfoLabel extends JComponent {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(InfoLabel.class);
+    private JLabel nameLabel;
 
     public InfoLabel(String key) {
         this(key, null, null, true);
@@ -52,7 +53,8 @@ public class InfoLabel extends JComponent {
         final String name = localize ? Messages.get(key) : key;
 
         if (key != null) {
-            add(new JLabel(name),
+            nameLabel = new JLabel(name);
+            add(nameLabel,
                 new GridBagConstraints(0, 0, 1, 1, 0, 0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
                     new Insets(0, 0, 0, 0), 0, 0));
@@ -83,5 +85,9 @@ public class InfoLabel extends JComponent {
                 LOG.warn("Missing info for '" + infoKey + "'.");
             }
         }
+    }
+
+    public JLabel getNameLabel() {
+        return nameLabel;
     }
 }

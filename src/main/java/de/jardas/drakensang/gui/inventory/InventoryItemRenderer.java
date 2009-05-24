@@ -6,6 +6,7 @@ import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.gui.MainFrame;
 import de.jardas.drakensang.model.inventory.InventoryItem;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 import java.util.ArrayList;
@@ -62,8 +63,18 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
     }
 
     public JComponent renderLabel(final I item) {
-        return new InfoLabel(getNameKey(item), getInfoKey(item),
-            renderIcon(item));
+        final InfoLabel label = new InfoLabel(getNameKey(item),
+                getInfoKey(item), renderIcon(item));
+
+        if (item.getSlot() != null) {
+            final JLabel nameLabel = label.getNameLabel();
+            final String text = nameLabel.getText() + " (" +
+                Messages.get(item.getSlot().name()) + ")";
+            nameLabel.setText(text);
+            nameLabel.setForeground(Color.BLUE.darker());
+        }
+
+        return label;
     }
 
     private ImageIcon renderIcon(final I item) {
@@ -92,7 +103,7 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 
     public JComponent renderCounter(final I item) {
         if (item.getMaxCount() <= 1) {
-            return new JLabel("" + item.getCount());
+            return null;
         }
 
         final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
