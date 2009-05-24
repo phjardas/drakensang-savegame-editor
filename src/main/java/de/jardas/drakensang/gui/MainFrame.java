@@ -13,8 +13,10 @@ import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -44,6 +46,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -262,6 +265,26 @@ public class MainFrame extends JFrame {
                         return characters.size();
                     }
                 });
+        characterList.setCellRenderer(new ListCellRenderer() {
+                public Component getListCellRendererComponent(JList list,
+                    Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                    final Character ch = characters.get(index);
+                    final JLabel label = new JLabel(getCharacterName(ch));
+
+                    if (ch.isPlayerCharacter()) {
+                        label.setForeground(Color.RED);
+                    } else if (ch.isCurrentPartyMember()) {
+                        label.setForeground(Color.BLUE);
+                    }
+
+                    if (!ch.isPartyMember()) {
+                        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+                    }
+
+                    return label;
+                }
+            });
 
         characterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         characterList.addListSelectionListener(new ListSelectionListener() {

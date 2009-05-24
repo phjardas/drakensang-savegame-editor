@@ -101,6 +101,12 @@ public class CharacterDao {
             c.setCurrentSpeed(round(result.getDouble("CurrentSpeed"), 4));
             c.setMaxVelocity(round(result.getDouble("MaxVelocity"), 4));
 
+            final String groups = (result.getString("Groups") != null)
+                ? result.getString("Groups") : "";
+            c.setCurrentPartyMember(groups.contains("_Group_PlayerParty"));
+            c.setPartyMember(c.isCurrentPartyMember() ||
+                groups.contains("GainXpGroup"));
+
             c.getAttribute().load(result);
             c.getTalente().load(result);
             c.getSonderfertigkeiten().load(result);

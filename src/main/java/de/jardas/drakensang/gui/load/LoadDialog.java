@@ -167,7 +167,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
 
             for (final Savegame savegame : savegames) {
                 SavegameListItem item = new SavegameListItem(savegame,
-                        savegameListener);
+                        LoadDialog.this);
                 add(item,
                     new GridBagConstraints(0, row++, 1, 1, 1, 0,
                         GridBagConstraints.NORTHWEST,
