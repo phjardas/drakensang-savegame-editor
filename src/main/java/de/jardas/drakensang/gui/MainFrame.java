@@ -219,7 +219,7 @@ public class MainFrame extends JFrame {
                 public void loadSavegame(Savegame savegame) {
                     MainFrame.this.loadSavegame(savegame);
                 }
-            });
+            }).showDialog();
     }
 
     public void loadSavegame(Savegame savegame) {
@@ -321,16 +321,6 @@ public class MainFrame extends JFrame {
             characterPanel.setCharacter(character);
         } catch (RuntimeException e) {
             Main.handleException(e);
-        }
-    }
-
-    public void loadDefaultSavegame() {
-        Savegame latest = SavegameDao.getLatestSavegame();
-
-        if (latest != null) {
-            loadSavegame(latest);
-        } else {
-            showLoadDialog();
         }
     }
 }

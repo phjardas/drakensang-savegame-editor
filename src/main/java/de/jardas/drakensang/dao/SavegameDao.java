@@ -49,14 +49,7 @@ public class SavegameDao {
         }
     }
 
-    public static Savegame getLatestSavegame() {
-        List<Savegame> savegames = getSavegames();
-        Collections.sort(savegames, Collections.reverseOrder());
-
-        return savegames.isEmpty() ? null : savegames.get(0);
-    }
-
-    public static List<Savegame> getSavegames() {
+    public static List<Savegame> getSavegames(Progress progress) {
         File savedir = getSavesDirectory();
         File[] files = savedir.listFiles(new FileFilter() {
                     public boolean accept(File pathname) {
@@ -64,15 +57,18 @@ public class SavegameDao {
                     }
                 });
 
+        progress.setTotalNumberOfSavegames(files.length);
+
         List<Savegame> savegames = new ArrayList<Savegame>(files.length);
 
         for (File file : files) {
             try {
-                savegames.add(Savegame.load(file));
+                final Savegame save = Savegame.load(file);
+                savegames.add(save);
+                progress.onSavegameLoaded(save);
             } catch (IllegalArgumentException e) {
                 LOG.warn("Error loading savegame from " + file + ": " + e, e);
-
-                // ignore
+                progress.onSavegameFailed(file);
             }
         }
 
@@ -153,5 +149,13 @@ public class SavegameDao {
         }
 
         return dir;
+    }
+
+    public static interface Progress {
+        void setTotalNumberOfSavegames(int total);
+
+        void onSavegameLoaded(Savegame savegame);
+
+        void onSavegameFailed(File file);
     }
 }
