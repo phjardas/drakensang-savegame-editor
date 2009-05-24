@@ -3,6 +3,7 @@ package de.jardas.drakensang.gui;
 import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.gui.util.WordWrap;
 import de.jardas.drakensang.model.Advantage;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.Effect;
@@ -88,7 +89,7 @@ public class AdvantagesPanel extends JPanel {
             if (character.getAdvantages().contains(advantage) &&
                     advantage.isUnknownModification()) {
                 JOptionPane.showMessageDialog(Main.getFrame(),
-                    InfoLabel.addNewLines(Messages.get("mod.unknown.message")),
+                    WordWrap.addNewlines(Messages.get("mod.unknown.message")),
                     Messages.get("mod.unknown.title"),
                     JOptionPane.WARNING_MESSAGE | JOptionPane.OK_OPTION);
 
