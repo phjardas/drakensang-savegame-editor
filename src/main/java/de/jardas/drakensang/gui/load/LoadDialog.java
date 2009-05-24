@@ -14,7 +14,6 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-
 public class LoadDialog extends JDialog implements SavegameListener {
     private final SavegameListener savegameListener;
     private SavegameListPanel list;
@@ -27,6 +26,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
 
         setLayout(new BorderLayout());
 
+		// FIXME show a progress bar while loading
         list = new SavegameListPanel(SavegameDao.getSavegames(), this);
 
         abortButton = new JButton(new AbstractAction(Messages.get("Cancel")) {

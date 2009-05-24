@@ -62,11 +62,18 @@ public final class Main {
     }
 
     private static void showLanguageChooser() {
+        LOG.debug("Showing language chooser dialog.");
         new LocaleChooserDialog() {
                 @Override
                 public void onLocaleChosen(Locale locale) {
+                	setVisible(false);
                     Main.setUserLocale(locale);
                     showMainFrame();
+                }
+
+                @Override
+                public void onAbort() {
+                    System.exit(1);
                 }
             };
     }
@@ -118,6 +125,14 @@ public final class Main {
     }
 
     private static Locale getUserLocale() {
+        final Locale locale = Settings.getInstance().getLocale();
+
+        if (locale != null) {
+            LOG.info("Found locale in settings: " + locale);
+
+            return locale;
+        }
+
         try {
             return LocaleOption.guessLocale();
         } catch (LocaleNotFoundException e) {
@@ -127,13 +142,11 @@ public final class Main {
         }
     }
 
-    private static void setUserLocale(Locale locale) {
-    	if (Locale.getDefault().equals(locale)) {
-    		return;
-    	}
-    	
+    public static void setUserLocale(Locale locale) {
         LOG.debug("Setting locale to '" + locale + "'.");
         Locale.setDefault(locale);
+        Settings.getInstance().setLocale(locale);
+        Settings.getInstance().save();
         Messages.reload();
     }
 

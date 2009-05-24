@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Locale;
 import java.util.Properties;
 
 
@@ -20,6 +21,7 @@ public class Settings {
     private File drakensangHome;
     private String latestVersionInformation;
     private boolean createBackupOnSave = true;
+    private Locale locale;
     private File backupDirectory = new File(SETTINGS_DIRECTORY, "backups");
 
     public static synchronized Settings getInstance() {
@@ -62,6 +64,14 @@ public class Settings {
         this.backupDirectory = backupDirectory;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
     public synchronized void save() {
         Properties props = new Properties();
         props.setProperty("drakensang.home",
@@ -74,6 +84,12 @@ public class Settings {
 
         props.setProperty("backups.enabled",
             Boolean.toString(isCreateBackupOnSave()));
+
+        if (getLocale() != null) {
+            props.setProperty("locale.language", getLocale().getLanguage());
+            props.setProperty("locale.country", getLocale().getCountry());
+            props.setProperty("locale.variant", getLocale().getVariant());
+        }
 
         if (getBackupDirectory() != null) {
             props.setProperty("backups.directory",
@@ -118,6 +134,13 @@ public class Settings {
             if (props.get("backups.enabled") != null) {
                 settings.setCreateBackupOnSave(Boolean.parseBoolean(
                         props.getProperty("backups.enabled")));
+            }
+
+            if (props.get("locale.language") != null) {
+                final String language = props.getProperty("locale.language");
+                final String country = props.getProperty("locale.country");
+                final String variant = props.getProperty("locale.variant");
+                settings.setLocale(new Locale(language, country, variant));
             }
         } catch (IOException e) {
             LOG.info("No settings found at " + SETTINGS_FILE + ": " + e);

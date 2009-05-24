@@ -7,6 +7,7 @@ import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.gui.inventory.wizard.NewItemWizard;
 import de.jardas.drakensang.gui.load.LoadDialog;
 import de.jardas.drakensang.gui.load.SavegameListener;
+import de.jardas.drakensang.gui.util.WordWrap;
 import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -52,6 +54,7 @@ public class MainFrame extends JFrame {
     private final JToolBar toolbar = new JToolBar();
     private CharacterPanel characterPanel = new CharacterPanel();
     private JButton saveButton;
+    private JButton settingsButton;
     private JButton inventoryWizardButton;
     private JComponent glassPane = new JPanel();
     private JComponent defaultGlassPane;
@@ -129,6 +132,30 @@ public class MainFrame extends JFrame {
                 });
         saveButton.setEnabled(false);
         toolbar.add(saveButton);
+
+        settingsButton = new JButton(new AbstractAction(Messages.get("Settings"),
+                    new ImageIcon(getClass().getResource("images/wrench.png"))) {
+                    public void actionPerformed(ActionEvent e) {
+                        new LocaleChooserDialog(MainFrame.this) {
+                                @Override
+                                public void onLocaleChosen(Locale locale) {
+                                    setVisible(false);
+                                    Main.setUserLocale(locale);
+                                    JOptionPane.showMessageDialog(MainFrame.this,
+                                        WordWrap.addNewlines(Messages.get(
+                                                "languagechooser.afterchosen")),
+                                        Messages.get("languagechooser.title"),
+                                        JOptionPane.INFORMATION_MESSAGE);
+                                }
+
+                                @Override
+                                public void onAbort() {
+                                    setVisible(false);
+                                }
+                            };
+                    }
+                });
+        toolbar.add(settingsButton);
 
         toolbar.add(new JButton(new AbstractAction(Messages.get("about.button"),
                     new ImageIcon(getClass().getResource("images/about.gif"))) {

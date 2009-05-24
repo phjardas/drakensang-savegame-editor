@@ -4,6 +4,8 @@ import de.jardas.drakensang.dao.LocaleOption;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.util.WordWrap;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -26,7 +28,11 @@ public abstract class LocaleChooserDialog extends JDialog {
     private final JComboBox chooser = new JComboBox(new LocaleChooserModel());
 
     public LocaleChooserDialog() {
-        super((Frame) null, Messages.get("languagechooser.title"));
+        this(null);
+    }
+
+    public LocaleChooserDialog(Frame owner) {
+        super(owner, Messages.get("languagechooser.title"), true);
 
         setLayout(new GridBagLayout());
 
@@ -57,7 +63,7 @@ public abstract class LocaleChooserDialog extends JDialog {
 
         add(new JButton(new AbstractAction(Messages.get("languagechooser.exit")) {
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
+                    onAbort();
                 }
             }),
             new GridBagConstraints(col++, row, 1, 1, 0, 0,
@@ -75,12 +81,40 @@ public abstract class LocaleChooserDialog extends JDialog {
                 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(10, 10, 10, 10), 0, 0));
 
+        final Locale current = findCurrentLocale();
+
+        if (current != null) {
+            final int index = ArrayUtils.indexOf(locales, current);
+
+            if (index >= 0) {
+                chooser.setSelectedIndex(index);
+            }
+        }
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    private Locale findCurrentLocale() {
+        for (Locale locale : locales) {
+            if (Locale.getDefault().equals(locale)) {
+                return locale;
+            }
+        }
+
+        for (Locale locale : locales) {
+            if (Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+                return locale;
+            }
+        }
+
+        return null;
+    }
+
     public abstract void onLocaleChosen(Locale locale);
+
+    public abstract void onAbort();
 
     private class LocaleChooserModel extends DefaultComboBoxModel {
         public LocaleChooserModel() {
