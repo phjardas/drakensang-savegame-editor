@@ -29,10 +29,10 @@ public class CharacterDao {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CharacterDao.class);
     private static Set<Character> characters;
 
-    public static synchronized Set<Character> getCharacters() {
+    public static synchronized Set<Character> loadCharacters(Progress progress) {
         if (characters == null) {
             try {
-                characters = loadCharacters();
+                characters = loadCharactersInternal(progress);
             } catch (Exception e) {
                 throw new DrakensangException("Error loading characters: " + e,
                     e);
@@ -42,8 +42,40 @@ public class CharacterDao {
         return characters;
     }
 
-    private static Set<Character> loadCharacters() throws SQLException {
-        final String sql = "select * from _Instance_PC order by Name";
+    public static synchronized Set<Character> getCharacters() {
+        return loadCharacters(new Progress() {
+                public void setTotalNumberOfCharacters(int arg0) {
+                    // ignored
+                }
+
+                public void onCharacterLoaded(Character arg0) {
+                    // ignored    			
+                }
+            });
+    }
+
+    private static int getNumberOfCharacters() {
+        final String sql = "select count(*) from _Instance_PC where name not like '%fake%' and name not like 'loc%' and name not like '%cutscene%'";
+
+        try {
+            final PreparedStatement statement = SavegameDao.getConnection()
+                                                           .prepareStatement(sql);
+            final ResultSet result = statement.executeQuery();
+            result.next();
+
+            return result.getInt(1);
+        } catch (SQLException e) {
+            throw new DrakensangException(
+                "Error preparing or executing SQL statement " + sql + ": " + e,
+                e);
+        }
+    }
+
+    private static Set<Character> loadCharactersInternal(Progress progress)
+        throws SQLException {
+        progress.setTotalNumberOfCharacters(getNumberOfCharacters());
+
+        final String sql = "select * from _Instance_PC where name not like '%fake%' and name not like 'loc%' and name not like '%cutscene%' order by Name";
         ResultSet result;
 
         try {
@@ -59,18 +91,11 @@ public class CharacterDao {
         Set<Character> items = new HashSet<Character>();
 
         while (result.next()) {
-            String name = result.getString("Name");
-
-            if (name.contains("fake") || name.startsWith("loc") ||
-                    name.contains("cutscene")) {
-                LOG.debug("Skipping character " + name + ".");
-
-                continue;
-            }
+            final String name = result.getString("Name");
 
             LOG.debug("Loading character " + name + ".");
 
-            Character c = new Character();
+            final Character c = new Character();
             items.add(c);
 
             c.setGuid(result.getBytes("Guid"));
@@ -120,6 +145,8 @@ public class CharacterDao {
             loadAdvantages(c, result);
 
             InventoryDao.loadInventory(c);
+
+            progress.onCharacterLoaded(c);
         }
 
         return items;
@@ -218,5 +245,11 @@ public class CharacterDao {
     public static void reset() {
         LOG.debug("Resetting.");
         characters = null;
+    }
+
+    public static interface Progress {
+        void setTotalNumberOfCharacters(int total);
+
+        void onCharacterLoaded(Character character);
     }
 }

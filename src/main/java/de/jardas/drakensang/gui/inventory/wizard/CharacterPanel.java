@@ -20,7 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 
-class CharacterPanel extends NewItemWizardPanel {
+public class CharacterPanel extends NewItemWizardPanel {
     private final List<Character> characters;
     private final JComboBox characterBox;
 

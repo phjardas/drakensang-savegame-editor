@@ -13,8 +13,7 @@ import javax.swing.JTabbedPane;
 
 
 public class CharacterPanel extends JPanel {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-        .getLogger(CharacterPanel.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CharacterPanel.class);
     private Character character;
     private JTabbedPane tabs = new JTabbedPane();
     private AttributePanel attributesPanel = new AttributePanel();
@@ -24,6 +23,7 @@ public class CharacterPanel extends JPanel {
     private ZauberPanel zauberPanel = new ZauberPanel();
     private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
     private InventoryPanel inventoryPanel = new InventoryPanel();
+    private boolean initialized;
 
     public CharacterPanel() {
         attributesPanel.addChangeListener(new IntegerMapPanel.ChangeListener() {
@@ -31,6 +31,12 @@ public class CharacterPanel extends JPanel {
                     talentePanel.onAttributeChange(key, value);
                 }
             });
+    }
+
+    private void initialize() {
+        if (initialized) {
+            return;
+        }
 
         tabs.addTab(Messages.get("CharacterSheet"), new JScrollPane(infoPanel));
         tabs.addTab(Messages.get("Advantages"), new JScrollPane(advantagesPanel));
@@ -41,6 +47,7 @@ public class CharacterPanel extends JPanel {
 
         setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
+        initialized = true;
     }
 
     public Character getCharacter() {
@@ -49,8 +56,8 @@ public class CharacterPanel extends JPanel {
 
     public void setCharacter(Character character) {
         if (character == this.character) {
-            LOG.debug("Not updating character currently being displayed: "
-                + character.getId());
+            LOG.debug("Not updating character currently being displayed: " +
+                character.getId());
 
             return;
         }
@@ -60,6 +67,7 @@ public class CharacterPanel extends JPanel {
         this.character = character;
         Main.getFrame().setBusy(true);
 
+        initialize();
         infoPanel.setCharacter(character);
         attributesPanel.setValues(character.getAttribute());
         advantagesPanel.setCharacter(character);

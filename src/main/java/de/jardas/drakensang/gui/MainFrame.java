@@ -1,7 +1,9 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.Main;
 import de.jardas.drakensang.dao.CharacterDao;
+import de.jardas.drakensang.dao.CharacterDao.Progress;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.gui.inventory.wizard.NewItemWizard;
@@ -12,10 +14,13 @@ import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
 
+import org.jdesktop.swingworker.SwingWorker;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -34,19 +39,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -62,10 +70,27 @@ public class MainFrame extends JFrame {
     private JComponent glassPane = new JPanel();
     private JComponent defaultGlassPane;
     private boolean busy;
-    private List<Character> characters;
     private Savegame savegame;
     private JPanel left = new JPanel();
     private JLabel savegameIcon = new JLabel("");
+    private JProgressBar progressBar = new JProgressBar(0, 100);
+    private CharactersLoader charactersLoader = new CharactersLoader();
+    private final Progress progress = new Progress() {
+            private int count = 0;
+
+            public void setTotalNumberOfCharacters(int total) {
+                count = 0;
+                progressBar.setValue(count);
+                progressBar.setMaximum(total);
+            }
+
+            public void onCharacterLoaded(Character character) {
+                count++;
+                LOG.debug("Character " + count + " of " +
+                    progressBar.getMaximum() + " loaded: " + character.getId());
+                progressBar.setValue(count);
+            }
+        };
 
     public MainFrame() {
         super();
@@ -185,9 +210,9 @@ public class MainFrame extends JFrame {
         left.setLayout(new BorderLayout());
         left.add(savegameIcon, BorderLayout.SOUTH);
 
+        getContentPane().add(characterPanel, BorderLayout.CENTER);
         getContentPane().add(toolbar, BorderLayout.NORTH);
         getContentPane().add(left, BorderLayout.WEST);
-        getContentPane().add(characterPanel, BorderLayout.CENTER);
         getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
         setSize(840, 730);
@@ -239,9 +264,10 @@ public class MainFrame extends JFrame {
 
         setTitle(savegame.getName() + " - " + Messages.get("title"));
         SavegameDao.open(savegame);
+        charactersLoader.loadCharacters();
+    }
 
-        characters = new ArrayList<Character>(CharacterDao.getCharacters());
-
+    private void onCharactersLoaded(final List<Character> characters) {
         LOG.debug("Sorting characters.");
         Collections.sort(characters,
             new Comparator<Character>() {
@@ -270,28 +296,27 @@ public class MainFrame extends JFrame {
                         return characters.size();
                     }
                 });
-        characterList.setCellRenderer(new ListCellRenderer() {
+        characterList.setCellRenderer(new DefaultListCellRenderer() {
+                @Override
                 public Component getListCellRendererComponent(JList list,
                     Object value, int index, boolean selected,
                     boolean cellHasFocus) {
+                    super.getListCellRendererComponent(list, value, index,
+                        selected, cellHasFocus);
+
                     final Character ch = characters.get(index);
-                    final JLabel label = new JLabel(getCharacterName(ch));
 
                     if (ch.isPlayerCharacter()) {
-                        label.setForeground(Color.RED);
+                        setForeground(Color.RED);
                     } else if (ch.isCurrentPartyMember()) {
-                        label.setForeground(Color.BLUE);
+                        setForeground(Color.BLUE);
                     }
 
                     if (!ch.isPartyMember()) {
-                        label.setFont(label.getFont().deriveFont(Font.PLAIN));
-                    }
-                    
-                    if (selected) {
-                    	label.setBackground(Color.GRAY);
+                        setFont(getFont().deriveFont(Font.PLAIN));
                     }
 
-                    return label;
+                    return this;
                 }
             });
 
@@ -326,6 +351,7 @@ public class MainFrame extends JFrame {
         repaint();
 
         LOG.debug("Loading complete: " + savegame);
+        charactersLoader.setVisible(false);
         setBusy(false);
     }
 
@@ -353,6 +379,48 @@ public class MainFrame extends JFrame {
             characterPanel.setCharacter(character);
         } catch (RuntimeException e) {
             Main.handleException(e);
+        }
+    }
+
+    private class CharactersLoader extends JDialog {
+        public CharactersLoader() {
+            super(MainFrame.this, Messages.get("LoadGame"), true);
+
+            setLayout(new BorderLayout());
+            progressBar.setPreferredSize(new Dimension(300, 20));
+
+            add(progressBar, BorderLayout.CENTER);
+        }
+
+        public void loadCharacters() {
+            // Let's start loading the savegames.
+            final SwingWorker<List<Character>, Object> worker = new SwingWorker<List<Character>, Object>() {
+                    @Override
+                    protected List<Character> doInBackground()
+                        throws Exception {
+                        return new ArrayList<Character>(CharacterDao.loadCharacters(
+                                progress));
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            onCharactersLoaded(get());
+                        } catch (InterruptedException e) {
+                            // ignore
+                        } catch (ExecutionException e) {
+                            Main.handleException(new DrakensangException(
+                                    "Error loading savegame " + savegame +
+                                    ": " + e, e));
+                        }
+                    }
+                };
+
+            worker.execute();
+
+            pack();
+            setLocationRelativeTo(MainFrame.this);
+            setVisible(true);
         }
     }
 }
