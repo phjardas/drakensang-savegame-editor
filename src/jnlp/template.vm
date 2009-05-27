@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="6.0+" version="1.5-SNAPSHOT"
+<jnlp spec="6.0+" version="1.5"
   codebase="http://www.jardas.de/drakensang/webstart" href="$outputFile">
   <information>
     <title>Drakensang Savegame Editor</title>

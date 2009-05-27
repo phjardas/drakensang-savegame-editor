@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.jardas.drakensang</groupId>
   <artifactId>drakensang-savegame-editor</artifactId>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.5</version>
   <packaging>jar</packaging>
   <name>Drakensang Savegame Editor</name>
   <description>Drakensang Savegame Editor allows you to
