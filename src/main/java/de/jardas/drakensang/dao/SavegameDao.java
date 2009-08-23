@@ -52,8 +52,8 @@ public class SavegameDao {
     public static List<Savegame> getSavegames(Progress progress) {
         File savedir = getSavesDirectory();
         File[] files = savedir.listFiles(new FileFilter() {
-                    public boolean accept(File pathname) {
-                        return pathname.isDirectory();
+                    public boolean accept(File file) {
+                        return file.isDirectory();
                     }
                 });
 
@@ -62,7 +62,7 @@ public class SavegameDao {
         List<Savegame> savegames = new ArrayList<Savegame>(files.length);
 
         for (File file : files) {
-            try {
+        	try {
                 final Savegame save = Savegame.load(file);
                 savegames.add(save);
                 progress.onSavegameLoaded(save);

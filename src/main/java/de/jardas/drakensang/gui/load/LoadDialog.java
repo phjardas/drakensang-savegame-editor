@@ -1,12 +1,5 @@
 package de.jardas.drakensang.gui.load;
 
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.dao.SavegameDao.Progress;
-import de.jardas.drakensang.model.savegame.Savegame;
-
-import org.jdesktop.swingworker.SwingWorker;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -14,9 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-
 import java.io.File;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -27,6 +18,15 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+
+import org.jdesktop.swingworker.SwingWorker;
+
+import de.jardas.drakensang.DrakensangException;
+import de.jardas.drakensang.Main;
+import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.dao.SavegameDao;
+import de.jardas.drakensang.dao.SavegameDao.Progress;
+import de.jardas.drakensang.model.savegame.Savegame;
 
 
 public class LoadDialog extends JDialog implements SavegameListener {
@@ -145,7 +145,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
                         } catch (InterruptedException e) {
                             // ignore
                         } catch (ExecutionException e) {
-                            // ignore
+                        	Main.handleException(new DrakensangException("Error loading save games:" + e, e));
                         }
                     }
                 };

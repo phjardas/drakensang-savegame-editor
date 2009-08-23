@@ -9,6 +9,7 @@ import de.jardas.drakensang.model.inventory.InventoryItem;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,15 +79,14 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
     }
 
     private ImageIcon renderIcon(final I item) {
-        try {
-            return new ImageIcon(MainFrame.class.getResource(item.getIcon()
-                                                                 .toLowerCase() +
-                    ".png"));
-        } catch (Exception e) {
-            LOG.warn("Error rendering icon for " + item.getIcon() + ": " + e, e);
-
-            return null;
-        }
+            final URL image = MainFrame.class.getResource(item.getIcon().toLowerCase() + ".png");
+            
+            if (image == null) {
+            	LOG.warn("No icon found for '" + item.getIcon() + "'.");
+            	return null;
+            }
+            
+			return new ImageIcon(image);
     }
 
     public String renderInlineInfo(final I item) {
