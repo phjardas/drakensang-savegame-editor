@@ -11,6 +11,7 @@ public enum Culture {
 	Horasier,
 	Mhanadistani,
 	Mittelreicher,
+	Gjalskerlaender,
 	Novadi,
 	Thorwaler,
 	Waldelf;

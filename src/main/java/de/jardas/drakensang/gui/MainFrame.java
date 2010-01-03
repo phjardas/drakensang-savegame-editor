@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
         getContentPane().add(left, BorderLayout.WEST);
         getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
-        setSize(840, 730);
+        setSize(850, 730);
         setLocationRelativeTo(null);
 
         LOG.debug("Main frame initialized.");

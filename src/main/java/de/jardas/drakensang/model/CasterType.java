@@ -4,5 +4,6 @@ public enum CasterType {
 	none,
 	halfmage,
 	fullmage,
-	priest;
+	priest,
+	geode;
 }

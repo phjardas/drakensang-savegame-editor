@@ -18,7 +18,7 @@ public class Static {
         .getLogger(Static.class);
     private static Connection connection;
 
-    private static Connection getConnection() {
+    public static Connection getConnection() {
         if (connection == null) {
             connection = loadConnection();
         }

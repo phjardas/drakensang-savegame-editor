@@ -6,20 +6,13 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.model.savegame.PackReader.PackData;
 
 public class PackReaderTest {
-	@Test
+	@Test(expected = DrakensangException.class)
 	public void testReadVersion2() throws IOException {
-		final PackData info = PackReader.read(getClass().getResourceAsStream(
-				"savegame_v2.nfo"));
-		assertEquals("Pack version", 2, info.getVersion());
-
-		final String[] data = info.getData();
-		assertEquals("Pack length", 3, data.length);
-		assertEquals("Location", "location04", data[0]);
-		assertEquals("Character", "Sleepingsun,Livello: 5", data[1]);
-		assertEquals("Name", "Italian save", data[2]);
+		PackReader.read(getClass().getResourceAsStream("savegame_v2.nfo"));
 	}
 
 	@Test

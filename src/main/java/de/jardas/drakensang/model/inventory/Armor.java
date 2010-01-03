@@ -96,6 +96,7 @@ public class Armor extends InventoryItem {
 		GlovesWithArmArmor,
 		HeadArmor,
 		LegArmor,
+		BodyLegs,
 		Shirt,
 		Shoes,
 		ShoesWithLegArmor,

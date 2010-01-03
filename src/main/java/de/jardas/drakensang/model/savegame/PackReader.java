@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.jardas.drakensang.DrakensangException;
+
 public final class PackReader {
 	private PackReader() {
 		// utility class
@@ -23,37 +25,11 @@ public final class PackReader {
 	private static String[] loadData(InputStream in, final int version)
 			throws IOException {
 		switch (version) {
-		case 2:
-			return readVersion2(in);
 		case 3:
 			return readVersion3(in);
 		default:
-			throw new IOException("Unknown savegame version: " + version);
+			throw new DrakensangException("Unknown savegame version: " + version);
 		}
-	}
-
-	private static String[] readVersion2(InputStream in) throws IOException {
-		in.skip(4);
-		final List<String> data = new ArrayList<String>();
-
-		while (true) {
-			int length = in.read();
-
-			if (length < 0) {
-				break;
-			}
-
-			length--;
-
-			in.skip(3);
-
-			final byte[] buffer = new byte[length];
-			in.read(buffer, 0, length);
-			final String str = new String(buffer, "UTF-8");
-			data.add(str);
-		}
-
-		return data.toArray(new String[data.size()]);
 	}
 
 	private static String[] readVersion3(InputStream in) throws IOException {

@@ -5,10 +5,12 @@ import de.jardas.drakensang.dao.Static;
 public enum Profession {
 	Alchimist,
 	Amazone,
+	Barbar,
 	Bogenschuetze,
 	Dieb,
 	Einbrecher,
 	Elementarist,
+	Geode,
 	Heilmagier,
 	Kaempfer,
 	Kampfmagier,

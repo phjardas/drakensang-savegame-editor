@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class SavegameDao {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
@@ -43,7 +45,7 @@ public class SavegameDao {
 		try {
 			unpackedSavegame = unpackSavegame(savegame);
 		} catch (IOException e) {
-			throw new DrakensangException("Error unpacking V3 savegame at "
+			throw new DrakensangException("Error unpacking savegame at "
 					+ savegame.getFile() + ": " + e, e);
 		}
 
@@ -77,7 +79,7 @@ public class SavegameDao {
 					"drakensang2-editor-unpacked-savegame-", ".db4");
 			out = new FileOutputStream(tmp);
 
-			LOG.debug("Unpacking V3 savegame from " + save.getFile() + " to "
+			LOG.debug("Unpacking savegame from " + save.getFile() + " to "
 					+ tmp);
 
 			IOUtils.copy(zin, out);
@@ -86,6 +88,30 @@ public class SavegameDao {
 		} finally {
 			IOUtils.closeQuietly(out);
 			IOUtils.closeQuietly(zin);
+			IOUtils.closeQuietly(in);
+		}
+	}
+
+	public void publishSavegame() throws IOException {
+		FileOutputStream out = null;
+		ZipOutputStream zout = null;
+		FileInputStream in = null;
+
+		try {
+			in = new FileInputStream(unpackedSavegame);
+			out = new FileOutputStream(savegame.getFile());
+			zout = new ZipOutputStream(out);
+
+			final ZipEntry entry = new ZipEntry("game.db4");
+			zout.putNextEntry(entry);
+
+			LOG.debug("Packing V3 savegame from " + unpackedSavegame + " to "
+					+ savegame.getFile());
+
+			IOUtils.copy(in, zout);
+		} finally {
+			IOUtils.closeQuietly(zout);
+			IOUtils.closeQuietly(out);
 			IOUtils.closeQuietly(in);
 		}
 	}

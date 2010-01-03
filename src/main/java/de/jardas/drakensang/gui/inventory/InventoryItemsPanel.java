@@ -2,6 +2,7 @@ package de.jardas.drakensang.gui.inventory;
 
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Money;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,6 +40,10 @@ public class InventoryItemsPanel extends JPanel {
         Class<?extends InventoryItem> currentClass = null;
 
         for (InventoryItem item : items) {
+        	if (item instanceof Money) {
+        		continue;
+        	}
+        	
             if ((panel == null) || (currentClass != item.getClass())) {
                 panel = new JPanel();
                 panel.setLayout(new GridBagLayout());
