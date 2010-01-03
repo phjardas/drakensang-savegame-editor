@@ -1,6 +1,5 @@
 package de.jardas.drakensang.model.savegame;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -11,8 +10,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import de.jardas.drakensang.DrakensangException;
+import de.jardas.drakensang.model.savegame.PackReader.PackData;
 
 public class Savegame implements Comparable<Savegame> {
+	private int version;
 	private File directory;
 	private File file;
 	private String name;
@@ -20,6 +21,14 @@ public class Savegame implements Comparable<Savegame> {
 	private Date changeDate;
 	private int level;
 	private String worldMap;
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
 	public Date getChangeDate() {
 		return this.changeDate;
@@ -106,12 +115,15 @@ public class Savegame implements Comparable<Savegame> {
 		final File infoFile = new File(game.getFile().getParentFile(), game
 				.getFile().getName().replace(".dsa", ".nfo"));
 		FileInputStream in = null;
-		
+
 		try {
 			in = new FileInputStream(infoFile);
-			final String[] data = PackReader.read(in);
-			game.setWorldMap(data[0]);
+			final PackData info = PackReader.read(in);
+			game.setVersion(info.getVersion());
 			
+			final String[] data = info.getData();
+			game.setWorldMap(data[0]);
+
 			final String hero = data[1];
 			game.setHero(hero.split(",")[0]);
 			game.setLevel(Integer.parseInt(hero.split(":")[1].trim()));

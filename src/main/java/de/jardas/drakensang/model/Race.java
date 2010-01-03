@@ -4,6 +4,7 @@ import de.jardas.drakensang.dao.Static;
 
 public enum Race {
 	Elf,
+	Halbelf,
 	Mittellaender,
 	Thorwaler,
 	Tulamide,

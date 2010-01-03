@@ -1,6 +1,7 @@
 package de.jardas.drakensang;
 
 import de.jardas.drakensang.dao.LocaleOption;
+import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.dao.LocaleOption.LocaleNotFoundException;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.ExceptionDialog;
@@ -80,13 +81,14 @@ public final class Main {
 
     public static void handleException(Exception e) {
         LOG.error("Uncaught exception: " + e, e);
+        SavegameDao.close();
 
         if (frame != null) {
             frame.setVisible(false);
         }
-
+        
         new ExceptionDialog(frame, e).setVisible(true);
-
+        
         LOG.info("Shutting down...");
 
         System.exit(1);

@@ -15,6 +15,7 @@ public enum EffectTarget {
     ManaRegenerationFrequency,
     Endurance,
     EnduranceRegeneration,
+    EnduranceRegenerationFrequency,
 	Dodge;
 	
     public static EffectTarget getTargetType(String name) {
@@ -57,7 +58,11 @@ public enum EffectTarget {
         if ("Reg_AU".equals(name)) {
             return EnduranceRegeneration;
         }
-        
+
+        if ("Reg_AU_freq".equals(name)) {
+        	return EnduranceRegenerationFrequency;
+        }
+
         if ("AW".equals(name)) {
         	return Dodge;
         }

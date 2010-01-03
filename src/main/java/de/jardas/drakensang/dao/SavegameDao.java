@@ -6,9 +6,12 @@ import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.util.WindowsRegistry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.sql.Connection;
@@ -22,140 +25,191 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
+import java.util.zip.ZipInputStream;
 
 public class SavegameDao {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SavegameDao.class);
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
-            "yyyyMMdd-HHmmss");
-    private static Savegame savegame;
-    private static SavegameDao instance;
-    private static Connection connection;
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+			.getLogger(SavegameDao.class);
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+			"yyyyMMdd-HHmmss");
+	private static Savegame savegame;
+	private static SavegameDao instance;
+	private static Connection connection;
+	private File unpackedSavegame;
 
-    private SavegameDao(Savegame savegame) {
-        close();
+	private SavegameDao(Savegame savegame) {
+		close();
 
-        try {
-            LOG.debug("Opening savegame at " + savegame.getFile());
-            connection = DriverManager.getConnection("jdbc:sqlite:/" +
-                    savegame.getFile());
-            SavegameDao.savegame = savegame;
+		try {
+			unpackedSavegame = unpackSavegame(savegame);
+		} catch (IOException e) {
+			throw new DrakensangException("Error unpacking V3 savegame at "
+					+ savegame.getFile() + ": " + e, e);
+		}
 
-            LevelDao.reset();
-            CharacterDao.reset();
-        } catch (Exception e) {
-            throw new DrakensangException("Can't open database file '" +
-                savegame.getFile() + "': " + e, e);
-        }
-    }
+		try {
+			LOG.debug("Opening savegame at " + unpackedSavegame);
+			connection = DriverManager.getConnection("jdbc:sqlite:/"
+					+ unpackedSavegame);
+			SavegameDao.savegame = savegame;
 
-    public static List<Savegame> getSavegames(Progress progress) {
-        File savedir = getSavesDirectory();
-        File[] files = savedir.listFiles(new FileFilter() {
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
-                });
+			LevelDao.reset();
+			CharacterDao.reset();
+		} catch (Exception e) {
+			throw new DrakensangException("Can't open database file '"
+					+ savegame.getFile() + "': " + e, e);
+		}
+	}
 
-        progress.setTotalNumberOfSavegames(files.length);
+	private File unpackSavegame(Savegame save) throws IOException {
+		FileOutputStream out = null;
+		FileInputStream in = null;
+		ZipInputStream zin = null;
 
-        List<Savegame> savegames = new ArrayList<Savegame>(files.length);
+		try {
+			in = new FileInputStream(save.getFile());
+			zin = new ZipInputStream(in);
 
-        for (File file : files) {
-        	try {
-                final Savegame save = Savegame.load(file);
-                savegames.add(save);
-                progress.onSavegameLoaded(save);
-            } catch (IllegalArgumentException e) {
-                LOG.warn("Error loading savegame from " + file + ": " + e, e);
-                progress.onSavegameFailed(file);
-            }
-        }
+			// Es gibt genau eine Datei im ZIP.
+			zin.getNextEntry();
 
-        Collections.sort(savegames, Collections.reverseOrder());
+			final File tmp = File.createTempFile(
+					"drakensang2-editor-unpacked-savegame-", ".db4");
+			out = new FileOutputStream(tmp);
 
-        return savegames;
-    }
+			LOG.debug("Unpacking V3 savegame from " + save.getFile() + " to "
+					+ tmp);
 
-    public static File getSavesDirectory() {
-        File documentsDir = new File(WindowsRegistry.getCurrentUserPersonalFolderPath());
-        File savedir = new File(documentsDir,
-                "Drakensang/profiles/default/save/");
+			IOUtils.copy(zin, out);
 
-        return savedir;
-    }
+			return tmp;
+		} finally {
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(zin);
+			IOUtils.closeQuietly(in);
+		}
+	}
 
-    public static SavegameDao open(Savegame savegame) {
-        instance = new SavegameDao(savegame);
+	public static List<Savegame> getSavegames(Progress progress) {
+		File savedir = getSavesDirectory();
+		File[] files = savedir.listFiles(new FileFilter() {
+			public boolean accept(File file) {
+				return file.isDirectory();
+			}
+		});
 
-        return getInstance();
-    }
+		progress.setTotalNumberOfSavegames(files.length);
 
-    public static void close() {
-        if (connection != null) {
-            LOG.info("Closing connection to " + savegame.getFile() + ".");
+		List<Savegame> savegames = new ArrayList<Savegame>(files.length);
 
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOG.error("Error closing connection: " + e, e);
-            }
-        }
+		for (File file : files) {
+			try {
+				final Savegame save = Savegame.load(file);
+				savegames.add(save);
+				progress.onSavegameLoaded(save);
+			} catch (IllegalArgumentException e) {
+				LOG.warn("Error loading savegame from " + file + ": " + e, e);
+				progress.onSavegameFailed(file);
+			}
+		}
 
-        connection = null;
-        instance = null;
-        savegame = null;
-    }
+		Collections.sort(savegames, Collections.reverseOrder());
 
-    public static Connection getConnection() {
-        return connection;
-    }
+		return savegames;
+	}
 
-    public static SavegameDao getInstance() {
-        return instance;
-    }
+	public static File getSavesDirectory() {
+		File documentsDir = new File(WindowsRegistry
+				.getCurrentUserPersonalFolderPath());
+		File savedir = new File(documentsDir,
+				"Drakensang_TRoT_Demo/profiles/default/save/");
 
-    public static Savegame getSavegame() {
-        return savegame;
-    }
+		return savedir;
+	}
 
-    public static File createBackup() {
-        if (!Settings.getInstance().isCreateBackupOnSave()) {
-            return null;
-        }
+	public static SavegameDao open(Savegame savegame) {
+		instance = new SavegameDao(savegame);
 
-        final File backupDir = Settings.getInstance().getBackupDirectory();
-        final File dir = new File(new File(backupDir,
-                    DATE_FORMAT.format(new Date())),
-                getSavegame().getDirectory().getName());
+		return getInstance();
+	}
 
-        if (dir.exists()) {
-            throw new DrakensangException("Backup directory already exists: " +
-                dir);
-        }
+	public static void close() {
+		if (instance != null) {
+			instance.closeConnection();
+		}
+	}
 
-        if (!dir.mkdirs()) {
-            throw new DrakensangException("Error creating backup directory " +
-                dir);
-        }
+	private void closeConnection() {
+		if (connection != null) {
+			LOG.info("Closing connection to " + unpackedSavegame + ".");
 
-        LOG.info("Saving backup to " + dir);
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				LOG.error("Error closing connection: " + e, e);
+			}
 
-        try {
-            FileUtils.copyDirectory(getSavegame().getDirectory(), dir, true);
-        } catch (IOException e) {
-            throw new DrakensangException("Error creating savegame backup to " +
-                dir + ": " + e, e);
-        }
+			if (unpackedSavegame != null) {
+				LOG.debug("Deleting unpacked savegame file at "
+						+ unpackedSavegame);
+				unpackedSavegame.delete();
+			}
+		}
 
-        return dir;
-    }
+		connection = null;
+		instance = null;
+		savegame = null;
+		unpackedSavegame = null;
+	}
 
-    public static interface Progress {
-        void setTotalNumberOfSavegames(int total);
+	public static Connection getConnection() {
+		return connection;
+	}
 
-        void onSavegameLoaded(Savegame savegame);
+	public static SavegameDao getInstance() {
+		return instance;
+	}
 
-        void onSavegameFailed(File file);
-    }
+	public static Savegame getSavegame() {
+		return savegame;
+	}
+
+	public static File createBackup() {
+		if (!Settings.getInstance().isCreateBackupOnSave()) {
+			return null;
+		}
+
+		final File backupDir = Settings.getInstance().getBackupDirectory();
+		final File dir = new File(new File(backupDir, DATE_FORMAT
+				.format(new Date())), getSavegame().getDirectory().getName());
+
+		if (dir.exists()) {
+			throw new DrakensangException("Backup directory already exists: "
+					+ dir);
+		}
+
+		if (!dir.mkdirs()) {
+			throw new DrakensangException("Error creating backup directory "
+					+ dir);
+		}
+
+		LOG.info("Saving backup to " + dir);
+
+		try {
+			FileUtils.copyDirectory(getSavegame().getDirectory(), dir, true);
+		} catch (IOException e) {
+			throw new DrakensangException("Error creating savegame backup to "
+					+ dir + ": " + e, e);
+		}
+
+		return dir;
+	}
+
+	public static interface Progress {
+		void setTotalNumberOfSavegames(int total);
+
+		void onSavegameLoaded(Savegame savegame);
+
+		void onSavegameFailed(File file);
+	}
 }

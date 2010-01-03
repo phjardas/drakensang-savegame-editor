@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+
 import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.model.IntegerMap;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -183,7 +183,7 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     }
 
     protected InfoLabel createLabel(final String key) {
-        return new InfoLabel(getLocalKey(key), getInfoKey(key), getInfoIcon(key));
+        return new InfoLabel(getLocalKey(key), getInfoKey(key));
     }
 
     protected String getName(final String key) {
@@ -197,10 +197,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     }
 
     protected String getInfoKey(String key) {
-        return null;
-    }
-
-    protected ImageIcon getInfoIcon(String key) {
         return null;
     }
 
@@ -251,11 +247,6 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
 
         public int getRow() {
             return row;
-        }
-
-        public void reset() {
-            column = 0;
-            row = 0;
         }
 
         public void advance() {

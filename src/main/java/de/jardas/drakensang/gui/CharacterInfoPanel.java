@@ -415,10 +415,10 @@ public class CharacterInfoPanel extends JPanel {
     }
 
     private ImageIcon createPicture() {
-        String url = character.getCharacterSet().getIcon(character.getSex()) +
-            ".png";
-
-        return new ImageIcon(getClass().getResource(url));
+    	// FIXME Archetype images
+        // final String url = character.getCharacterSet().getIcon(character.getSex()) + ".png";
+    	// return new ImageIcon(getClass().getResource(url));
+    	return null;
     }
 
     private void addInput(JComponent parent, String label, JComponent input,

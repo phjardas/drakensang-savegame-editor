@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 public enum LocaleOption {
-	ENGLISH(Locale.UK, "Farewell."),
-    GERMAN(Locale.GERMANY, "Gehabt Euch wohl."),
-    POLISH(new Locale("pl"), "Bywaj.");
+    GERMAN(Locale.GERMANY, "Folge dem Meister");
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LocaleOption.class);
     private final Locale locale;
@@ -27,7 +25,7 @@ public enum LocaleOption {
 
     public static Locale guessLocale() throws LocaleNotFoundException {
         final String msg = Messages.getRequired(
-                "0482f6e4-2ca5-4d3b-a236-97cb5eb38526");
+                "00005f1c-2f82-4789-ac28-1b4b571576b3");
 
         for (LocaleOption option : values()) {
             if (option.isMyLanguage(msg)) {

@@ -14,7 +14,7 @@ import java.util.Properties;
 public class Settings {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Settings.class);
     private static final File SETTINGS_DIRECTORY = new File(System.getProperty(
-                "user.home"), ".drakensang-editor");
+                "user.home"), ".drakensang-editor-2");
     private static final File SETTINGS_FILE = new File(SETTINGS_DIRECTORY,
             "settings.properties");
     private static Settings instance;

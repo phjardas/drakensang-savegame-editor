@@ -12,9 +12,9 @@ public final class WindowsRegistry {
     private static final String REGSTR_TOKEN = "REG_SZ";
     private static final String PERSONAL_FOLDER = "\"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\"
         + "Explorer\\Shell Folders\" /v Personal";
-    private static final String DRAKENSANG_HOME = "\"HKCU\\Software\\DTP\\Drakensang\""
+    private static final String DRAKENSANG_HOME = "\"HKLM\\SOFTWARE\\DTP\\Drakensang_TRoT_DEMO\""
         + " /v target_folder";
-    private static final String DRAKENSANG_LANG = "\"HKCU\\Software\\DTP\\Drakensang\""
+    private static final String DRAKENSANG_LANG = "\"HKCU\\Software\\DTP\\Drakensang_TRoT_DEMO\""
         + " /v language";
 
     private WindowsRegistry() {
