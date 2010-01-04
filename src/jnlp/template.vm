@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="6.0+" version="1.6-SNAPSHOT"
+<jnlp spec="6.0+" version="2.0-SNAPSHOT"
   codebase="http://www.jardas.de/drakensang/webstart" href="$outputFile">
   <information>
-    <title>Drakensang Savegame Editor</title>
+    <title>Drakensang 2 Savegame Editor</title>
     <vendor>Philipp Jardas</vendor>
     <homepage href="http://www.jardas.de/drakensang/" />
     <offline-allowed />
