@@ -117,7 +117,18 @@ public class SavegameDao {
 	}
 
 	public static List<Savegame> getSavegames(Progress progress) {
-		File savedir = getSavesDirectory();
+		final List<Savegame> saves = new ArrayList<Savegame>();
+
+		for (File savedir : getSavesDirectories()) {
+			if (savedir.isDirectory()) {
+				saves.addAll(getSavegames(savedir, progress));
+			}
+		}
+
+		return saves;
+	}
+
+	private static List<Savegame> getSavegames(File savedir, Progress progress) {
 		File[] files = savedir.listFiles(new FileFilter() {
 			public boolean accept(File file) {
 				return file.isDirectory();
@@ -144,13 +155,15 @@ public class SavegameDao {
 		return savegames;
 	}
 
-	public static File getSavesDirectory() {
-		File documentsDir = new File(WindowsRegistry
+	private static File[] getSavesDirectories() {
+		final File documentsDir = new File(WindowsRegistry
 				.getCurrentUserPersonalFolderPath());
-		File savedir = new File(documentsDir,
+		final File savedir = new File(documentsDir,
+				"Drakensang_TRoT/profiles/default/save/");
+		final File demodir = new File(documentsDir,
 				"Drakensang_TRoT_Demo/profiles/default/save/");
 
-		return savedir;
+		return new File[] { savedir, demodir, };
 	}
 
 	public static SavegameDao open(Savegame savegame) {
