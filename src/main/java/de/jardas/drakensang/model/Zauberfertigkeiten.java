@@ -1,6 +1,5 @@
 package de.jardas.drakensang.model;
 
-
 public class Zauberfertigkeiten extends IntegerMap {
 	@Override
 	public String[] getKeys() {
@@ -13,13 +12,16 @@ public class Zauberfertigkeiten extends IntegerMap {
 				"ZaEscliptifactusSchattenkraft",
 				"ZaEigenschaftWiederherstellen", "ZaEisenrost",
 				"ZaEiseskaelteKaempferherz", "ZaElementarerDiener",
-				"ZaFalkenaugeMeisterschuss", "ZaFavilludoFunkentanz",
-				"ZaFlimFlam", "ZaForamen", "ZaFulminictus", "ZaGardianum",
-				"ZaHerrUeberDasTierreich", "ZaTatzeSchwinge", "ZaHorriphobus",
-				"ZaIgnifaxius", "ZaIgnisphaero", "ZaKlarumPurum",
-				"ZaKulminatio", "ZaParalysis", "ZaPlumbumbarum",
-				"ZaPsychostabilis", "ZaRuheKoerper", "ZaSanftmut",
+				"ZaFalkenaugeMeisterschuss", "ZaFaust",
+				"ZaFavilludoFunkentanz", "ZaFlimFlam", "ZaForamen",
+				"ZaFulminictus", "ZaGardianum", "ZaHerrUeberDasTierreich",
+				"ZaTatzeSchwinge", "ZaHorriphobus", "ZaIgnifaxius",
+				"ZaIgnisphaero", "ZaKlarumPurum", "ZaKraefte", "ZaKulminatio",
+				"ZaLaunen", "ZaLeib", "ZaParalysis", "ZaPlumbumbarum",
+				"ZaPsychostabilis", "ZaRuheKoerper", "ZaSanftmut", "ZaSchutz",
 				"ZaSeidenzungeElfenwort", "ZaSensibar", "ZaSkelettarius",
-				"ZaSomnigravis", "ZaOdem", };
+				"ZaSomnigravis", "ZaSumu", "ZaOdem", "ZaVerzauberung",
+				"MiAngebot", "MiGlueckssegen", "MiPhexensGunst",
+				"MiSternenstaub", "MiSternenwurf", };
 	}
 }

@@ -12,55 +12,76 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
 public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
-    @Override
-    public JComponent renderSpecial(final Weapon weapon) {
-        final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
+	@Override
+	public JComponent renderSpecial(final Weapon weapon) {
+		final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
 
-        final JSpinner diceSpinner = new JSpinner(new SpinnerNumberModel(
-                    weapon.getSchaden().getDiceMultiplier(), 0, 10, 1));
-        diceSpinner.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    weapon.getSchaden()
-                          .setDiceMultiplier(((Number) diceSpinner.getValue())
-                        .intValue());
-                    schadenLabel.setText(getSchadenText(weapon));
-                }
-            });
+		final JSpinner diceSpinner = new JSpinner(new SpinnerNumberModel(weapon
+				.getSchaden().getDiceMultiplier(), 0, 10, 1));
+		diceSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				weapon.getSchaden().setDiceMultiplier(
+						((Number) diceSpinner.getValue()).intValue());
+				schadenLabel.setText(getSchadenText(weapon));
+			}
+		});
 
-        final JSpinner addSpinner = new JSpinner(new SpinnerNumberModel(
-                    weapon.getSchaden().getAddition(), -100, 100, 1));
-        addSpinner.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    weapon.getSchaden()
-                          .setAddition(((Number) addSpinner.getValue()).intValue());
-                    schadenLabel.setText(getSchadenText(weapon));
-                }
-            });
+		final JSpinner addSpinner = new JSpinner(new SpinnerNumberModel(weapon
+				.getSchaden().getAddition(), -100, 100, 1));
+		addSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				weapon.getSchaden().setAddition(
+						((Number) addSpinner.getValue()).intValue());
+				schadenLabel.setText(getSchadenText(weapon));
+			}
+		});
 
-        final JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 
-        panel.add(diceSpinner);
-        panel.add(new JLabel(Messages.get("D6") + "+"));
-        panel.add(addSpinner);
-        panel.add(schadenLabel);
+		panel.add(diceSpinner);
+		panel.add(new JLabel(Messages.get("D6") + "+"));
+		panel.add(addSpinner);
+		panel.add(new JLabel("mod"));
 
-        return panel;
-    }
+		final JSpinner atSpinner = new JSpinner(new SpinnerNumberModel(weapon
+				.getAttackeMod(), -10, 10, 1));
+		atSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				weapon
+						.setAttackeMod(((Number) atSpinner.getValue())
+								.intValue());
+			}
+		});
 
-    private String getSchadenText(Weapon weapon) {
-        return " (" + weapon.getSchaden().getMinimum() + "-"
-        + weapon.getSchaden().getMaximum() + " " + Messages.get("TP") + ")";
-    }
+		final JSpinner paSpinner = new JSpinner(new SpinnerNumberModel(weapon
+				.getParadeMod(), -10, 10, 1));
+		paSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				weapon.setParadeMod(((Number) paSpinner.getValue()).intValue());
+			}
+		});
 
-    @Override
-    public String renderInlineInfo(Weapon weapon) {
-        return weapon.getSchaden().toString();
-    }
+		panel.add(atSpinner);
+		panel.add(new JLabel("/"));
+		panel.add(paSpinner);
 
-    @Override
-    public boolean isApplicable(InventoryItem item) {
-        return item instanceof Weapon;
-    }
+		return panel;
+	}
+
+	private String getSchadenText(Weapon weapon) {
+		return " (" + weapon.getSchaden().getMinimum() + "-"
+				+ weapon.getSchaden().getMaximum() + " " + Messages.get("TP")
+				+ ")";
+	}
+
+	@Override
+	public String renderInlineInfo(Weapon weapon) {
+		return weapon.getSchaden().toString();
+	}
+
+	@Override
+	public boolean isApplicable(InventoryItem item) {
+		return item instanceof Weapon;
+	}
 }

@@ -5,6 +5,24 @@ import de.jardas.drakensang.model.Schaden;
 public class Weapon extends InventoryItem {
 	private Type equipmentType;
 	private Schaden schaden;
+	private int attackeMod;
+	private int paradeMod;
+
+	public int getAttackeMod() {
+		return this.attackeMod;
+	}
+
+	public void setAttackeMod(int attackeMod) {
+		this.attackeMod = attackeMod;
+	}
+
+	public int getParadeMod() {
+		return this.paradeMod;
+	}
+
+	public void setParadeMod(int paradeMod) {
+		this.paradeMod = paradeMod;
+	}
 
 	public Schaden getSchaden() {
 		return this.schaden;

@@ -18,135 +18,139 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-
 public class Messages {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Messages.class);
-    private static final Map<String, String> CACHE = new HashMap<String, String>();
-    private static final String BUNDLE_NAME = Main.class.getPackage().getName() +
-        ".messages";
-    private static Connection connection;
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+			.getLogger(Messages.class);
+	private static final Map<String, String> CACHE = new HashMap<String, String>();
+	private static final String BUNDLE_NAME = Main.class.getPackage().getName()
+			+ ".messages";
+	private static Connection connection;
 
-    static {
-        reload();
-    }
+	static {
+		reload();
+	}
 
-    public static void reload() {
-        final Locale locale = Locale.getDefault();
+	public static void reload() {
+		final Locale locale = Locale.getDefault();
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Loading resources for locale '" + locale + "' from '" +
-                BUNDLE_NAME + "'.");
-        }
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Loading resources for locale '" + locale + "' from '"
+					+ BUNDLE_NAME + "'.");
+		}
 
-        final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
-                locale);
-        final Enumeration<String> keys = bundle.getKeys();
+		final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
+				locale);
+		final Enumeration<String> keys = bundle.getKeys();
 
-        while (keys.hasMoreElements()) {
-            final String key = keys.nextElement();
-            final String value = bundle.getString(key);
+		while (keys.hasMoreElements()) {
+			final String key = keys.nextElement();
+			final String value = bundle.getString(key);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Caching message '" + key + "' with value '" + value +
-                    "'.");
-            }
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Caching message '" + key + "' with value '" + value
+						+ "'.");
+			}
 
-            cache(key, value);
-        }
-    }
+			cache(key, value);
+		}
+	}
 
-    private static void cache(String key, String value) {
-        CACHE.put(key.toLowerCase(), value);
-    }
+	private static void cache(String key, String value) {
+		CACHE.put(key.toLowerCase(), value);
+	}
 
-    private static Connection getConnection() {
-        if (connection == null) {
-            connection = loadConnection();
-        }
+	private static Connection getConnection() {
+		if (connection == null) {
+			connection = loadConnection();
+		}
 
-        return connection;
-    }
+		return connection;
+	}
 
-    private static Connection loadConnection() {
-        File home = Settings.getInstance().getDrakensangHome();
-        File localeFile = new File(home, "export/db/locale.db4");
-        String url = "jdbc:sqlite:/" + localeFile.getAbsolutePath();
-        LOG.debug("Opening localization connection to " + url);
+	private static Connection loadConnection() {
+		File home = Settings.getInstance().getDrakensangHome();
+		File localeFile = new File(home, "export/db/locale.db4");
+		String url = "jdbc:sqlite:/" + localeFile.getAbsolutePath();
+		LOG.debug("Opening localization connection to " + url);
 
-        try {
-            return DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                "Error opening localization connection to " + localeFile +
-                ": " + e, e);
-        }
-    }
+		try {
+			return DriverManager.getConnection(url);
+		} catch (SQLException e) {
+			throw new RuntimeException(
+					"Error opening localization connection to " + localeFile
+							+ ": " + e, e);
+		}
+	}
 
-    public static String get(String key) {
-        if (key == null) {
-            return "";
-        }
+	public static String get(String key) {
+		if (key == null) {
+			return "";
+		}
 
-        try {
-            return getRequired(key);
-        } catch (MissingResourceException e) {
-            LOG.warn("No localization found for '" + key + "': " + e);
+		try {
+			return getRequired(key);
+		} catch (MissingResourceException e) {
+			LOG.warn("No localization found for '" + key + "': " + e);
 
-            return "!!!" + key + "!!!";
-        }
-    }
+			return "!!!" + key + "!!!";
+		}
+	}
 
-    public static String getRequired(String key) {
-        String value = CACHE.get(key.toLowerCase());
+	public static String getRequired(String key) {
+		String value = CACHE.get(key.toLowerCase());
 
-        if (value != null) {
-            return value;
-        }
+		if (value != null) {
+			return value;
+		}
 
-        value = get("LocaText", key, "LocaId", "_Locale");
-        cache(key, value);
+		value = get("LocaText", key, "LocaId", "_Locale");
+		cache(key, value);
 
-        return value;
-    }
+		if (value.startsWith("Obsolete!")) {
+			LOG.warn("Obsolete translation for '" + key + "'");
+		}
 
-    public static String get(String col, String key, String idCol, String table) {
-        try {
-            LOG.debug("Loading " + col + " from " + table + " where " + idCol +
-                " = '" + key + "'.");
+		return value;
+	}
 
-            PreparedStatement stmt = getConnection()
-                                         .prepareStatement("select " + col +
-                    " from " + table + " where " + idCol + " = ?");
-            stmt.setString(1, key);
+	public static String get(String col, String key, String idCol, String table) {
+		try {
+			LOG.debug("Loading " + col + " from " + table + " where " + idCol
+					+ " = '" + key + "'.");
 
-            ResultSet result = stmt.executeQuery();
+			PreparedStatement stmt = getConnection().prepareStatement(
+					"select " + col + " from " + table + " where " + idCol
+							+ " = ?");
+			stmt.setString(1, key);
 
-            if (!result.next()) {
-                throw new MissingResourceException(
-                    "No localization found for '" + key + "'.",
-                    Messages.class.getName(), key);
-            }
+			ResultSet result = stmt.executeQuery();
 
-            return result.getString(col);
-        } catch (SQLException e) {
-            throw new MissingResourceException(
-                "Error looking up localized value for '" + key + "': " + e,
-                Messages.class.getName(), key);
-        }
-    }
+			if (!result.next()) {
+				throw new MissingResourceException(
+						"No localization found for '" + key + "'.",
+						Messages.class.getName(), key);
+			}
 
-    public static boolean testConnection() {
-        try {
-            getConnection();
+			return result.getString(col);
+		} catch (SQLException e) {
+			throw new MissingResourceException(
+					"Error looking up localized value for '" + key + "': " + e,
+					Messages.class.getName(), key);
+		}
+	}
 
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+	public static boolean testConnection() {
+		try {
+			getConnection();
 
-    public static void resetConnection() {
-        LOG.debug("Resetting connection.");
-        connection = null;
-    }
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static void resetConnection() {
+		LOG.debug("Resetting connection.");
+		connection = null;
+	}
 }

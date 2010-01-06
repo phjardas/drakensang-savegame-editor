@@ -9,7 +9,7 @@ public class Armor extends InventoryItem {
 	private int ruestungArmRechts;
 	private int ruestungBeinLinks;
 	private int ruestungBeinRechts;
-	private Type type;
+	private Type[] types;
 
 	public Armor() {
 		super(false);
@@ -79,29 +79,32 @@ public class Armor extends InventoryItem {
 		this.ruestungBeinRechts = ruestungBeinRechts;
 	}
 
-	public Type getType() {
-		return type;
+	public Type[] getTypes() {
+		return types;
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setTypes(Type[] types) {
+		this.types = types;
 	}
 
 	public static enum Type {
-		ArmArmor,
-		ChestArmor,
-		ChestArmorWithoutShoulder,
-		FullBodyArmor,
-		Gloves,
-		GlovesWithArmArmor,
-		HeadArmor,
-		LegArmor,
-		BodyLegs,
-		Shirt,
-		Shoes,
-		ShoesWithLegArmor,
+		LeftHand,
+		RightHand,
+		Body,
+		Head,
 		Shoulder,
+		Shirt,
+		Body_Plate,
+		ArmArmor,
+		LegArmor,
+		Shoes,
+		Belt,
 		Trousers,
-		TrousersWithLegArmor,
+		Neck,
+		Ring,
+		Quiver,
+		Gloves,
+		Knee,
+		Decoration,
 	}
 }
