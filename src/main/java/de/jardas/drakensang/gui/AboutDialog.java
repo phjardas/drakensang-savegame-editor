@@ -59,12 +59,12 @@ public class AboutDialog extends JDialog {
                 insets, 0, 0));
 
         final JLabel website = new JLabel(
-                "<html><a href=\"#\">http://www.jardas.de/drakensang/</a></html>");
+                "<html><a href=\"#\">http://www.jardas.de/drakensang2/</a></html>");
         website.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         website.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    Browser.open("http://www.jardas.de/drakensang/");
+                    Browser.open("http://www.jardas.de/drakensang2/");
                 }
             });
         add(website,

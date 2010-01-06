@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 public enum LocaleOption {
-    GERMAN(Locale.GERMANY, "Folge dem Meister");
+    GERMAN(Locale.GERMANY, "Folge dem Meister"),
+    ENGLISH(Locale.UK, "");
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LocaleOption.class);
     private final Locale locale;
