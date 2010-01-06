@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feature-history>
+
+  <feature date="2010-01-07">
+    <description lang="de">
+      Hinweise über neue Features beim
+      Programmstart.
+    </description>
+    <description lang="en">
+      Informing the user about new features.
+    </description>
+  </feature>
+
+  <feature date="2010-01-07">
+    <description lang="de">
+      Geoden-Zaubersprüche können jetzt
+      bearbeitet werden.
+    </description>
+    <description lang="en">
+      Geode spells can now be edited.
+    </description>
+  </feature>
+
+  <feature date="2010-01-07">
+    <description lang="de">
+      Mirakel können jetzt bearbeitet
+      werden.
+    </description>
+    <description lang="en">
+      Miracles can now be edited.
+    </description>
+  </feature>
+
+  <feature date="2010-01-07">
+    <description lang="de">
+      Attacke- und Parade-Modifikatoren von
+      Waffen können jetzt bearbeitet werden.
+    </description>
+    <description lang="en">
+      AT/PA modifiers of weapons can now be
+      edited.
+    </description>
+  </feature>
+
+</feature-history>

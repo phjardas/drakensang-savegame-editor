@@ -1,5 +1,6 @@
 package de.jardas.drakensang;
 
+import de.jardas.drakensang.FeatureHistory.Feature;
 import de.jardas.drakensang.dao.LocaleOption;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.dao.LocaleOption.LocaleNotFoundException;
@@ -7,6 +8,7 @@ import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.ExceptionDialog;
 import de.jardas.drakensang.gui.LocaleChooserDialog;
 import de.jardas.drakensang.gui.MainFrame;
+import de.jardas.drakensang.gui.NewFeaturesDialog;
 import de.jardas.drakensang.gui.util.WordWrap;
 import de.jardas.drakensang.util.DrakensangHomeFinder;
 
@@ -19,173 +21,180 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-
 public final class Main {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Main.class);
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                                    .getName() +
-            ".messages", Locale.getDefault());
-    private static MainFrame frame = null;
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+			.getLogger(Main.class);
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+			Main.class.getPackage().getName() + ".messages", Locale
+					.getDefault());
+	private static MainFrame frame = null;
 
-    private Main() {
-        // utility class
-    }
+	private Main() {
+		// utility class
+	}
 
-    public static MainFrame getFrame() {
-        return Main.frame;
-    }
+	public static MainFrame getFrame() {
+		return Main.frame;
+	}
 
-    public static void main(String[] args) {
-        LOG.info("Starting up Drakensang Savegame Editor");
+	public static void main(String[] args) {
+		LOG.info("Starting up Drakensang Savegame Editor");
 
-        try {
-            Class.forName("org.sqlite.JDBC");
+		try {
+			Class.forName("org.sqlite.JDBC");
 
-            checkSettings();
+			checkSettings();
 
-            final Locale locale = getUserLocale();
+			final Locale locale = getUserLocale();
 
-            if (locale != null) {
-                setUserLocale(locale);
-                showMainFrame();
-            } else {
-                showLanguageChooser();
-            }
-        } catch (Exception e) {
-            handleException(e);
-        }
-    }
+			if (locale != null) {
+				setUserLocale(locale);
+				showMainFrame();
+			} else {
+				showLanguageChooser();
+			}
+		} catch (Exception e) {
+			handleException(e);
+		}
+	}
 
-    private static void showMainFrame() {
-        frame = new MainFrame();
-        frame.setVisible(true);
-        frame.showLoadDialog();
-    }
+	private static void showMainFrame() {
+		final Feature[] features = FeatureHistory.getUnknownFeatures(Settings
+				.getInstance());
 
-    private static void showLanguageChooser() {
-        LOG.debug("Showing language chooser dialog.");
-        new LocaleChooserDialog() {
-                @Override
-                public void onLocaleChosen(Locale locale) {
-                	setVisible(false);
-                    Main.setUserLocale(locale);
-                    showMainFrame();
-                }
+		if (features.length > 0) {
+			new NewFeaturesDialog(features, null).setVisible(true);
+		}
 
-                @Override
-                public void onAbort() {
-                    System.exit(1);
-                }
-            };
-    }
+		frame = new MainFrame();
+		frame.setVisible(true);
+		frame.showLoadDialog();
+	}
 
-    public static void handleException(Exception e) {
-        LOG.error("Uncaught exception: " + e, e);
-        SavegameDao.close();
+	private static void showLanguageChooser() {
+		LOG.debug("Showing language chooser dialog.");
+		new LocaleChooserDialog() {
+			@Override
+			public void onLocaleChosen(Locale locale) {
+				setVisible(false);
+				Main.setUserLocale(locale);
+				showMainFrame();
+			}
 
-        if (frame != null) {
-            frame.setVisible(false);
-        }
-        
-        new ExceptionDialog(frame, e).setVisible(true);
-        
-        LOG.info("Shutting down...");
+			@Override
+			public void onAbort() {
+				System.exit(1);
+			}
+		};
+	}
 
-        System.exit(1);
-    }
+	public static void handleException(Exception e) {
+		LOG.error("Uncaught exception: " + e, e);
+		SavegameDao.close();
 
-    public static String getCurrentVersion() {
-        ResourceBundle bundle = ResourceBundle.getBundle(Main.class.getPackage()
-                                                                   .getName() +
-                ".version");
+		if (frame != null) {
+			frame.setVisible(false);
+		}
 
-        return bundle.getString("version");
-    }
+		new ExceptionDialog(frame, e).setVisible(true);
 
-    private static void checkSettings() {
-        final Settings settings = Settings.getInstance();
-        LOG.debug("Testing connection to " +
-            Settings.getInstance().getDrakensangHome());
+		LOG.info("Shutting down...");
 
-        if (!Messages.testConnection()) {
-            Messages.resetConnection();
+		System.exit(1);
+	}
 
-            final File home = DrakensangHomeFinder.findDrakensangHome();
+	public static String getCurrentVersion() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Main.class
+				.getPackage().getName()
+				+ ".version");
 
-            if (home != null) {
-                settings.setDrakensangHome(home);
-                settings.save();
+		return bundle.getString("version");
+	}
 
-                return;
-            }
-        }
+	private static void checkSettings() {
+		final Settings settings = Settings.getInstance();
+		LOG.debug("Testing connection to "
+				+ Settings.getInstance().getDrakensangHome());
 
-        while (!Messages.testConnection()) {
-            Messages.resetConnection();
-            settings.setDrakensangHome(locateDrakensangHome(settings));
-        }
-    }
+		if (!Messages.testConnection()) {
+			Messages.resetConnection();
 
-    private static Locale getUserLocale() {
-        final Locale locale = Settings.getInstance().getLocale();
+			final File home = DrakensangHomeFinder.findDrakensangHome();
 
-        if (locale != null) {
-            LOG.info("Found locale in settings: " + locale);
+			if (home != null) {
+				settings.setDrakensangHome(home);
+				settings.save();
 
-            return locale;
-        }
+				return;
+			}
+		}
 
-        try {
-            return LocaleOption.guessLocale();
-        } catch (LocaleNotFoundException e) {
-            LOG.warn("Locale not found: " + e, e);
+		while (!Messages.testConnection()) {
+			Messages.resetConnection();
+			settings.setDrakensangHome(locateDrakensangHome(settings));
+		}
+	}
 
-            return null;
-        }
-    }
+	private static Locale getUserLocale() {
+		final Locale locale = Settings.getInstance().getLocale();
 
-    public static void setUserLocale(Locale locale) {
-        LOG.debug("Setting locale to '" + locale + "'.");
-        Locale.setDefault(locale);
-        Settings.getInstance().setLocale(locale);
-        Settings.getInstance().save();
-        Messages.reload();
-    }
+		if (locale != null) {
+			LOG.info("Found locale in settings: " + locale);
 
-    private static File locateDrakensangHome(Settings settings) {
-        JOptionPane.showMessageDialog(null,
-            WordWrap.addNewlines(BUNDLE.getString("drakensang.home.info")),
-            BUNDLE.getString("drakensang.home.title"),
-            JOptionPane.WARNING_MESSAGE);
+			return locale;
+		}
 
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle(BUNDLE.getString("drakensang.home.title"));
-        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setCurrentDirectory(new File("c:/Program Files"));
+		try {
+			return LocaleOption.guessLocale();
+		} catch (LocaleNotFoundException e) {
+			LOG.warn("Locale not found: " + e, e);
 
-        fileChooser.removeChoosableFileFilter(fileChooser.getChoosableFileFilters()[0]);
-        fileChooser.setFileFilter(new FileFilter() {
-                public boolean accept(File f) {
-                    return f.isDirectory() ||
-                    f.getName().equals("drakensang.exe");
-                }
+			return null;
+		}
+	}
 
-                public String getDescription() {
-                    return "Drakensang (drakensang.exe)";
-                }
-            });
+	public static void setUserLocale(Locale locale) {
+		LOG.debug("Setting locale to '" + locale + "'.");
+		Locale.setDefault(locale);
+		Settings.getInstance().setLocale(locale);
+		Settings.getInstance().save();
+		Messages.reload();
+	}
 
-        int result = fileChooser.showDialog(null,
-                BUNDLE.getString("drakensang.home.button"));
+	private static File locateDrakensangHome(Settings settings) {
+		JOptionPane.showMessageDialog(null, WordWrap.addNewlines(BUNDLE
+				.getString("drakensang.home.info")), BUNDLE
+				.getString("drakensang.home.title"),
+				JOptionPane.WARNING_MESSAGE);
 
-        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-            return fileChooser.getSelectedFile().getParentFile();
-        }
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle(BUNDLE.getString("drakensang.home.title"));
+		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setCurrentDirectory(new File("c:/Program Files"));
 
-        LOG.info("No Drakensang home selected, shutting down...");
-        System.exit(0);
+		fileChooser.removeChoosableFileFilter(fileChooser
+				.getChoosableFileFilters()[0]);
+		fileChooser.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory() || f.getName().equals("drakensang.exe");
+			}
 
-        return null;
-    }
+			public String getDescription() {
+				return "Drakensang (drakensang.exe)";
+			}
+		});
+
+		int result = fileChooser.showDialog(null, BUNDLE
+				.getString("drakensang.home.button"));
+
+		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile().getParentFile();
+		}
+
+		LOG.info("No Drakensang home selected, shutting down...");
+		System.exit(0);
+
+		return null;
+	}
 }

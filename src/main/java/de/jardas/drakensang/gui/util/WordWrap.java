@@ -10,7 +10,7 @@ public class WordWrap {
 	}
 
 	public static String addHtmlNewlines(String in) {
-		return "<html>" + addNewlines(in, 80, "<br>") + "</html>";
+		return "<html>" + addNewlines(in, 80, "<p>") + "</html>";
 	}
 
 	private static String addNewlines(String in, int length, String nl) {
