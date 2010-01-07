@@ -6,8 +6,6 @@ import java.util.Set;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import de.jardas.drakensang.model.inventory.Inventory;
-import de.jardas.drakensang.model.inventory.Money;
 import de.jardas.drakensang.shared.model.Advantage;
 import de.jardas.drakensang.shared.model.Attribute;
 import de.jardas.drakensang.shared.model.CasterRace;
@@ -20,6 +18,8 @@ import de.jardas.drakensang.shared.model.Sex;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 import de.jardas.drakensang.shared.model.Talente;
 import de.jardas.drakensang.shared.model.Zauberfertigkeiten;
+import de.jardas.drakensang.shared.model.inventory.Inventory;
+import de.jardas.drakensang.shared.model.inventory.Money;
 
 public class Character extends Persistable {
 	private int abenteuerpunkte;
@@ -28,7 +28,7 @@ public class Character extends Persistable {
 	private final Talente talente = new Talente();
 	private final Sonderfertigkeiten sonderfertigkeiten = new Sonderfertigkeiten();
 	private final Zauberfertigkeiten zauberfertigkeiten = new Zauberfertigkeiten();
-	private final Inventory inventory = new Inventory(this);
+	private final Inventory inventory = new Inventory();
 	private Race race;
 	private Culture culture;
 	private Profession profession;

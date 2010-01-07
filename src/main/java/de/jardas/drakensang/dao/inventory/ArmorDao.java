@@ -3,9 +3,9 @@ package de.jardas.drakensang.dao.inventory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import de.jardas.drakensang.model.inventory.Armor;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
+import de.jardas.drakensang.shared.model.inventory.Armor;
 
 public class ArmorDao extends InventoryItemDao<Armor> {
 	private static final String[] FIELDS = { "_ID", "_Level", "_Layers",

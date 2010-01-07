@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Torch;
+import de.jardas.drakensang.shared.model.inventory.Torch;
 
 
 public class TorchDao extends InventoryItemDao<Torch> {

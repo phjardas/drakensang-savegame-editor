@@ -211,11 +211,8 @@ public class SavegameDao {
 	}
 
 	public static File createBackup() {
-		if (!Settings.getInstance().isCreateBackupOnSave()) {
-			return null;
-		}
-
-		final File backupDir = Settings.getInstance().getBackupDirectory();
+		final File backupDir = new File(Settings.getSettingsDirectory(),
+				"backups");
 		final File dir = new File(new File(backupDir, DATE_FORMAT
 				.format(new Date())), getSavegame().getDirectory().getName());
 

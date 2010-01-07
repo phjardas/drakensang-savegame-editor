@@ -9,6 +9,7 @@ import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.gui.MainFrame;
 import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.Program;
+import de.jardas.drakensang.shared.Settings;
 
 public class Main implements Runnable {
 	private static Program program = new MainProgram();
@@ -19,6 +20,8 @@ public class Main implements Runnable {
 	}
 
 	public static void main(String[] args) {
+		Settings.init(".drakensang-character-editor-2", EditorSettings.class);
+
 		final Main main = new Main();
 		main.run();
 	}

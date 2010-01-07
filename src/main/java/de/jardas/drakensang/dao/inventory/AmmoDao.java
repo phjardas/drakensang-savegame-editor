@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Ammo;
+import de.jardas.drakensang.shared.model.inventory.Ammo;
 
 
 public class AmmoDao extends InventoryItemDao<Ammo> {

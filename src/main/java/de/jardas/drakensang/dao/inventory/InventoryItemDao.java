@@ -11,21 +11,21 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.model.inventory.Ammo;
-import de.jardas.drakensang.model.inventory.Armor;
-import de.jardas.drakensang.model.inventory.EquipmentSlot;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Item;
-import de.jardas.drakensang.model.inventory.Jewelry;
-import de.jardas.drakensang.model.inventory.Key;
-import de.jardas.drakensang.model.inventory.Money;
-import de.jardas.drakensang.model.inventory.Recipe;
-import de.jardas.drakensang.model.inventory.Shield;
-import de.jardas.drakensang.model.inventory.Torch;
-import de.jardas.drakensang.model.inventory.Weapon;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.shared.model.inventory.Ammo;
+import de.jardas.drakensang.shared.model.inventory.Armor;
+import de.jardas.drakensang.shared.model.inventory.EquipmentSlot;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.model.inventory.Item;
+import de.jardas.drakensang.shared.model.inventory.Jewelry;
+import de.jardas.drakensang.shared.model.inventory.Key;
+import de.jardas.drakensang.shared.model.inventory.Money;
+import de.jardas.drakensang.shared.model.inventory.Recipe;
+import de.jardas.drakensang.shared.model.inventory.Shield;
+import de.jardas.drakensang.shared.model.inventory.Torch;
+import de.jardas.drakensang.shared.model.inventory.Weapon;
 
 
 public abstract class InventoryItemDao<I extends InventoryItem> {

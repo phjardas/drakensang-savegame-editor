@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Jewelry;
+import de.jardas.drakensang.shared.model.inventory.Jewelry;
 
 
 public class JewelryDao extends InventoryItemDao<Jewelry> {

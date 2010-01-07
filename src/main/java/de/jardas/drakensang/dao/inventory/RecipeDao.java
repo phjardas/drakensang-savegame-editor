@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Recipe;
+import de.jardas.drakensang.shared.model.inventory.Recipe;
 
 
 public class RecipeDao extends InventoryItemDao<Recipe> {

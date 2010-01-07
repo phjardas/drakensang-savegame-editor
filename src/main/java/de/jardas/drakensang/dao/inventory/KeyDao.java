@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Key;
+import de.jardas.drakensang.shared.model.inventory.Key;
 
 
 public class KeyDao extends InventoryItemDao<Key> {

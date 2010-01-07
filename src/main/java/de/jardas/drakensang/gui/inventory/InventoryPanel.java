@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import de.jardas.drakensang.model.inventory.Inventory;
+import de.jardas.drakensang.shared.model.inventory.Inventory;
 
 public class InventoryPanel extends JPanel {
 	private InventoryItemsPanel panel = new InventoryItemsPanel();

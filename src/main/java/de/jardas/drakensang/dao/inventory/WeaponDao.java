@@ -3,11 +3,11 @@ package de.jardas.drakensang.dao.inventory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import de.jardas.drakensang.model.inventory.Weapon;
-import de.jardas.drakensang.model.inventory.Weapon.Type;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 import de.jardas.drakensang.shared.model.Schaden;
+import de.jardas.drakensang.shared.model.inventory.Weapon;
+import de.jardas.drakensang.shared.model.inventory.Weapon.Type;
 
 public class WeaponDao extends InventoryItemDao<Weapon> {
 	private static final String[] FIELDS = { "Guid", "_ID", "_Level",

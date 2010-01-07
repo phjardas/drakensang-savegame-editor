@@ -8,9 +8,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Weapon;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.model.inventory.Weapon;
 
 public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
 	@Override

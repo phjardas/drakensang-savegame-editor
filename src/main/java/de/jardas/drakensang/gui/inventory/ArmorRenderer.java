@@ -12,8 +12,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.gui.InfoLabel;
-import de.jardas.drakensang.model.inventory.Armor;
-import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.model.inventory.Armor;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
 
 
 public class ArmorRenderer extends InventoryItemRenderer<Armor> {

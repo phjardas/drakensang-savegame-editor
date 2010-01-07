@@ -8,9 +8,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Shield;
 import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.model.inventory.Shield;
 
 
 public class ShieldRenderer extends InventoryItemRenderer<Shield> {

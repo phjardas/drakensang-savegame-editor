@@ -130,7 +130,7 @@
           <configuration>
             <jnlp>
               <mainClass>de.jardas.drakensang.Main</mainClass>
-              <outputFile>drakensang-savegame-editor-${pom.version}.jnlp</outputFile>
+              <outputFile>drakensang-savegame-editor.jnlp</outputFile>
             </jnlp>
             <sign>
               <keystore>../../src/jnlp/jnlp.jks</keystore>

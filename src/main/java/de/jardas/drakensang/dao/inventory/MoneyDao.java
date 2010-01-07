@@ -1,6 +1,6 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.model.inventory.Money;
+import de.jardas.drakensang.shared.model.inventory.Money;
 
 
 public class MoneyDao extends InventoryItemDao<Money> {

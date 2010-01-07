@@ -16,9 +16,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Money;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.model.inventory.Money;
 
 
 public class InventoryItemsPanel extends JPanel {

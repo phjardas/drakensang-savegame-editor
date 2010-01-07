@@ -12,8 +12,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.gui.InfoLabel;
-import de.jardas.drakensang.model.inventory.InventoryItem;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.model.inventory.InventoryItem;
 
 public abstract class InventoryItemRenderer<I extends InventoryItem> {
 	private static List<InventoryItemRenderer<? extends InventoryItem>> RENDERERS = new ArrayList<InventoryItemRenderer<? extends InventoryItem>>();
