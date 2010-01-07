@@ -7,9 +7,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.inventory.InventoryPanel;
 import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.shared.db.Messages;
 
 public class CharacterPanel extends JPanel {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger

@@ -1,9 +1,5 @@
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Weapon;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,6 +7,10 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Weapon;
+import de.jardas.drakensang.shared.db.Messages;
 
 public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
 	@Override

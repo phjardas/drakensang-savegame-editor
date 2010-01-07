@@ -1,8 +1,5 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
-
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -10,6 +7,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.MutableComboBoxModel;
+
+import de.jardas.drakensang.Main;
+import de.jardas.drakensang.shared.db.Messages;
 
 public abstract class StringComboBox extends JComboBox {
 	private String current = null;

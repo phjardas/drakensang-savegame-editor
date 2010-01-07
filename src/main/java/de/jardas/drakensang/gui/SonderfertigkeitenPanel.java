@@ -4,8 +4,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 
-import de.jardas.drakensang.dao.Static;
-import de.jardas.drakensang.model.Sonderfertigkeiten;
+import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 
 public class SonderfertigkeitenPanel extends
 		IntegerMapPanel<Sonderfertigkeiten> {

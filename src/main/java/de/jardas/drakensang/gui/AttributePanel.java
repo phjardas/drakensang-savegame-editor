@@ -1,7 +1,7 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.dao.Static;
-import de.jardas.drakensang.model.Attribute;
+import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.model.Attribute;
 
 
 public class AttributePanel extends IntegerMapPanel<Attribute> {

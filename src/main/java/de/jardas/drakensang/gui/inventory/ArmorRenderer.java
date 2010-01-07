@@ -1,9 +1,5 @@
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.gui.InfoLabel;
-import de.jardas.drakensang.model.inventory.Armor;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +10,10 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import de.jardas.drakensang.gui.InfoLabel;
+import de.jardas.drakensang.model.inventory.Armor;
+import de.jardas.drakensang.model.inventory.InventoryItem;
 
 
 public class ArmorRenderer extends InventoryItemRenderer<Armor> {

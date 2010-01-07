@@ -1,6 +1,6 @@
 package de.jardas.drakensang.model.inventory;
 
-import de.jardas.drakensang.model.Persistable;
+import de.jardas.drakensang.shared.model.Persistable;
 
 public abstract class InventoryItem extends Persistable {
     private final boolean countable;

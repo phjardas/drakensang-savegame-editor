@@ -1,9 +1,5 @@
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.dao.Static;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Shield;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,6 +7,10 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Shield;
+import de.jardas.drakensang.shared.db.Static;
 
 
 public class ShieldRenderer extends InventoryItemRenderer<Shield> {

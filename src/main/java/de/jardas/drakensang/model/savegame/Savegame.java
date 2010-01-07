@@ -9,8 +9,9 @@ import java.util.Date;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.model.savegame.PackReader.PackData;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.io.PackReader;
+import de.jardas.drakensang.shared.io.PackReader.PackData;
 
 public class Savegame implements Comparable<Savegame> {
 	private int version;

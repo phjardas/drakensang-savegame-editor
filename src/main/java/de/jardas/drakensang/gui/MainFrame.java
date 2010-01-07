@@ -1,20 +1,5 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.CharacterDao;
-import de.jardas.drakensang.dao.CharacterDao.Progress;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.gui.load.LoadDialog;
-import de.jardas.drakensang.gui.load.SavegameListener;
-import de.jardas.drakensang.gui.util.WordWrap;
-import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.savegame.Savegame;
-import de.jardas.drakensang.model.savegame.SavegameIcon;
-
-import org.jdesktop.swingworker.SwingWorker;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -27,12 +12,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import java.io.File;
-
 import java.text.Collator;
 import java.text.MessageFormat;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +39,22 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.jdesktop.swingworker.SwingWorker;
+
+import de.jardas.drakensang.Main;
+import de.jardas.drakensang.dao.CharacterDao;
+import de.jardas.drakensang.dao.SavegameDao;
+import de.jardas.drakensang.dao.CharacterDao.Progress;
+import de.jardas.drakensang.gui.load.LoadDialog;
+import de.jardas.drakensang.gui.load.SavegameListener;
+import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.savegame.Savegame;
+import de.jardas.drakensang.model.savegame.SavegameIcon;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.LocaleChooserDialog;
+import de.jardas.drakensang.shared.gui.WordWrap;
 
 
 public class MainFrame extends JFrame {
@@ -206,7 +204,7 @@ public class MainFrame extends JFrame {
         setSize(850, 730);
         setLocationRelativeTo(null);
 
-        LOG.debug("Main frame initialized.");
+        LOG.debug("Launcher frame initialized.");
     }
 
     public void setBusy(boolean busy) {

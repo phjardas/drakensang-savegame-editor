@@ -1,16 +1,10 @@
 package de.jardas.drakensang.gui;
 
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.IntegerMap;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.text.Collator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
+
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.model.IntegerMap;
 
 
 public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {

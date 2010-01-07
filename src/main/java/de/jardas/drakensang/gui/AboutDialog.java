@@ -1,7 +1,5 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.dao.Messages;
-
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
@@ -16,6 +14,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.Browser;
 
 
 public class AboutDialog extends JDialog {

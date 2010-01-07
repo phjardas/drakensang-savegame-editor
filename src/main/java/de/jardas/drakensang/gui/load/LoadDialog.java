@@ -21,12 +21,12 @@ import javax.swing.JToolBar;
 
 import org.jdesktop.swingworker.SwingWorker;
 
-import de.jardas.drakensang.DrakensangException;
 import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.dao.SavegameDao.Progress;
 import de.jardas.drakensang.model.savegame.Savegame;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.Messages;
 
 
 public class LoadDialog extends JDialog implements SavegameListener {

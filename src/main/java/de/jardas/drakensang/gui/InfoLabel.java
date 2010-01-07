@@ -1,9 +1,5 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.gui.util.WordWrap;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -11,13 +7,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.MissingResourceException;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
+import de.jardas.drakensang.Main;
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.WordWrap;
 
 
 public class InfoLabel extends JComponent {

@@ -1,11 +1,11 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.dao.Messages;
-
 import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import de.jardas.drakensang.shared.db.Messages;
 
 
 public class Footer extends JPanel {

@@ -1,13 +1,14 @@
 package de.jardas.drakensang;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-
 import java.net.URL;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import de.jardas.drakensang.shared.DrakensangException;
 
 
 public class VersionInformation {

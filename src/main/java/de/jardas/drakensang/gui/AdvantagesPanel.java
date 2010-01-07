@@ -1,22 +1,11 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.gui.util.WordWrap;
-import de.jardas.drakensang.model.Advantage;
-import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.Effect;
-import de.jardas.drakensang.model.Modification;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.text.Collator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +20,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import de.jardas.drakensang.Main;
+import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.WordWrap;
+import de.jardas.drakensang.shared.model.Advantage;
+import de.jardas.drakensang.shared.model.Effect;
+import de.jardas.drakensang.shared.model.Modification;
 
 
 public class AdvantagesPanel extends JPanel {

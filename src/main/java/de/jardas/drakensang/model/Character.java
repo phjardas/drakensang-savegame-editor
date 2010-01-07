@@ -8,6 +8,18 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import de.jardas.drakensang.model.inventory.Inventory;
 import de.jardas.drakensang.model.inventory.Money;
+import de.jardas.drakensang.shared.model.Advantage;
+import de.jardas.drakensang.shared.model.Attribute;
+import de.jardas.drakensang.shared.model.CasterRace;
+import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.Culture;
+import de.jardas.drakensang.shared.model.Persistable;
+import de.jardas.drakensang.shared.model.Profession;
+import de.jardas.drakensang.shared.model.Race;
+import de.jardas.drakensang.shared.model.Sex;
+import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
+import de.jardas.drakensang.shared.model.Talente;
+import de.jardas.drakensang.shared.model.Zauberfertigkeiten;
 
 public class Character extends Persistable {
 	private int abenteuerpunkte;

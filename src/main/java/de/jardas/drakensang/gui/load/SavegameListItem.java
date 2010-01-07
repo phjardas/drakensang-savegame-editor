@@ -1,6 +1,6 @@
 package de.jardas.drakensang.gui.load;
 
-import de.jardas.drakensang.dao.Messages;
+import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.model.savegame.SavegameIcon;
 

@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.jardas.drakensang.DrakensangException;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.Static;
 
 public class ArchetypeDao {
 	private static boolean initialized;

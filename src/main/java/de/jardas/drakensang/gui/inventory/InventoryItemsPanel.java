@@ -1,15 +1,9 @@
 package de.jardas.drakensang.gui.inventory;
 
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-import de.jardas.drakensang.model.inventory.Money;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.text.Collator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +15,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.model.inventory.Money;
+import de.jardas.drakensang.shared.db.Messages;
 
 
 public class InventoryItemsPanel extends JPanel {

@@ -1,10 +1,16 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.dao.Guid;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.dao.UpdateStatementBuilder;
-import de.jardas.drakensang.dao.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.model.inventory.Ammo;
 import de.jardas.drakensang.model.inventory.Armor;
 import de.jardas.drakensang.model.inventory.EquipmentSlot;
@@ -17,17 +23,9 @@ import de.jardas.drakensang.model.inventory.Recipe;
 import de.jardas.drakensang.model.inventory.Shield;
 import de.jardas.drakensang.model.inventory.Torch;
 import de.jardas.drakensang.model.inventory.Weapon;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
+import de.jardas.drakensang.shared.db.UpdateStatementBuilder.ParameterType;
 
 
 public abstract class InventoryItemDao<I extends InventoryItem> {
@@ -169,44 +167,6 @@ public abstract class InventoryItemDao<I extends InventoryItem> {
 
     public String getTable() {
         return this.table;
-    }
-
-    // FIXME creation of inventory items
-    public void create(InventoryItem item) throws SQLException {
-        LOG.debug("Creating " + item);
-        LOG.warn("Creating inventory items is not supported yet: " + item);
-
-        final StringBuffer sql = new StringBuffer();
-        sql.append("insert into '").append(getTable());
-        sql.append("' (select ? as 'Guid', ? as 'StorageGuid'");
-
-        for (String field : getFields()) {
-            if (!"Guid".equalsIgnoreCase(field) &&
-                    !"StorageGuid".equals(field)) {
-                sql.append(", '").append(field).append("'");
-            }
-        }
-
-        sql.append(" from '").append(getTable());
-        sql.append("' where 'Guid'=?)");
-        System.out.println(sql);
-
-        final PreparedStatement stmt = SavegameDao.getConnection()
-                                                  .prepareStatement(sql.toString());
-        stmt.setBytes(1, Guid.generateGuid());
-        stmt.setBytes(2, item.getInventory().getCharacter().getGuid());
-        stmt.setBytes(3, item.getGuid());
-        stmt.executeUpdate();
-    }
-
-    public void delete(InventoryItem item) throws SQLException {
-        LOG.debug("Deleting " + item);
-
-        final PreparedStatement stmt = SavegameDao.getConnection()
-                                                  .prepareStatement("delete from " +
-                getTable() + " where Guid = ?");
-        stmt.setBytes(1, item.getGuid());
-        stmt.executeUpdate();
     }
 
     public List<I> loadInventory() {

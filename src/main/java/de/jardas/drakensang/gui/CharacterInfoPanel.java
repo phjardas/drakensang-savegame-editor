@@ -18,14 +18,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.dao.ArchetypeDao;
-import de.jardas.drakensang.dao.Messages;
-import de.jardas.drakensang.model.CasterRace;
-import de.jardas.drakensang.model.CasterType;
 import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.Culture;
-import de.jardas.drakensang.model.Profession;
-import de.jardas.drakensang.model.Race;
-import de.jardas.drakensang.model.Sex;
+import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.model.CasterRace;
+import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.Culture;
+import de.jardas.drakensang.shared.model.Profession;
+import de.jardas.drakensang.shared.model.Race;
+import de.jardas.drakensang.shared.model.Sex;
 
 public class CharacterInfoPanel extends JPanel {
 	private final JLabel aeMax = new JLabel();

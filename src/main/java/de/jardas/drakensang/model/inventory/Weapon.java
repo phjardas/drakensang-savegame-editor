@@ -1,6 +1,6 @@
 package de.jardas.drakensang.model.inventory;
 
-import de.jardas.drakensang.model.Schaden;
+import de.jardas.drakensang.shared.model.Schaden;
 
 public class Weapon extends InventoryItem {
 	private Type equipmentType;

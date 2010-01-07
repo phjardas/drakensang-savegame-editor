@@ -1,7 +1,7 @@
 package de.jardas.drakensang.gui;
 
-import de.jardas.drakensang.dao.Static;
-import de.jardas.drakensang.model.Zauberfertigkeiten;
+import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.model.Zauberfertigkeiten;
 
 public class ZauberPanel extends IntegerMapPanel<Zauberfertigkeiten> {
 	@Override

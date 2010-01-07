@@ -1,26 +1,15 @@
 package de.jardas.drakensang.dao;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.Settings;
-import de.jardas.drakensang.model.savegame.Savegame;
-import de.jardas.drakensang.util.WindowsRegistry;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +17,14 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
+import de.jardas.drakensang.model.savegame.Savegame;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.Settings;
+import de.jardas.drakensang.shared.registry.WindowsRegistry;
 
 public class SavegameDao {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger

@@ -1,11 +1,11 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.dao.UpdateStatementBuilder;
-import de.jardas.drakensang.model.inventory.Shield;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import de.jardas.drakensang.model.inventory.Shield;
+import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 
 
 public class ShieldDao extends InventoryItemDao<Shield> {

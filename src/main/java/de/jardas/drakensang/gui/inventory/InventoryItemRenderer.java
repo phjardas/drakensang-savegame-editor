@@ -1,25 +1,19 @@
 package de.jardas.drakensang.gui.inventory;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.dao.Messages;
 import de.jardas.drakensang.gui.InfoLabel;
 import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.db.Messages;
 
 public abstract class InventoryItemRenderer<I extends InventoryItem> {
 	private static List<InventoryItemRenderer<? extends InventoryItem>> RENDERERS = new ArrayList<InventoryItemRenderer<? extends InventoryItem>>();
@@ -50,7 +44,6 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 		components.add(renderLabel(item));
 		components.add(renderCounter(item));
 		components.add(renderSpecial(item));
-		components.add(renderActions(item));
 
 		return components;
 	}
@@ -99,27 +92,6 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 	}
 
 	public JComponent renderSpecial(final I item) {
-		return null;
-	}
-
-	protected JComponent renderActions(final I item) {
-		JPanel panel = new JPanel();
-
-		panel.add(new JButton(new AbstractAction("löschen") {
-			public void actionPerformed(ActionEvent evt) {
-				String message = item.isQuestItem() ? "Dies ist ein Quest-Gegenstand. Willst du ihn wirklich löschen?"
-						: "Willst du diesen Gegenstand wirklich löschen?";
-				int result = JOptionPane.showConfirmDialog(Main.getFrame(),
-						message, "Gegenstand löschen",
-						JOptionPane.YES_NO_OPTION);
-
-				if (result == JOptionPane.YES_OPTION) {
-					item.getInventory().remove(item);
-				}
-			}
-		}));
-
-		// FIXME löschen ist noch nicht so recht interessant.
 		return null;
 	}
 

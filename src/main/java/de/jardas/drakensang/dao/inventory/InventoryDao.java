@@ -1,21 +1,20 @@
 package de.jardas.drakensang.dao.inventory;
 
-import de.jardas.drakensang.DrakensangException;
-import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.model.Character;
-import de.jardas.drakensang.model.inventory.Inventory;
-import de.jardas.drakensang.model.inventory.InventoryItem;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import de.jardas.drakensang.dao.SavegameDao;
+import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.model.inventory.Inventory;
+import de.jardas.drakensang.model.inventory.InventoryItem;
+import de.jardas.drakensang.shared.DrakensangException;
 
 
 public class InventoryDao {
@@ -124,16 +123,5 @@ public class InventoryDao {
         for (InventoryItem item : inventory.getItems()) {
             getInventoryItemDao(item.getClass()).save(item);
         }
-
-        for (InventoryItem item : inventory.getAddedItems()) {
-            getInventoryItemDao(item.getClass()).create(item);
-        }
-
-        for (InventoryItem item : inventory.getDeletedItems()) {
-            getInventoryItemDao(item.getClass()).delete(item);
-        }
-    }
-
-    public static void findItemsInLevel(String level) {
     }
 }
