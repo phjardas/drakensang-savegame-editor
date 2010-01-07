@@ -10,12 +10,15 @@ public enum EffectTarget {
     Life,
     LifeRegeneration,
     LifeRegenerationFrequency,
+    LifeRegenerationFrequencyCombat,
     Mana,
     ManaRegeneration,
     ManaRegenerationFrequency,
+    ManaRegenerationFrequencyCombat,
     Endurance,
     EnduranceRegeneration,
     EnduranceRegenerationFrequency,
+    EnduranceRegenerationFrequencyCombat,
 	Dodge;
 	
     public static EffectTarget getTargetType(String name) {
@@ -38,6 +41,10 @@ public enum EffectTarget {
         if ("Reg_LE_freq".equals(name)) {
         	return LifeRegenerationFrequency;
         }
+        
+        if ("Reg_LE_freq_combat".equals(name)) {
+        	return LifeRegenerationFrequencyCombat;
+        }
 
         if ("AEmax".equals(name)) {
             return Mana;
@@ -50,6 +57,10 @@ public enum EffectTarget {
         if ("Reg_AE_freq".equals(name)) {
         	return ManaRegenerationFrequency;
         }
+        
+        if ("Reg_AE_freq_combat".equals(name)) {
+        	return ManaRegenerationFrequencyCombat;
+        }
 
         if ("AUmax".equals(name)) {
             return Endurance;
@@ -61,6 +72,10 @@ public enum EffectTarget {
 
         if ("Reg_AU_freq".equals(name)) {
         	return EnduranceRegenerationFrequency;
+        }
+        
+        if ("Reg_AU_freq_combat".equals(name)) {
+        	return EnduranceRegenerationFrequencyCombat;
         }
 
         if ("AW".equals(name)) {

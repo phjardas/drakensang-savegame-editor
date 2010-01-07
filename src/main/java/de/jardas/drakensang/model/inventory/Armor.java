@@ -1,110 +1,80 @@
 package de.jardas.drakensang.model.inventory;
 
 public class Armor extends InventoryItem {
-	private int ruestungKopf;
-	private int ruestungBrust;
-	private int ruestungRuecken;
-	private int ruestungBauch;
-	private int ruestungArmLinks;
-	private int ruestungArmRechts;
-	private int ruestungBeinLinks;
-	private int ruestungBeinRechts;
-	private Type[] types;
+    private int ruestungKopf;
+    private int ruestungBrust;
+    private int ruestungRuecken;
+    private int ruestungBauch;
+    private int ruestungArmLinks;
+    private int ruestungArmRechts;
+    private int ruestungBeinLinks;
+    private int ruestungBeinRechts;
 
-	public Armor() {
-		super(false);
-	}
+    public Armor() {
+        super(false);
+    }
 
-	public int getRuestungKopf() {
-		return ruestungKopf;
-	}
+    public int getRuestungKopf() {
+        return ruestungKopf;
+    }
 
-	public void setRuestungKopf(int ruestungKopf) {
-		this.ruestungKopf = ruestungKopf;
-	}
+    public void setRuestungKopf(int ruestungKopf) {
+        this.ruestungKopf = ruestungKopf;
+    }
 
-	public int getRuestungBrust() {
-		return ruestungBrust;
-	}
+    public int getRuestungBrust() {
+        return ruestungBrust;
+    }
 
-	public void setRuestungBrust(int ruestungBrust) {
-		this.ruestungBrust = ruestungBrust;
-	}
+    public void setRuestungBrust(int ruestungBrust) {
+        this.ruestungBrust = ruestungBrust;
+    }
 
-	public int getRuestungRuecken() {
-		return ruestungRuecken;
-	}
+    public int getRuestungRuecken() {
+        return ruestungRuecken;
+    }
 
-	public void setRuestungRuecken(int ruestungRuecken) {
-		this.ruestungRuecken = ruestungRuecken;
-	}
+    public void setRuestungRuecken(int ruestungRuecken) {
+        this.ruestungRuecken = ruestungRuecken;
+    }
 
-	public int getRuestungBauch() {
-		return ruestungBauch;
-	}
+    public int getRuestungBauch() {
+        return ruestungBauch;
+    }
 
-	public void setRuestungBauch(int ruestungBauch) {
-		this.ruestungBauch = ruestungBauch;
-	}
+    public void setRuestungBauch(int ruestungBauch) {
+        this.ruestungBauch = ruestungBauch;
+    }
 
-	public int getRuestungArmLinks() {
-		return ruestungArmLinks;
-	}
+    public int getRuestungArmLinks() {
+        return ruestungArmLinks;
+    }
 
-	public void setRuestungArmLinks(int ruestungArmLinks) {
-		this.ruestungArmLinks = ruestungArmLinks;
-	}
+    public void setRuestungArmLinks(int ruestungArmLinks) {
+        this.ruestungArmLinks = ruestungArmLinks;
+    }
 
-	public int getRuestungArmRechts() {
-		return ruestungArmRechts;
-	}
+    public int getRuestungArmRechts() {
+        return ruestungArmRechts;
+    }
 
-	public void setRuestungArmRechts(int ruestungArmRechts) {
-		this.ruestungArmRechts = ruestungArmRechts;
-	}
+    public void setRuestungArmRechts(int ruestungArmRechts) {
+        this.ruestungArmRechts = ruestungArmRechts;
+    }
 
-	public int getRuestungBeinLinks() {
-		return ruestungBeinLinks;
-	}
+    public int getRuestungBeinLinks() {
+        return ruestungBeinLinks;
+    }
 
-	public void setRuestungBeinLinks(int ruestungBeinLinks) {
-		this.ruestungBeinLinks = ruestungBeinLinks;
-	}
+    public void setRuestungBeinLinks(int ruestungBeinLinks) {
+        this.ruestungBeinLinks = ruestungBeinLinks;
+    }
 
-	public int getRuestungBeinRechts() {
-		return ruestungBeinRechts;
-	}
+    public int getRuestungBeinRechts() {
+        return ruestungBeinRechts;
+    }
 
-	public void setRuestungBeinRechts(int ruestungBeinRechts) {
-		this.ruestungBeinRechts = ruestungBeinRechts;
-	}
-
-	public Type[] getTypes() {
-		return types;
-	}
-
-	public void setTypes(Type[] types) {
-		this.types = types;
-	}
-
-	public static enum Type {
-		LeftHand,
-		RightHand,
-		Body,
-		Head,
-		Shoulder,
-		Shirt,
-		Body_Plate,
-		ArmArmor,
-		LegArmor,
-		Shoes,
-		Belt,
-		Trousers,
-		Neck,
-		Ring,
-		Quiver,
-		Gloves,
-		Knee,
-		Decoration,
-	}
+    public void setRuestungBeinRechts(int ruestungBeinRechts) {
+        this.ruestungBeinRechts = ruestungBeinRechts;
+    }
 }
