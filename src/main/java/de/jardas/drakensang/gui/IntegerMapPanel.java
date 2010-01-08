@@ -161,7 +161,7 @@ public abstract class IntegerMapPanel<M extends IntegerMap> extends JPanel {
     protected JComponent createField(final String key, int value) {
         try {
             final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-                        value, -1000, 100, 1));
+                        value, -1000, 1000, 1));
             spinner.addChangeListener(new javax.swing.event.ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
                         final int val = ((Number) spinner.getValue()).intValue();
