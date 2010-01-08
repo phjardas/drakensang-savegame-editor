@@ -7,7 +7,6 @@ import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 import de.jardas.drakensang.shared.model.Schaden;
 import de.jardas.drakensang.shared.model.inventory.Weapon;
-import de.jardas.drakensang.shared.model.inventory.Weapon.Type;
 
 public class WeaponDao extends InventoryItemDao<Weapon> {
 	private static final String[] FIELDS = { "Guid", "_ID", "_Level",
@@ -40,8 +39,6 @@ public class WeaponDao extends InventoryItemDao<Weapon> {
 		final Weapon weapon = super.load(results);
 
 		try {
-			weapon.setEquipmentType(Type.valueOf(results
-					.getString("EquipmentType")));
 			weapon.setSchaden(new Schaden(results.getInt("WpW6"), results
 					.getInt("WpW6plus")));
 			weapon.setAttackeMod(results.getInt("WpATmod"));

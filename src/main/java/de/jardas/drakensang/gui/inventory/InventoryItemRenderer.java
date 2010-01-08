@@ -13,6 +13,7 @@ import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.gui.InfoLabel;
+import de.jardas.drakensang.shared.model.inventory.EquipableItem;
 import de.jardas.drakensang.shared.model.inventory.InventoryItem;
 
 public abstract class InventoryItemRenderer<I extends InventoryItem> {
@@ -52,12 +53,15 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 		final InfoLabel label = new InfoLabel(getNameKey(item),
 				getInfoKey(item));
 
-		if (item.getSlot() != null) {
-			final JLabel nameLabel = label.getNameLabel();
-			final String text = nameLabel.getText() + " ("
-					+ Messages.get(item.getSlot().name()) + ")";
-			nameLabel.setText(text);
-			nameLabel.setForeground(Color.BLUE.darker());
+		if (item instanceof EquipableItem) {
+			final EquipableItem equip = (EquipableItem) item;
+			if (equip.getSlot() != null) {
+				final JLabel nameLabel = label.getNameLabel();
+				final String text = nameLabel.getText() + " ("
+						+ Messages.get(equip.getSlot().name()) + ")";
+				nameLabel.setText(text);
+				nameLabel.setForeground(Color.BLUE.darker());
+			}
 		}
 
 		return label;
