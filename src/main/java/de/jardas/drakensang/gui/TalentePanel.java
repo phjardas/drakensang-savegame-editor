@@ -13,9 +13,11 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 
-import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.gui.InfoLabel;
+import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.model.Talente;
 
 public class TalentePanel extends IntegerMapPanel<Talente> {

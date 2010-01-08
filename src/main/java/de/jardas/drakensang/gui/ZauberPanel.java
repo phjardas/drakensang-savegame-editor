@@ -1,6 +1,7 @@
 package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.model.Zauberfertigkeiten;
 
 public class ZauberPanel extends IntegerMapPanel<Zauberfertigkeiten> {

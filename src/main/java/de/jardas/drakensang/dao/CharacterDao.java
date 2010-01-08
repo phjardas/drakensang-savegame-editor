@@ -12,13 +12,13 @@ import java.util.Set;
 import org.apache.commons.lang.WordUtils;
 
 import de.jardas.drakensang.dao.inventory.InventoryDao;
-import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.shared.model.Advantage;
 import de.jardas.drakensang.shared.model.CasterRace;
 import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Culture;
 import de.jardas.drakensang.shared.model.IntegerMap;
 import de.jardas.drakensang.shared.model.Profession;
@@ -165,7 +165,7 @@ public class CharacterDao {
 				"\\s*;\\s*");
 
 		for (String token : tokens) {
-			c.getAdvantages().add(Advantage.valueOf(token));
+			c.getAdvantages().add(Advantage.forId(token));
 		}
 	}
 
@@ -196,8 +196,9 @@ public class CharacterDao {
 		builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
 		builder.append("'AE' = ?", character.getAstralenergie());
 		builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
-		builder.append("'Advantages' = ?", Advantage.serialize(character
-				.getAdvantages()));
+		builder
+				.append("'Advantages' = ?",
+						serialize(character.getAdvantages()));
 		builder.append("'SneakSpeed' = ?", character.getSneakSpeed());
 		builder.append("'WalkSpeed' = ?", character.getWalkSpeed());
 		builder.append("'RunSpeed' = ?", character.getRunSpeed());
@@ -226,6 +227,20 @@ public class CharacterDao {
 		LOG.debug("Updated rows: " + updated);
 
 		InventoryDao.save(character.getInventory());
+	}
+
+	private static String serialize(Set<Advantage> advantages) {
+		final StringBuffer out = new StringBuffer();
+
+		for (Advantage advantage : advantages) {
+			if (out.length() > 0) {
+				out.append(";");
+			}
+
+			out.append(advantage.getId());
+		}
+
+		return out.toString();
 	}
 
 	private static void appendSave(UpdateStatementBuilder builder,

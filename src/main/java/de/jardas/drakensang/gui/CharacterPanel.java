@@ -6,10 +6,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import de.jardas.drakensang.Main;
 import de.jardas.drakensang.gui.inventory.InventoryPanel;
-import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.IntegerMapPanel;
+import de.jardas.drakensang.shared.gui.character.AttributePanel;
+import de.jardas.drakensang.shared.model.Character;
 
 public class CharacterPanel extends JPanel {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
@@ -69,7 +71,7 @@ public class CharacterPanel extends JPanel {
 		LOG.debug("Updating displayed character: " + character.getId());
 
 		this.character = character;
-		Main.getFrame().setBusy(true);
+		((MainFrame) Launcher.getMainFrame()).setBusy(true);
 
 		initialize();
 
@@ -81,7 +83,7 @@ public class CharacterPanel extends JPanel {
 		sonderPanel.setValues(character.getSonderfertigkeiten());
 		inventoryPanel.setInventory(character.getInventory());
 
-		Main.getFrame().setBusy(false);
+		((MainFrame) Launcher.getMainFrame()).setBusy(false);
 
 		repaint();
 	}

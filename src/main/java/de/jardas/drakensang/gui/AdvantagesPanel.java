@@ -7,13 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JCheckBox;
@@ -21,148 +18,131 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.jardas.drakensang.Main;
-import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.shared.DrakensangException;
+import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.WordWrap;
 import de.jardas.drakensang.shared.model.Advantage;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Effect;
-import de.jardas.drakensang.shared.model.Modification;
-
 
 public class AdvantagesPanel extends JPanel {
-    private Character character;
-    private final Set<JCheckBox> boxes = new HashSet<JCheckBox>();
+	private Character character;
+	private final Set<JCheckBox> boxes = new HashSet<JCheckBox>();
 
-    public AdvantagesPanel() {
-        setLayout(new GridBagLayout());
-    }
+	public AdvantagesPanel() {
+		setLayout(new GridBagLayout());
+	}
 
-    private void update() {
-        boxes.clear();
-        removeAll();
-        addAdvantageFields();
-    }
+	private void update() {
+		boxes.clear();
+		removeAll();
+		addAdvantageFields();
+	}
 
-    private void addAdvantageFields() {
-        final List<Advantage> advantages = new ArrayList<Advantage>(Arrays.asList(
-                    Advantage.values()));
-        Collections.sort(advantages,
-            new Comparator<Advantage>() {
-                private final Collator collator = Collator.getInstance();
+	private void addAdvantageFields() {
+		final List<Advantage> advantages = new ArrayList<Advantage>(Advantage
+				.values());
+		Collections.sort(advantages, new Comparator<Advantage>() {
+			private final Collator collator = Collator.getInstance();
 
-                public int compare(Advantage o1, Advantage o2) {
-                    return collator.compare(o1.getName(), o2.getName());
-                }
-            });
+			public int compare(Advantage o1, Advantage o2) {
+				return collator.compare(o1.getName(), o2.getName());
+			}
+		});
 
-        final Map<Modification, Boolean> modificationVisibility = new HashMap<Modification, Boolean>();
+		displayInfoForUnknownModification(advantages);
 
-        for (Modification mod : Modification.values()) {
-            modificationVisibility.put(mod, false);
-        }
+		int row = 0;
 
-        for (Advantage advantage : advantages) {
-            if (advantage.isPartOfModification() &&
-                    character.getAdvantages().contains(advantage)) {
-                modificationVisibility.put(advantage.getModification(), true);
-            }
-        }
+		for (Advantage advantage : advantages) {
+			addAdvantageField(advantage, row++);
+		}
+	}
 
-        displayInfoForUnknownModification(advantages);
+	private void displayInfoForUnknownModification(List<Advantage> advantages) {
+		for (Advantage advantage : advantages) {
+			if (character.getAdvantages().contains(advantage)
+					&& advantage.isUnknownModification()) {
+				JOptionPane.showMessageDialog(Launcher.getMainFrame(), WordWrap
+						.addNewlines(Messages.get("mod.unknown.message")),
+						Messages.get("mod.unknown.title"),
+						JOptionPane.WARNING_MESSAGE | JOptionPane.OK_OPTION);
 
-        int row = 0;
+				return;
+			}
+		}
+	}
 
-        for (Advantage advantage : advantages) {
-            if (!advantage.isPartOfModification() ||
-                    modificationVisibility.get(advantage.getModification())) {
-                addAdvantageField(advantage, row++);
-            }
-        }
-    }
+	private void addAdvantageField(final Advantage advantage, int row) {
+		final JCheckBox box = new JCheckBox();
+		boolean selected = getCharacter().getAdvantages().contains(advantage);
 
-    private void displayInfoForUnknownModification(List<Advantage> advantages) {
-        for (Advantage advantage : advantages) {
-            if (character.getAdvantages().contains(advantage) &&
-                    advantage.isUnknownModification()) {
-                JOptionPane.showMessageDialog(Main.getFrame(),
-                    WordWrap.addNewlines(Messages.get("mod.unknown.message")),
-                    Messages.get("mod.unknown.title"),
-                    JOptionPane.WARNING_MESSAGE | JOptionPane.OK_OPTION);
+		box.setSelected(selected);
+		box.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (box.isSelected()) {
+					if (getCharacter().getAdvantages().size() >= 4) {
+						throw new DrakensangException(
+								"A character must not have more than four treats!");
+					} else {
+						getCharacter().getAdvantages().add(advantage);
+					}
+				} else {
+					getCharacter().getAdvantages().remove(advantage);
+				}
 
-                return;
-            }
-        }
-    }
+				enableUncheckedBoxes(getCharacter().getAdvantages().size() < 4);
+			}
+		});
+		boxes.add(box);
 
-    private void addAdvantageField(final Advantage advantage, int row) {
-        final JCheckBox box = new JCheckBox();
-        boolean selected = getCharacter().getAdvantages().contains(advantage);
+		add(box, new GridBagConstraints(0, row, 1, 1, 0, 0,
+				GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3,
+						6, 3, 6), 0, 0));
 
-        box.setSelected(selected);
-        box.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (box.isSelected()) {
-                        if (getCharacter().getAdvantages().size() >= 4) {
-                            throw new DrakensangException(
-                                "A character must not have more than four treats!");
-                        } else {
-                            getCharacter().getAdvantages().add(advantage);
-                        }
-                    } else {
-                        getCharacter().getAdvantages().remove(advantage);
-                    }
+		add(new InfoLabel(advantage.getName(), advantage.getInfo(), false),
+				new GridBagConstraints(1, row, 1, 1, 0, 0,
+						GridBagConstraints.WEST, GridBagConstraints.NONE,
+						new Insets(3, 6, 3, 6), 0, 0));
 
-                    enableUncheckedBoxes(getCharacter().getAdvantages().size() < 4);
-                }
-            });
-        boxes.add(box);
+		final StringBuffer effects = new StringBuffer();
 
-        add(box,
-            new GridBagConstraints(0, row, 1, 1, 0, 0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
+		for (Effect effect : advantage.getEffects()) {
+			if (effects.length() > 0) {
+				effects.append(", ");
+			}
 
-        add(new InfoLabel(advantage.getName(), advantage.getInfo(), false),
-            new GridBagConstraints(1, row, 1, 1, 0, 0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
+			effects.append(Messages.get(effect.getTargetNameKey()));
+			effects.append(" ");
+			effects.append((effect.getModifier() > 0) ? "+" : "");
+			effects.append(effect.getModifier());
+		}
 
-        final StringBuffer effects = new StringBuffer();
+		add(new JLabel(effects.toString()), new GridBagConstraints(2, row, 1,
+				1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(3, 6, 3, 6), 0, 0));
+	}
 
-        for (Effect effect : advantage.getEffects()) {
-            if (effects.length() > 0) {
-                effects.append(", ");
-            }
+	private void enableUncheckedBoxes(boolean enabled) {
+		for (JCheckBox box : boxes) {
+			if (!box.isSelected()) {
+				box.setEnabled(enabled);
+			}
+		}
+	}
 
-            effects.append(Messages.get(effect.getTargetNameKey()));
-            effects.append(" ");
-            effects.append((effect.getModifier() > 0) ? "+" : "");
-            effects.append(effect.getModifier());
-        }
+	public Character getCharacter() {
+		return this.character;
+	}
 
-        add(new JLabel(effects.toString()),
-            new GridBagConstraints(2, row, 1, 1, 0, 0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(3, 6, 3, 6), 0, 0));
-    }
+	public void setCharacter(Character character) {
+		if (this.character == character) {
+			return;
+		}
 
-    private void enableUncheckedBoxes(boolean enabled) {
-        for (JCheckBox box : boxes) {
-            if (!box.isSelected()) {
-                box.setEnabled(enabled);
-            }
-        }
-    }
-
-    public Character getCharacter() {
-        return this.character;
-    }
-
-    public void setCharacter(Character character) {
-        if (this.character == character) {
-            return;
-        }
-
-        this.character = character;
-        update();
-    }
+		this.character = character;
+		update();
+	}
 }

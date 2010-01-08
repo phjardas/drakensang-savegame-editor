@@ -11,7 +11,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.gui.InfoLabel;
+import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.model.inventory.Armor;
 import de.jardas.drakensang.shared.model.inventory.InventoryItem;
 

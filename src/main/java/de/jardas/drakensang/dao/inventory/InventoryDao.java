@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.jardas.drakensang.dao.SavegameDao;
-import de.jardas.drakensang.model.Character;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.model.inventory.Inventory;
 import de.jardas.drakensang.shared.model.inventory.InventoryItem;

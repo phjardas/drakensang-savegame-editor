@@ -18,10 +18,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.jardas.drakensang.dao.ArchetypeDao;
-import de.jardas.drakensang.model.Character;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.EnumComboBox;
+import de.jardas.drakensang.shared.gui.InfoLabel;
+import de.jardas.drakensang.shared.gui.StringComboBox;
+import de.jardas.drakensang.shared.gui.character.AttributePanel;
 import de.jardas.drakensang.shared.model.CasterRace;
 import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Culture;
 import de.jardas.drakensang.shared.model.Profession;
 import de.jardas.drakensang.shared.model.Race;
@@ -46,7 +50,7 @@ public class CharacterInfoPanel extends JPanel {
 		attributesPanel.setBorder(BorderFactory.createTitledBorder(Messages
 				.get("Attribute")));
 		attributesPanel
-				.addChangeListener(new de.jardas.drakensang.gui.IntegerMapPanel.ChangeListener() {
+				.addChangeListener(new de.jardas.drakensang.shared.gui.IntegerMapPanel.ChangeListener() {
 					public void valueChanged(String key, int value) {
 						updateDerivedFields();
 					}
@@ -268,8 +272,7 @@ public class CharacterInfoPanel extends JPanel {
 
 			final EnumComboBox<Sex> sex = new EnumComboBox<Sex>(Sex.values(),
 					character.getSex()) {
-				protected void valueChanged(Sex item)
-						throws ChangeRejectedException {
+				protected void valueChanged(Sex item) {
 					character.setSex(item);
 				}
 			};

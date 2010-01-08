@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 
 import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 
 public class SonderfertigkeitenPanel extends
