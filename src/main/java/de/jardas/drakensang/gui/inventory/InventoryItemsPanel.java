@@ -42,6 +42,7 @@ public class InventoryItemsPanel extends JPanel {
 			if (item instanceof Money) {
 				continue;
 			}
+			
 			final String group = getGroupTitle(item.getClass());
 			List<InventoryItem> list = map.get(group);
 
