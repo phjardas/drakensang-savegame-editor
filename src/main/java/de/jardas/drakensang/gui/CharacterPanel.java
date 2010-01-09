@@ -9,8 +9,6 @@ import javax.swing.JTabbedPane;
 import de.jardas.drakensang.gui.inventory.InventoryPanel;
 import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.db.Messages;
-import de.jardas.drakensang.shared.gui.IntegerMapPanel;
-import de.jardas.drakensang.shared.gui.character.AttributePanel;
 import de.jardas.drakensang.shared.model.Character;
 
 public class CharacterPanel extends JPanel {
@@ -18,23 +16,13 @@ public class CharacterPanel extends JPanel {
 			.getLogger(CharacterPanel.class);
 	private Character character;
 	private JTabbedPane tabs = new JTabbedPane();
-	private AttributePanel attributesPanel = new AttributePanel();
-	private CharacterInfoPanel infoPanel = new CharacterInfoPanel(
-			attributesPanel);
+	private CharacterInfoPanel infoPanel = new CharacterInfoPanel();
 	private AdvantagesPanel advantagesPanel = new AdvantagesPanel();
 	private TalentePanel talentePanel = new TalentePanel();
 	private ZauberPanel zauberPanel = new ZauberPanel();
 	private SonderfertigkeitenPanel sonderPanel = new SonderfertigkeitenPanel();
 	private InventoryPanel inventoryPanel = new InventoryPanel();
 	private boolean initialized;
-
-	public CharacterPanel() {
-		attributesPanel.addChangeListener(new IntegerMapPanel.ChangeListener() {
-			public void valueChanged(String key, int value) {
-				talentePanel.onAttributeChange(key, value);
-			}
-		});
-	}
 
 	private void initialize() {
 		if (initialized) {
@@ -76,7 +64,6 @@ public class CharacterPanel extends JPanel {
 		initialize();
 
 		infoPanel.setCharacter(character);
-		attributesPanel.setValues(character.getAttribute());
 		advantagesPanel.setCharacter(character);
 		talentePanel.setCharacter(character);
 		zauberPanel.setValues(character.getZauberfertigkeiten());

@@ -3,6 +3,8 @@ package de.jardas.drakensang.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -13,15 +15,28 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 
-import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.db.Static;
 import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
+import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Talente;
 
 public class TalentePanel extends IntegerMapPanel<Talente> {
 	private Character character;
+	private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
+			for (Map.Entry<String, JComponent> entry : getSpecials().entrySet()) {
+				if (entry.getValue() == null) {
+					continue;
+				}
+
+				final String key = entry.getKey();
+				final JLabel label = (JLabel) entry.getValue();
+				label.setText(createAttributesLabel(key));
+			}
+		}
+	};
 
 	@Override
 	protected boolean isVisible(String key) {
@@ -46,18 +61,6 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 	@Override
 	protected JComponent createSpecial(String key) {
 		return new JLabel(createAttributesLabel(key));
-	}
-
-	public void onAttributeChange(String attributeKey, int value) {
-		for (Map.Entry<String, JComponent> entry : getSpecials().entrySet()) {
-			if (entry.getValue() == null) {
-				continue;
-			}
-
-			final String key = entry.getKey();
-			final JLabel label = (JLabel) entry.getValue();
-			label.setText(createAttributesLabel(key));
-		}
 	}
 
 	private String createAttributesLabel(String key) {
@@ -139,7 +142,21 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 	}
 
 	public void setCharacter(Character character) {
+		if (character == this.character) {
+			return;
+		}
+
+		if (this.character != null) {
+			this.character.removePropertyChangeListener(propertyChangeListener);
+		}
+
 		this.character = character;
+
+		if (this.character != null) {
+			character.addPropertyChangeListener(propertyChangeListener,
+					"attributes.*", "advantages.*");
+		}
+
 		setValues(character.getTalente());
 	}
 }

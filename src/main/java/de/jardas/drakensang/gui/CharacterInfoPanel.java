@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -12,49 +14,58 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.jardas.drakensang.dao.ArchetypeDao;
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.gui.EnumComboBox;
 import de.jardas.drakensang.shared.gui.InfoLabel;
-import de.jardas.drakensang.shared.gui.StringComboBox;
+import de.jardas.drakensang.shared.gui.RegeneratingPanel;
 import de.jardas.drakensang.shared.gui.character.AttributePanel;
 import de.jardas.drakensang.shared.model.CasterRace;
 import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.CharSet;
 import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Culture;
+import de.jardas.drakensang.shared.model.Face;
+import de.jardas.drakensang.shared.model.Hair;
 import de.jardas.drakensang.shared.model.Profession;
 import de.jardas.drakensang.shared.model.Race;
 import de.jardas.drakensang.shared.model.Sex;
 
 public class CharacterInfoPanel extends JPanel {
-	private final JLabel aeMax = new JLabel();
-	private final JLabel leMax = new JLabel();
 	private final JLabel fernkampfBasis = new JLabel();
 	private final JLabel paradeBasis = new JLabel();
 	private final JLabel attackeBasis = new JLabel();
-	private final JLabel ausdauerMax = new JLabel();
 	private final JLabel magieresistenz = new JLabel();
-	private final AttributePanel attributesPanel;
+	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
+			final String property = evt.getPropertyName();
+			if ("attackeBasis".equals(property)) {
+				attackeBasis.setText(String.valueOf(character.getAttackeBasis()
+						.getValue()));
+			} else if ("paradeBasis".equals(property)) {
+				paradeBasis.setText(String.valueOf(character.getParadeBasis()
+						.getValue()));
+			} else if ("fernkampfBasis".equals(property)) {
+				fernkampfBasis.setText(String.valueOf(character
+						.getFernkampfBasis().getValue()));
+			} else if ("magieresistenz".equals(property)) {
+				magieresistenz.setText(String.valueOf(character
+						.getMagieresistenz().getValue()));
+			}
+		}
+	};
+	private final AttributePanel attributesPanel = new AttributePanel();
 	private Character character;
 
-	public CharacterInfoPanel(AttributePanel attributesPanel) {
-		this.attributesPanel = attributesPanel;
-
+	public CharacterInfoPanel() {
 		setLayout(new GridBagLayout());
-
 		attributesPanel.setBorder(BorderFactory.createTitledBorder(Messages
 				.get("Attribute")));
-		attributesPanel
-				.addChangeListener(new de.jardas.drakensang.shared.gui.IntegerMapPanel.ChangeListener() {
-					public void valueChanged(String key, int value) {
-						updateDerivedFields();
-					}
-				});
 	}
 
 	private void update() {
@@ -74,79 +85,49 @@ public class CharacterInfoPanel extends JPanel {
 		add(new JLabel(), new GridBagConstraints(1, row, 1, 1, 1, 1,
 				GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,
 						0, 0, 0), 0, 0));
-
-		updateDerivedFields();
 	}
 
 	private void addDerivedFields() {
-		int row = 0;
+		final JPanel p = new JPanel();
+		p.setLayout(new GridBagLayout());
+		add(p, new GridBagConstraints(1, 0, 1, 1, 0, 0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+				new Insets(0, 0, 0, 0), 0, 0));
+
+		final JTabbedPane tabs = new JTabbedPane();
+		tabs.addTab(Messages.get("LE"), new RegeneratingPanel(null, character
+				.getLebensenergie()));
+		tabs.addTab(Messages.get("AE"), new RegeneratingPanel(null, character
+				.getAstralenergie()));
+		tabs.addTab(Messages.get("AU"), new RegeneratingPanel(null, character
+				.getAusdauer()));
+		// tabs.addTab(Messages.get("KE"), new RegeneratingPanel(null,
+		// character.getKarma()));
+
+		p.add(tabs, new GridBagConstraints(0, 0, 1, 1, 0, 0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+				new Insets(0, 0, 0, 0), 0, 0));
+
 		final JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.setBorder(BorderFactory.createTitledBorder(Messages
 				.get("BaseValues")));
-		add(panel, new GridBagConstraints(1, 0, 1, 1, 0, 0,
+		p.add(panel, new GridBagConstraints(0, 1, 1, 1, 0, 0,
 				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-				new Insets(3, 6, 3, 6), 0, 0));
+				new Insets(6, 0, 0, 0), 0, 0));
 
-		final JSpinner le = new JSpinner(new SpinnerNumberModel(character
-				.getLebensenergie(), 0, 1000, 1));
-		le.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				character.setLebensenergie(((Number) le.getValue()).intValue());
-				updateDerivedFields();
-			}
-		});
-		addInput(panel, "LE", le, row++);
-
-		final JSpinner leBonus = new JSpinner(new SpinnerNumberModel(character
-				.getLebensenergieBonus(), -100, 100, 1));
-		leBonus.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				character.setLebensenergieBonus(((Number) leBonus.getValue())
-						.intValue());
-				updateDerivedFields();
-			}
-		});
-		addInput(panel, "LEbonus", leBonus, row++);
-		addInput(panel, "LEmax", leMax, row++);
-
-		final JSpinner ae = new JSpinner(new SpinnerNumberModel(character
-				.getAstralenergie(), 0, 1000, 1));
-		ae.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				character.setAstralenergie(((Number) ae.getValue()).intValue());
-				updateDerivedFields();
-			}
-		});
-		addInput(panel, "AE", ae, row++);
-
-		final JSpinner aeBonus = new JSpinner(new SpinnerNumberModel(character
-				.getAstralenergieBonus(), -100, 100, 1));
-		aeBonus.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				character.setAstralenergieBonus(((Number) aeBonus.getValue())
-						.intValue());
-				updateDerivedFields();
-			}
-		});
-		addInput(panel, "AEbonus", aeBonus, row++);
-		addInput(panel, "AEmax", aeMax, row++);
-
-		addInput(panel, "maximaleAusdauer", ausdauerMax, row++);
-		addInput(panel, "Magieresistenz", magieresistenz, row++);
-		addInput(panel, "AttackeBasis", attackeBasis, row++);
-		addInput(panel, "ParadeBasis", paradeBasis, row++);
-		addInput(panel, "Fernkampf-Basis", fernkampfBasis, row++);
-	}
-
-	public void updateDerivedFields() {
-		aeMax.setText(String.valueOf(character.getAstralenergieMax()));
-		leMax.setText(String.valueOf(character.getLebensenergieMax()));
-		attackeBasis.setText(String.valueOf(character.getAttackeBasis()));
-		paradeBasis.setText(String.valueOf(character.getParadeBasis()));
-		fernkampfBasis.setText(String.valueOf(character.getFernkampfBasis()));
-		ausdauerMax.setText(String.valueOf(character.getAusdauer()));
+		int r = 0;
 		magieresistenz.setText(String.valueOf(character.getMagieresistenz()));
+		addInput(panel, "Magieresistenz", magieresistenz, r++);
+
+		attackeBasis.setText(String.valueOf(character.getAttackeBasis()));
+		addInput(panel, "AttackeBasis", attackeBasis, r++);
+
+		paradeBasis.setText(String.valueOf(character.getParadeBasis()));
+		addInput(panel, "ParadeBasis", paradeBasis, r++);
+
+		fernkampfBasis.setText(String.valueOf(character.getFernkampfBasis()));
+		addInput(panel, "Fernkampf-Basis", fernkampfBasis, r++);
 	}
 
 	private void addNumberFields(int panelRow) {
@@ -279,9 +260,10 @@ public class CharacterInfoPanel extends JPanel {
 
 			addInput(appearancePanel, "Sex", sex, row++);
 
-			final StringComboBox hairCombo = new StringComboBox(ArchetypeDao
-					.getHairs(), character.getHair()) {
-				protected void valueChanged(String item) {
+			final EnumComboBox<Hair> hairCombo = new EnumComboBox<Hair>(Hair
+					.values(character.getSex(), character.getRace()), character
+					.getHair()) {
+				protected void valueChanged(Hair item) {
 					character.setHair(item);
 				}
 
@@ -293,9 +275,10 @@ public class CharacterInfoPanel extends JPanel {
 
 			addInput(appearancePanel, "SelectHair", hairCombo, row++);
 
-			final StringComboBox faceCombo = new StringComboBox(ArchetypeDao
-					.getFaces(), character.getFace()) {
-				protected void valueChanged(String item) {
+			final EnumComboBox<Face> faceCombo = new EnumComboBox<Face>(Face
+					.values(character.getSex(), character.getRace()), character
+					.getFace()) {
+				protected void valueChanged(Face item) {
 					character.setFace(item);
 				}
 
@@ -307,10 +290,11 @@ public class CharacterInfoPanel extends JPanel {
 
 			addInput(appearancePanel, "SelectFace", faceCombo, row++);
 
-			final StringComboBox bodyCombo = new StringComboBox(ArchetypeDao
-					.getBodies(), character.getBody()) {
-				protected void valueChanged(String item) {
-					character.setBody(item);
+			final EnumComboBox<CharSet> bodyCombo = new EnumComboBox<CharSet>(
+					CharSet.values(character.getSex(), character.getRace()),
+					character.getCharSet()) {
+				protected void valueChanged(CharSet item) {
+					character.setCharSet(item);
 				}
 
 				@Override
@@ -350,7 +334,6 @@ public class CharacterInfoPanel extends JPanel {
 				character.getRace()) {
 			protected void valueChanged(Race item) {
 				character.setRace(item);
-				updateDerivedFields();
 			}
 		};
 
@@ -360,7 +343,6 @@ public class CharacterInfoPanel extends JPanel {
 				.values(), character.getCulture()) {
 			protected void valueChanged(Culture item) {
 				character.setCulture(item);
-				updateDerivedFields();
 			}
 		};
 
@@ -370,7 +352,6 @@ public class CharacterInfoPanel extends JPanel {
 				Profession.values(), character.getProfession()) {
 			protected void valueChanged(Profession item) {
 				character.setProfession(item);
-				updateDerivedFields();
 			}
 		};
 
@@ -445,7 +426,18 @@ public class CharacterInfoPanel extends JPanel {
 			return;
 		}
 
+		if (this.character != null) {
+			this.character.removePropertyChangeListener(propertyChangeListener);
+		}
+
 		this.character = character;
+
+		if (this.character != null) {
+			character.addPropertyChangeListener(propertyChangeListener,
+					"attackeBasis", "paradeBasis", "fernkampfBasis",
+					"magieresistenz");
+		}
+
 		update();
 	}
 }

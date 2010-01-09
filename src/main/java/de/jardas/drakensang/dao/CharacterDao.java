@@ -18,11 +18,15 @@ import de.jardas.drakensang.shared.db.UpdateStatementBuilder.ParameterType;
 import de.jardas.drakensang.shared.model.Advantage;
 import de.jardas.drakensang.shared.model.CasterRace;
 import de.jardas.drakensang.shared.model.CasterType;
+import de.jardas.drakensang.shared.model.CharSet;
 import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Culture;
+import de.jardas.drakensang.shared.model.Face;
+import de.jardas.drakensang.shared.model.Hair;
 import de.jardas.drakensang.shared.model.IntegerMap;
 import de.jardas.drakensang.shared.model.Profession;
 import de.jardas.drakensang.shared.model.Race;
+import de.jardas.drakensang.shared.model.Regenerating;
 import de.jardas.drakensang.shared.model.Sex;
 
 public class CharacterDao {
@@ -116,11 +120,6 @@ public class CharacterDao {
 			c.setCasterType(CasterType.valueOf(result.getString("CasterType")));
 			c.setCasterRace(CasterRace.valueOf(result.getString("CasterRace")));
 
-			c.setLebensenergie(result.getInt("LE"));
-			c.setLebensenergieBonus(result.getInt("LEBonus"));
-			c.setAstralenergie(result.getInt("AE"));
-			c.setAstralenergieBonus(result.getInt("AEBonus"));
-
 			c.setSneakSpeed(round(result.getDouble("SneakSpeed"), 4));
 			c.setWalkSpeed(round(result.getDouble("WalkSpeed"), 4));
 			c.setRunSpeed(round(result.getDouble("RunSpeed"), 4));
@@ -133,25 +132,54 @@ public class CharacterDao {
 			c.setPartyMember(c.isCurrentPartyMember()
 					|| groups.contains("GainXpGroup"));
 
-			c.getAttribute().load(result);
-			c.getTalente().load(result);
-			c.getSonderfertigkeiten().load(result);
-			c.getZauberfertigkeiten().load(result);
-
-			if (c.isPlayerCharacter()) {
-				c.setHair(result.getString("HairSkin"));
-				c.setFace(result.getString("HeadSkin"));
-				c.setBody(result.getString("CharacterSet"));
-			}
+			load(c.getAttribute(), result);
+			load(c.getTalente(), result);
+			load(c.getSonderfertigkeiten(), result);
+			load(c.getZauberfertigkeiten(), result);
 
 			loadAdvantages(c, result);
 
+			if (c.isPlayerCharacter()) {
+				c.setHair(Hair.valueOf(result.getString("HairSkin")));
+				c.setFace(Face.valueOf(result.getString("HeadSkin")));
+				c.setCharSet(CharSet.valueOf(result.getString("CharacterSet")));
+			}
+
 			InventoryDao.loadInventory(c);
+
+			c.initialized();
+
+			load(c.getLebensenergie(), "LE", result);
+			load(c.getAstralenergie(), "AE", result);
+			load(c.getAusdauer(), "AU", result);
+			// load(c.getKarma(), "KE", result);
 
 			progress.onCharacterLoaded(c);
 		}
 
 		return items;
+	}
+
+	private static void load(Regenerating reg, String name, ResultSet result)
+			throws SQLException {
+		reg.setCurrentValue(result.getInt(name));
+		reg.setRegenerationAmount(result.getInt("Reg_" + name));
+		reg.setRegenerationFrequency(result.getInt("Reg_" + name + "_freq"));
+		reg.setRegenerationFrequencyCombat(result.getInt("Reg_" + name
+				+ "_freq_combat"));
+
+		try {
+			reg.setBonus(result.getInt(name + "bonus"));
+		} catch (SQLException e) {
+			// ignore
+		}
+	}
+
+	private static void load(IntegerMap map, ResultSet result)
+			throws SQLException {
+		for (String key : map.getKeys()) {
+			map.set(key, result.getInt(key));
+		}
 	}
 
 	private static double round(double input, int precision) {
@@ -192,10 +220,6 @@ public class CharacterDao {
 		builder.append("'IsMagicUser' = ?", character.isMagician() ? 1 : 0);
 		builder.append("'CasterType' = ?", character.getCasterType().name());
 		builder.append("'CasterRace' = ?", character.getCasterRace().name());
-		builder.append("'LE' = ?", character.getLebensenergie());
-		builder.append("'LEBonus' = ?", character.getLebensenergieBonus());
-		builder.append("'AE' = ?", character.getAstralenergie());
-		builder.append("'AEBonus' = ?", character.getAstralenergieBonus());
 		builder
 				.append("'Advantages' = ?",
 						serialize(character.getAdvantages()));
@@ -205,10 +229,15 @@ public class CharacterDao {
 		builder.append("'CurrentSpeed' = ?", character.getCurrentSpeed());
 		builder.append("'MaxVelocity' = ?", character.getMaxVelocity());
 
+		save(character.getLebensenergie(), "LE", builder);
+		save(character.getAstralenergie(), "AE", builder);
+		save(character.getAusdauer(), "AU", builder);
+		// save(character.getKarma(), "KE", builder);
+
 		if (character.isPlayerCharacter()) {
-			builder.append("'HairSkin' = ?", character.getHair());
-			builder.append("'HeadSkin' = ?", character.getFace());
-			builder.append("'CharacterSet' = ?", character.getBody());
+			builder.append("'HairSkin' = ?", character.getHair().name());
+			builder.append("'HeadSkin' = ?", character.getFace().name());
+			builder.append("'CharacterSet' = ?", character.getCharSet().name());
 			builder.append("'Graphics' = ?", "characters/"
 					+ character.getSex().name());
 			builder.append("'AnimSet' = ?", character.getSex().name());
@@ -229,7 +258,22 @@ public class CharacterDao {
 		InventoryDao.save(character.getInventory());
 	}
 
-	private static String serialize(Set<Advantage> advantages) {
+	private static void save(Regenerating reg, String name,
+			UpdateStatementBuilder builder) {
+		builder.append("'" + name + "' = ?", reg.getCurrentValue());
+		builder.append("'Reg_" + name + "' = ?", reg.getRegenerationAmount());
+		builder.append("'Reg_" + name + "_freq' = ?", reg
+				.getRegenerationFrequency());
+		builder.append("'Reg_" + name + "_freq_combat' = ?", reg
+				.getRegenerationFrequencyCombat());
+		builder.append("'" + name + "max' = ?", reg.getMaxValue());
+
+		if (!"AU".equals(name)) {
+			builder.append("'" + name + "bonus' = ?", reg.getBonus());
+		}
+	}
+
+	private static String serialize(Iterable<Advantage> advantages) {
 		final StringBuffer out = new StringBuffer();
 
 		for (Advantage advantage : advantages) {
