@@ -44,16 +44,16 @@ public class CharacterInfoPanel extends JPanel {
 	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
 			final String property = evt.getPropertyName();
-			if ("attackeBasis".equals(property)) {
+			if ("attackeBasis.value".equals(property)) {
 				attackeBasis.setText(String.valueOf(character.getAttackeBasis()
 						.getValue()));
-			} else if ("paradeBasis".equals(property)) {
+			} else if ("paradeBasis.value".equals(property)) {
 				paradeBasis.setText(String.valueOf(character.getParadeBasis()
 						.getValue()));
-			} else if ("fernkampfBasis".equals(property)) {
+			} else if ("fernkampfBasis.value".equals(property)) {
 				fernkampfBasis.setText(String.valueOf(character
 						.getFernkampfBasis().getValue()));
-			} else if ("magieresistenz".equals(property)) {
+			} else if ("magieresistenz.value".equals(property)) {
 				magieresistenz.setText(String.valueOf(character
 						.getMagieresistenz().getValue()));
 			}
@@ -434,8 +434,8 @@ public class CharacterInfoPanel extends JPanel {
 
 		if (this.character != null) {
 			character.addPropertyChangeListener(propertyChangeListener,
-					"attackeBasis", "paradeBasis", "fernkampfBasis",
-					"magieresistenz");
+					"attackeBasis.value", "paradeBasis.value",
+					"fernkampfBasis.value", "magieresistenz.value");
 		}
 
 		update();

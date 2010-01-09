@@ -42,8 +42,8 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 
 	protected List<JComponent> createComponents(final I item) {
 		List<JComponent> components = new ArrayList<JComponent>();
-		components.add(renderLabel(item));
 		components.add(renderCounter(item));
+		components.add(renderLabel(item));
 		components.add(renderSpecial(item));
 
 		return components;
@@ -81,7 +81,7 @@ public abstract class InventoryItemRenderer<I extends InventoryItem> {
 
 	public JComponent renderCounter(final I item) {
 		if (item.getMaxCount() <= 1) {
-			return null;
+			return new JLabel("1");
 		}
 
 		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(item

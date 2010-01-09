@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.jardas.drakensang.dao.inventory.InventoryDao;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.db.DaoHelper;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder;
 import de.jardas.drakensang.shared.db.UpdateStatementBuilder.ParameterType;
+import de.jardas.drakensang.shared.db.inventory.InventoryDao;
 import de.jardas.drakensang.shared.model.CharSet;
 import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Face;
@@ -112,7 +112,8 @@ public class CharacterDao {
 				c.setCharSet(CharSet.valueOf(result.getString("CharacterSet")));
 			}
 
-			InventoryDao.loadInventory(c);
+			InventoryDao.loadInventory(c, "_Instance_", SavegameDao
+					.getConnection());
 
 			c.initialized();
 
@@ -155,7 +156,8 @@ public class CharacterDao {
 
 		builder.createStatement(SavegameDao.getConnection()).executeUpdate();
 
-		InventoryDao.save(character.getInventory());
+		InventoryDao.save(character.getInventory(), "_Instance_", SavegameDao
+				.getConnection());
 	}
 
 	public static void saveAll() {
