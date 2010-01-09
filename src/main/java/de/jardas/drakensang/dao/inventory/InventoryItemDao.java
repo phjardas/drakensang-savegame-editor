@@ -28,7 +28,7 @@ import de.jardas.drakensang.shared.model.inventory.Torch;
 import de.jardas.drakensang.shared.model.inventory.Weapon;
 
 public abstract class InventoryItemDao<I extends InventoryItem> {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(InventoryItemDao.class);
 	private final Class<I> itemClass;
 	private final String table;

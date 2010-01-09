@@ -12,7 +12,7 @@ import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.model.Character;
 
 public class CharacterPanel extends JPanel {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(CharacterPanel.class);
 	private Character character;
 	private JTabbedPane tabs = new JTabbedPane();

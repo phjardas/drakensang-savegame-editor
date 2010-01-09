@@ -27,7 +27,7 @@ import de.jardas.drakensang.shared.Settings;
 import de.jardas.drakensang.shared.registry.WindowsRegistry;
 
 public class SavegameDao {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(SavegameDao.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd-HHmmss");

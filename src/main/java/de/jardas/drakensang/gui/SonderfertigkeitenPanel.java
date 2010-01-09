@@ -9,7 +9,7 @@ import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 
 public class SonderfertigkeitenPanel extends
-		IntegerMapPanel<Sonderfertigkeiten> {
+		IntegerMapPanel<SonderfertigkeitenIntegerMap> {
 	@Override
 	protected boolean isGrouped() {
 		return true;
@@ -36,10 +36,14 @@ public class SonderfertigkeitenPanel extends
 		box.setSelected(value >= 0);
 		box.addChangeListener(new javax.swing.event.ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getValues().set(key, box.isSelected() ? 0 : -500);
+				getValues().set(key, box.isSelected() ? 1 : -500);
 			}
 		});
 
 		return box;
+	}
+
+	public void setValues(Sonderfertigkeiten values) {
+		super.setValues(new SonderfertigkeitenIntegerMap(values));
 	}
 }

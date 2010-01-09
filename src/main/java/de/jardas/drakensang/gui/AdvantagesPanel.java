@@ -6,7 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.Collator;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -42,8 +42,7 @@ public class AdvantagesPanel extends JPanel {
 	}
 
 	private void addAdvantageFields() {
-		final List<Advantage> advantages = new ArrayList<Advantage>(Advantage
-				.values());
+		final List<Advantage> advantages = Arrays.asList(Advantage.values());
 		Collections.sort(advantages, new Comparator<Advantage>() {
 			private final Collator collator = Collator.getInstance();
 

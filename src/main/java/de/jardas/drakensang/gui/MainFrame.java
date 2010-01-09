@@ -57,7 +57,7 @@ import de.jardas.drakensang.shared.gui.WordWrap;
 import de.jardas.drakensang.shared.model.Character;
 
 public class MainFrame extends JFrame {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(MainFrame.class);
 	private final JToolBar toolbar = new JToolBar();
 	private CharacterPanel characterPanel = new CharacterPanel();
@@ -149,8 +149,12 @@ public class MainFrame extends JFrame {
 
 		saveButton = new JButton(new AbstractAction(Messages.get("SaveGame"),
 				new ImageIcon(getClass().getResource("images/save.gif"))) {
-			public void actionPerformed(ActionEvent e) {
-				save();
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					save();
+				} catch (Exception e) {
+					Launcher.handleException(e);
+				}
 			}
 		});
 		saveButton.setEnabled(false);
@@ -394,10 +398,9 @@ public class MainFrame extends JFrame {
 					} catch (InterruptedException e) {
 						// ignore
 					} catch (ExecutionException e) {
-						Launcher
-								.handleException(new DrakensangException(
-										"Error loading savegame " + savegame
-												+ ": " + e, e));
+						Launcher.handleException(new DrakensangException(
+								"Error loading savegame " + savegame.getFile(),
+								e));
 					}
 				}
 			};
