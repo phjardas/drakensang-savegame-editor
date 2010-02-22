@@ -133,7 +133,14 @@ public class LoadDialog extends JDialog implements SavegameListener {
 			final SwingWorker<List<Savegame>, Object> worker = new SwingWorker<List<Savegame>, Object>() {
 				@Override
 				protected List<Savegame> doInBackground() throws Exception {
-					return SavegameDao.getSavegames(progress);
+					try {
+						return SavegameDao.getSavegames(progress);
+					} catch (Exception e) {
+						Launcher.handleException(new DrakensangException(
+								"Error loading save games: " + e, e));
+
+						throw e;
+					}
 				}
 
 				@Override
@@ -144,7 +151,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
 						// ignore
 					} catch (ExecutionException e) {
 						Launcher.handleException(new DrakensangException(
-								"Error loading save games:" + e, e));
+								"Error loading save games: " + e, e));
 					}
 				}
 			};
