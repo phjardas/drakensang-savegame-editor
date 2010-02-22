@@ -42,4 +42,13 @@
     </description>
   </feature>
 
+  <feature date="2010-02-22">
+    <description lang="de">
+      Erster Support für die Vollversion.
+    </description>
+    <description lang="en">
+      First version supporting the release version.
+    </description>
+  </feature>
+
 </feature-history>

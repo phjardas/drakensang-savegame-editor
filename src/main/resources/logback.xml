@@ -7,7 +7,7 @@
   </appender>
 
   <logger name="de.jardas.drakensang">
-    <level value="debug" />
+    <level value="info" />
   </logger>
 
   <logger name="de.jardas.drakensang.shared.db.Messages">

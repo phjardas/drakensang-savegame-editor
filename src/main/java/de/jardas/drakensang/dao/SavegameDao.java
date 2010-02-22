@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,8 @@ import de.jardas.drakensang.shared.Settings;
 import de.jardas.drakensang.shared.registry.WindowsRegistry;
 
 public class SavegameDao {
+	private static final byte[] HEADER_SQLITE = { 83, 81, 76, }; // SQL
+	private static final byte[] HEADER_ZIP = { 80, 75, 0, }; // PK*
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(SavegameDao.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
@@ -34,22 +37,23 @@ public class SavegameDao {
 	private static Savegame savegame;
 	private static SavegameDao instance;
 	private static Connection connection;
+	private File savegameLocation;
 	private File unpackedSavegame;
 
 	private SavegameDao(Savegame savegame) {
 		close();
 
 		try {
-			unpackedSavegame = unpackSavegame(savegame);
+			unpackSavegame(savegame);
 		} catch (IOException e) {
 			throw new DrakensangException("Error unpacking savegame at "
 					+ savegame.getFile() + ": " + e, e);
 		}
 
 		try {
-			LOG.debug("Opening savegame at " + unpackedSavegame);
+			LOG.debug("Opening savegame at " + savegameLocation);
 			connection = DriverManager.getConnection("jdbc:sqlite:/"
-					+ unpackedSavegame);
+					+ savegameLocation);
 			SavegameDao.savegame = savegame;
 
 			CharacterDao.reset();
@@ -59,36 +63,74 @@ public class SavegameDao {
 		}
 	}
 
-	private File unpackSavegame(Savegame save) throws IOException {
+	private void unpackSavegame(Savegame save) throws IOException {
 		FileOutputStream out = null;
 		FileInputStream in = null;
-		ZipInputStream zin = null;
 
 		try {
 			in = new FileInputStream(save.getFile());
-			zin = new ZipInputStream(in);
+			final byte[] header = new byte[3];
+			in.read(header);
+			IOUtils.closeQuietly(in);
+			in = new FileInputStream(save.getFile());
 
-			// Es gibt genau eine Datei im ZIP.
-			zin.getNextEntry();
+			if (equals(HEADER_SQLITE, header)) {
+				unpackedSavegame = null;
+				savegameLocation = save.getFile();
+			} else if (equals(HEADER_ZIP, header)) {
+				ZipInputStream zin = null;
 
-			final File tmp = File.createTempFile(
-					"drakensang2-editor-unpacked-savegame-", ".db4");
-			out = new FileOutputStream(tmp);
+				try {
+					zin = new ZipInputStream(in);
 
-			LOG.debug("Unpacking savegame from " + save.getFile() + " to "
-					+ tmp);
+					// Es gibt genau eine Datei im ZIP.
+					zin.getNextEntry();
 
-			IOUtils.copy(zin, out);
+					unpackedSavegame = File.createTempFile(
+							"drakensang2-editor-unpacked-savegame-", ".db4");
+					savegameLocation = unpackedSavegame;
+					out = new FileOutputStream(unpackedSavegame);
 
-			return tmp;
+					LOG.debug("Unpacking savegame from " + save.getFile()
+							+ " to " + unpackedSavegame);
+
+					IOUtils.copy(zin, out);
+				} finally {
+					IOUtils.closeQuietly(zin);
+				}
+			} else {
+				throw new IllegalArgumentException("Unbekannter Header in "
+						+ save.getFile() + ": " + Arrays.toString(header));
+			}
 		} finally {
 			IOUtils.closeQuietly(out);
-			IOUtils.closeQuietly(zin);
 			IOUtils.closeQuietly(in);
 		}
 	}
 
+	private boolean equals(byte[] expected, byte[] actual) {
+		if (expected == null || actual == null) {
+			return expected == null && actual == null;
+		}
+
+		if (expected.length != actual.length) {
+			return false;
+		}
+
+		for (int i = 0; i < expected.length; i++) {
+			if (expected[i] != 0 && expected[i] != actual[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public void publishSavegame() throws IOException {
+		if (unpackedSavegame == null) {
+			return;
+		}
+
 		FileOutputStream out = null;
 		ZipOutputStream zout = null;
 		FileInputStream in = null;
@@ -176,7 +218,7 @@ public class SavegameDao {
 
 	private void closeConnection() {
 		if (connection != null) {
-			LOG.info("Closing connection to " + unpackedSavegame + ".");
+			LOG.info("Closing connection to " + savegameLocation + ".");
 
 			try {
 				connection.close();
