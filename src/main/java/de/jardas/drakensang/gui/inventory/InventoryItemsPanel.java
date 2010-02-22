@@ -33,7 +33,7 @@ public class InventoryItemsPanel extends JPanel {
 	}
 
 	private void update() {
-		removeAll();
+		tabs.removeAll();
 		add(tabs, BorderLayout.CENTER);
 
 		final Map<String, List<InventoryItem>> map = new HashMap<String, List<InventoryItem>>();
