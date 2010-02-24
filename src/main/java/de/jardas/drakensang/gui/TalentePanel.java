@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -18,6 +19,8 @@ import javax.swing.event.ChangeEvent;
 
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.game.Challenge;
+import de.jardas.drakensang.shared.game.Challenge.ChallengeProbability;
 import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.gui.TalentSpinnerModel;
@@ -25,6 +28,8 @@ import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Talente;
 
 public class TalentePanel extends IntegerMapPanel<Talente> {
+	private static final NumberFormat CHANCE_FORMAT = NumberFormat
+			.getPercentInstance();
 	private Character character;
 	private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -65,23 +70,54 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 		return new JLabel(createAttributesLabel(key));
 	}
 
+	@Override
+	protected void handleChange(String key, int value) {
+		super.handleChange(key, value);
+
+		final JComponent label = getSpecials().get(key);
+		if (label != null && label instanceof JLabel) {
+			((JLabel) label).setText(createAttributesLabel(key));
+		}
+	}
+
 	private String createAttributesLabel(String key) {
 		final String[] attrs = Talente.getAttributes(key);
-		StringBuffer attBuffer = new StringBuffer();
 
-		for (String attr : attrs) {
-			if ((attr != null) && (attr.trim().length() > 0)) {
-				if (attBuffer.length() > 0) {
-					attBuffer.append(", ");
-				}
-
-				attBuffer.append(Messages.get(attr + "Short"));
-				attBuffer.append("=");
-				attBuffer.append(getCharacter().getAttribute().get(attr));
-			}
+		if (attrs == null) {
+			return "";
 		}
 
-		return attBuffer.toString();
+		final int ta = getValues().get(key);
+
+		if (ta >= 0) {
+			final StringBuilder attBuilder = new StringBuilder();
+
+			for (String attr : attrs) {
+				if (attBuilder.length() > 0) {
+					attBuilder.append(", ");
+				}
+
+				attBuilder.append(Messages.get(attr + "Short"));
+				attBuilder.append("=");
+				attBuilder.append(getCharacter().getAttribute().get(attr));
+			}
+
+			StringBuilder buf = new StringBuilder();
+			final int at1 = getCharacter().getAttribute().get(attrs[0]);
+			final int at2 = getCharacter().getAttribute().get(attrs[1]);
+			final int at3 = getCharacter().getAttribute().get(attrs[2]);
+			final ChallengeProbability chances = Challenge.calculateChances(
+					at1, at2, at3, ta, 0);
+			buf.append(CHANCE_FORMAT.format(chances.getProbabilty()));
+
+			buf.append(" (");
+			buf.append(attBuilder);
+			buf.append(")");
+
+			return buf.toString();
+		} else {
+			return "";
+		}
 	}
 
 	@Override

@@ -51,4 +51,15 @@
     </description>
   </feature>
 
+  <feature date="2010-02-24">
+    <description lang="de">
+      Bei den Talenten wird jetzt die Erfolgswahrscheinlichkeit
+      einer Probe angezeigt.
+    </description>
+    <description lang="en">
+      Next to a talent the probability of success for a challenge
+      against this talent are displayed.
+    </description>
+  </feature>
+
 </feature-history>

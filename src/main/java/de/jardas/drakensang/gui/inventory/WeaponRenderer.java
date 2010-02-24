@@ -18,7 +18,7 @@ public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
 		final JLabel schadenLabel = new JLabel(getSchadenText(weapon));
 
 		final JSpinner diceSpinner = new JSpinner(new SpinnerNumberModel(weapon
-				.getSchaden().getDiceMultiplier(), 0, 10, 1));
+				.getSchaden().getDiceMultiplier(), 0, 100, 1));
 		diceSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				weapon.getSchaden().setDiceMultiplier(
@@ -45,7 +45,7 @@ public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
 		panel.add(new JLabel("mod"));
 
 		final JSpinner atSpinner = new JSpinner(new SpinnerNumberModel(weapon
-				.getAttackeMod(), -10, 10, 1));
+				.getAttackeMod(), -100, 100, 1));
 		atSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				weapon
@@ -55,7 +55,7 @@ public class WeaponRenderer extends InventoryItemRenderer<Weapon> {
 		});
 
 		final JSpinner paSpinner = new JSpinner(new SpinnerNumberModel(weapon
-				.getParadeMod(), -10, 10, 1));
+				.getParadeMod(), -100, 100, 1));
 		paSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				weapon.setParadeMod(((Number) paSpinner.getValue()).intValue());
