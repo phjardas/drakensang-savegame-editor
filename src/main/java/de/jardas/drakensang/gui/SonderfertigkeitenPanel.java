@@ -2,10 +2,12 @@ package de.jardas.drakensang.gui;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.SpinnerModel;
 import javax.swing.event.ChangeEvent;
 
 import de.jardas.drakensang.shared.db.Static;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
+import de.jardas.drakensang.shared.gui.TalentSpinnerModel;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 
 public class SonderfertigkeitenPanel extends
@@ -41,6 +43,11 @@ public class SonderfertigkeitenPanel extends
 		});
 
 		return box;
+	}
+
+	@Override
+	protected SpinnerModel createSpinnerModel(String key, int value) {
+		return TalentSpinnerModel.create(key, value, 1000);
 	}
 
 	public void setValues(Sonderfertigkeiten values) {

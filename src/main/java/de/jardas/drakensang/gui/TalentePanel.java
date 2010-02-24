@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 
@@ -19,6 +20,7 @@ import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.db.Static;
 import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
+import de.jardas.drakensang.shared.gui.TalentSpinnerModel;
 import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Talente;
 
@@ -135,6 +137,11 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 	@Override
 	protected String getInfoKey(String key) {
 		return Static.get("Description", key, "TaAttr", "_Template_Talent");
+	}
+
+	@Override
+	protected SpinnerModel createSpinnerModel(String key, int value) {
+		return TalentSpinnerModel.create(key, value, 1000);
 	}
 
 	public Character getCharacter() {
