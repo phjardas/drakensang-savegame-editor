@@ -173,7 +173,7 @@ public class CharacterInfoPanel extends JPanel {
 		addInput(panel, "XP", xp, row++);
 
 		final JSpinner up = new JSpinner(new SpinnerNumberModel(character
-				.getSteigerungspunkte(), 0, 1, 1));
+				.getSteigerungspunkte(), 0, 1000000, 1));
 		up.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				character.setSteigerungspunkte(((Number) up.getValue())
