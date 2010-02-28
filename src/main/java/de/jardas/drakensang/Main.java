@@ -1,11 +1,10 @@
 package de.jardas.drakensang;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 import de.jardas.drakensang.dao.SavegameDao;
 import de.jardas.drakensang.gui.MainFrame;
+import de.jardas.drakensang.shared.ApplicationInfo;
 import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.Program;
 import de.jardas.drakensang.shared.Settings;
@@ -43,18 +42,9 @@ public class Main implements Runnable {
 			SavegameDao.close();
 		}
 
-		public String getCurrentVersion() {
-			final Properties props = new Properties();
-			
-			try {
-				props
-						.load(getClass().getResourceAsStream(
-								"version.properties"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return props.getProperty("version");
+		public ApplicationInfo getApplicationInfo() {
+			return ApplicationInfo.load(getClass().getResourceAsStream(
+					"version.properties"));
 		}
 	}
 }
