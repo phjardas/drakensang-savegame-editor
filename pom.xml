@@ -17,6 +17,10 @@
     <url>http://www.jardas.de/</url>
   </organization>
 
+  <properties>
+    <build>${BUILD_NUMBER}</build>
+  </properties>
+
   <repositories>
     <repository>
       <id>java.net</id>
