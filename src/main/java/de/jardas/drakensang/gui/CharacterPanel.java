@@ -66,7 +66,7 @@ public class CharacterPanel extends JPanel {
 		infoPanel.setCharacter(character);
 		advantagesPanel.setCharacter(character);
 		talentePanel.setCharacter(character);
-		zauberPanel.setValues(character.getZauberfertigkeiten());
+		zauberPanel.setCharacter(character);
 		sonderPanel.setValues(character.getSonderfertigkeiten());
 		inventoryPanel.setInventory(character.getInventory());
 

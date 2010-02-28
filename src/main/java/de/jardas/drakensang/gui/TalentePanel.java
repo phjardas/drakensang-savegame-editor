@@ -3,10 +3,6 @@ package de.jardas.drakensang.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-import java.util.Map;
 import java.util.MissingResourceException;
 
 import javax.swing.JComponent;
@@ -17,10 +13,8 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 
-import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.db.Static;
-import de.jardas.drakensang.shared.game.Challenge;
-import de.jardas.drakensang.shared.game.Challenge.ChallengeProbability;
+import de.jardas.drakensang.shared.db.TalentDao;
 import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.gui.TalentSpinnerModel;
@@ -28,20 +22,11 @@ import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Talente;
 
 public class TalentePanel extends IntegerMapPanel<Talente> {
-	private static final NumberFormat CHANCE_FORMAT = NumberFormat
-			.getPercentInstance();
-	private Character character;
-	private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent evt) {
-			for (Map.Entry<String, JComponent> entry : getSpecials().entrySet()) {
-				if (entry.getValue() == null) {
-					continue;
-				}
-
-				final String key = entry.getKey();
-				final JLabel label = (JLabel) entry.getValue();
-				label.setText(createAttributesLabel(key));
-			}
+	private final ChallengeEstimator<IntegerMapPanel<Talente>> challengeEstimator = new ChallengeEstimator<IntegerMapPanel<Talente>>(
+			this) {
+		@Override
+		protected String[] getAttributes(String key) {
+			return TalentDao.valueOf(key).getAttributes();
 		}
 	};
 
@@ -57,17 +42,22 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 
 	@Override
 	protected String getGroupKey(String key) {
-		return Static.get("TaCategory", key, "TaAttr", "_Template_Talent");
+		return TalentDao.valueOf(key).getCategoryKey();
 	}
 
 	@Override
 	protected String getLocalKey(String key) {
-		return Talente.getNameKey(key);
+		return TalentDao.valueOf(key).getNameKey();
+	}
+
+	@Override
+	protected String getInfoKey(String key) {
+		return TalentDao.valueOf(key).getDescriptionKey();
 	}
 
 	@Override
 	protected JComponent createSpecial(String key) {
-		return new JLabel(createAttributesLabel(key));
+		return new JLabel(challengeEstimator.getChallengeEstimation(key));
 	}
 
 	@Override
@@ -76,47 +66,8 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 
 		final JComponent label = getSpecials().get(key);
 		if (label != null && label instanceof JLabel) {
-			((JLabel) label).setText(createAttributesLabel(key));
-		}
-	}
-
-	private String createAttributesLabel(String key) {
-		final String[] attrs = Talente.getAttributes(key);
-
-		if (attrs == null) {
-			return "";
-		}
-
-		final int ta = getValues().get(key);
-
-		if (ta >= 0) {
-			final StringBuilder attBuilder = new StringBuilder();
-
-			for (String attr : attrs) {
-				if (attBuilder.length() > 0) {
-					attBuilder.append(", ");
-				}
-
-				attBuilder.append(Messages.get(attr + "Short"));
-				attBuilder.append("=");
-				attBuilder.append(getCharacter().getAttribute().get(attr));
-			}
-
-			StringBuilder buf = new StringBuilder();
-			final int at1 = getCharacter().getAttribute().get(attrs[0]);
-			final int at2 = getCharacter().getAttribute().get(attrs[1]);
-			final int at3 = getCharacter().getAttribute().get(attrs[2]);
-			final ChallengeProbability chances = Challenge.calculateChances(
-					at1, at2, at3, ta, 0);
-			buf.append(CHANCE_FORMAT.format(chances.getProbabilty()));
-
-			buf.append(" (");
-			buf.append(attBuilder);
-			buf.append(")");
-
-			return buf.toString();
-		} else {
-			return "";
+			((JLabel) label).setText(challengeEstimator
+					.getChallengeEstimation(key));
 		}
 	}
 
@@ -171,35 +122,12 @@ public class TalentePanel extends IntegerMapPanel<Talente> {
 	}
 
 	@Override
-	protected String getInfoKey(String key) {
-		return Static.get("Description", key, "TaAttr", "_Template_Talent");
-	}
-
-	@Override
 	protected SpinnerModel createSpinnerModel(String key, int value) {
 		return TalentSpinnerModel.create(key, value, 1000);
 	}
 
-	public Character getCharacter() {
-		return this.character;
-	}
-
 	public void setCharacter(Character character) {
-		if (character == this.character) {
-			return;
-		}
-
-		if (this.character != null) {
-			this.character.removePropertyChangeListener(propertyChangeListener);
-		}
-
-		this.character = character;
-
-		if (this.character != null) {
-			character.addPropertyChangeListener(propertyChangeListener,
-					"attributes.*", "advantages.*");
-		}
-
+		challengeEstimator.register(character);
 		setValues(character.getTalente());
 	}
 }

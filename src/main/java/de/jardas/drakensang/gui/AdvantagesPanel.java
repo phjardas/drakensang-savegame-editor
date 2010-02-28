@@ -15,14 +15,12 @@ import java.util.Set;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import de.jardas.drakensang.shared.DrakensangException;
-import de.jardas.drakensang.shared.Launcher;
+import de.jardas.drakensang.shared.db.AdvantageDao;
 import de.jardas.drakensang.shared.db.Messages;
 import de.jardas.drakensang.shared.gui.InfoLabel;
-import de.jardas.drakensang.shared.gui.WordWrap;
 import de.jardas.drakensang.shared.model.Advantage;
 import de.jardas.drakensang.shared.model.Character;
 import de.jardas.drakensang.shared.model.Effect;
@@ -42,7 +40,7 @@ public class AdvantagesPanel extends JPanel {
 	}
 
 	private void addAdvantageFields() {
-		final List<Advantage> advantages = Arrays.asList(Advantage.values());
+		final List<Advantage> advantages = Arrays.asList(AdvantageDao.values());
 		Collections.sort(advantages, new Comparator<Advantage>() {
 			private final Collator collator = Collator.getInstance();
 
@@ -51,26 +49,10 @@ public class AdvantagesPanel extends JPanel {
 			}
 		});
 
-		displayInfoForUnknownModification(advantages);
-
 		int row = 0;
 
 		for (Advantage advantage : advantages) {
 			addAdvantageField(advantage, row++);
-		}
-	}
-
-	private void displayInfoForUnknownModification(List<Advantage> advantages) {
-		for (Advantage advantage : advantages) {
-			if (character.getAdvantages().contains(advantage)
-					&& advantage.isUnknownModification()) {
-				JOptionPane.showMessageDialog(Launcher.getMainFrame(), WordWrap
-						.addNewlines(Messages.get("mod.unknown.message")),
-						Messages.get("mod.unknown.title"),
-						JOptionPane.WARNING_MESSAGE | JOptionPane.OK_OPTION);
-
-				return;
-			}
 		}
 	}
 

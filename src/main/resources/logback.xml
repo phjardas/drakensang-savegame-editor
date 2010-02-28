@@ -22,6 +22,10 @@
     <level value="warn" />
   </logger>
 
+  <logger name="de.jardas.drakensang.shared.registry.WindowsRegistry">
+    <level value="debug" />
+  </logger>
+
   <root>
     <level value="debug" />
     <appender-ref ref="STDOUT" />

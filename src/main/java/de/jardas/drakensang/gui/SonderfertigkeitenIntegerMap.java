@@ -1,5 +1,6 @@
 package de.jardas.drakensang.gui;
 
+import de.jardas.drakensang.shared.db.SonderfertigkeitDao;
 import de.jardas.drakensang.shared.model.IntegerMap;
 import de.jardas.drakensang.shared.model.Sonderfertigkeit;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
@@ -9,19 +10,19 @@ class SonderfertigkeitenIntegerMap extends IntegerMap {
 	private final Sonderfertigkeiten fertigkeiten;
 
 	static {
-		KEYS = new String[Sonderfertigkeit.values().length];
+		KEYS = new String[SonderfertigkeitDao.values().length];
 
 		int i = 0;
-		for (Sonderfertigkeit sf : Sonderfertigkeit.values()) {
-			KEYS[i++] = sf.name();
+		for (Sonderfertigkeit sf : SonderfertigkeitDao.values()) {
+			KEYS[i++] = sf.getAttribute();
 		}
 	}
 
 	public SonderfertigkeitenIntegerMap(Sonderfertigkeiten fertigkeiten) {
 		this.fertigkeiten = fertigkeiten;
 
-		for (Sonderfertigkeit sf : Sonderfertigkeit.values()) {
-			set(sf.name(), fertigkeiten.contains(sf) ? 1 : -500);
+		for (Sonderfertigkeit sf : SonderfertigkeitDao.values()) {
+			set(sf.getAttribute(), fertigkeiten.contains(sf) ? 1 : -500);
 		}
 	}
 
@@ -30,9 +31,9 @@ class SonderfertigkeitenIntegerMap extends IntegerMap {
 		super.set(name, value);
 
 		if (value >= 0) {
-			fertigkeiten.add(Sonderfertigkeit.valueOf(name));
+			fertigkeiten.add(SonderfertigkeitDao.valueOf(name));
 		} else {
-			fertigkeiten.remove(Sonderfertigkeit.valueOf(name));
+			fertigkeiten.remove(SonderfertigkeitDao.valueOf(name));
 		}
 	}
 

@@ -5,9 +5,11 @@ import javax.swing.JComponent;
 import javax.swing.SpinnerModel;
 import javax.swing.event.ChangeEvent;
 
-import de.jardas.drakensang.shared.db.Static;
+import de.jardas.drakensang.shared.db.SonderfertigkeitDao;
+import de.jardas.drakensang.shared.gui.InfoLabel;
 import de.jardas.drakensang.shared.gui.IntegerMapPanel;
 import de.jardas.drakensang.shared.gui.TalentSpinnerModel;
+import de.jardas.drakensang.shared.model.Sonderfertigkeit;
 import de.jardas.drakensang.shared.model.Sonderfertigkeiten;
 
 public class SonderfertigkeitenPanel extends
@@ -19,17 +21,13 @@ public class SonderfertigkeitenPanel extends
 
 	@Override
 	protected String getGroupKey(String key) {
-		return Static.get("AttrCategory", key, "AtAttr", "_Template_Attacks");
+		return SonderfertigkeitDao.valueOf(key).getCategoryKey();
 	}
 
 	@Override
-	protected String getLocalKey(String key) {
-		return Static.get("Name", key, "AtAttr", "_Template_Attacks");
-	}
-
-	@Override
-	protected String getInfoKey(String key) {
-		return Static.get("Description", key, "AtAttr", "_Template_Attacks");
+	protected InfoLabel createLabel(String key) {
+		final Sonderfertigkeit sf = SonderfertigkeitDao.valueOf(key);
+		return new InfoLabel(sf.getName(), sf.getInfo(), false);
 	}
 
 	@Override
