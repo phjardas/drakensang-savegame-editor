@@ -17,6 +17,7 @@ public class CharacterPanel extends JPanel {
 	private Character character;
 	private JTabbedPane tabs = new JTabbedPane();
 	private CharacterInfoPanel infoPanel = new CharacterInfoPanel();
+	private FiguresPanel figuresPanel = new FiguresPanel();
 	private AdvantagesPanel advantagesPanel = new AdvantagesPanel();
 	private TalentePanel talentePanel = new TalentePanel();
 	private ZauberPanel zauberPanel = new ZauberPanel();
@@ -30,6 +31,7 @@ public class CharacterPanel extends JPanel {
 		}
 
 		tabs.addTab(Messages.get("CharacterSheet"), new JScrollPane(infoPanel));
+		tabs.addTab(Messages.get("FiguresSheet"), new JScrollPane(figuresPanel));
 		tabs.addTab(Messages.get("Advantages"),
 				new JScrollPane(advantagesPanel));
 		tabs.addTab(Messages.get("Talents"), new JScrollPane(talentePanel));
@@ -64,6 +66,7 @@ public class CharacterPanel extends JPanel {
 		initialize();
 
 		infoPanel.setCharacter(character);
+		figuresPanel.setCharacter(character);
 		advantagesPanel.setCharacter(character);
 		talentePanel.setCharacter(character);
 		zauberPanel.setCharacter(character);

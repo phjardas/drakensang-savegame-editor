@@ -206,7 +206,7 @@ public class MainFrame extends JFrame {
 		getContentPane().add(left, BorderLayout.WEST);
 		getContentPane().add(new Footer(), BorderLayout.SOUTH);
 
-		setSize(900, 730);
+		setSize(830, 600);
 		setLocationRelativeTo(null);
 
 		LOG.debug("Launcher frame initialized.");

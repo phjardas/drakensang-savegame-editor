@@ -1,5 +1,8 @@
 package de.jardas.drakensang.gui;
 
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.SpinnerModel;
@@ -17,6 +20,26 @@ public class SonderfertigkeitenPanel extends
 	@Override
 	protected boolean isGrouped() {
 		return true;
+	}
+
+	@Override
+	protected void addGroup(JComponent group, int index) {
+		final int row = index / 3;
+		final int col = index % 3;
+
+		add(group, new GridBagConstraints(col, row, 1, 1, 0, 0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+				new Insets(3, 6, 3, 6), 0, 0));
+	}
+
+	@Override
+	protected int getColumnCount() {
+		return 3;
+	}
+
+	@Override
+	protected int getRowCount(int index) {
+		return index / 3;
 	}
 
 	@Override
