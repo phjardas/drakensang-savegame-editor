@@ -1,6 +1,7 @@
 package de.jardas.drakensang.gui.load;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -8,12 +9,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -27,10 +32,10 @@ import de.jardas.drakensang.model.savegame.Savegame;
 import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.Launcher;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.gui.InfoLabel;
 
 public class LoadDialog extends JDialog implements SavegameListener {
 	private final SavegameListener savegameListener;
-	private final SavegameProgress progress = new SavegameProgress();
 	private final JProgressBar progressBar = new JProgressBar(0, 100);
 	private final LoadProgress loadProgress = new LoadProgress();
 	private final Frame owner;
@@ -48,13 +53,14 @@ public class LoadDialog extends JDialog implements SavegameListener {
 		loadProgress.showDialog();
 	}
 
-	private void init(final List<Savegame> savegames) {
+	private void init(final List<Savegame> savegames,
+			final SavegameProgress progress) {
 		setLayout(new BorderLayout());
 
 		final SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
-				list = new SavegameListPanel(savegames);
+				list = new SavegameListPanel(savegames, progress);
 
 				abortButton = new JButton(new AbstractAction(Messages
 						.get("Cancel")) {
@@ -70,7 +76,44 @@ public class LoadDialog extends JDialog implements SavegameListener {
 				add(new JScrollPane(list), BorderLayout.CENTER);
 				add(toolbar, BorderLayout.SOUTH);
 
+				if (!progress.getFailed().isEmpty()) {
+					final JButton failedButton = new JButton(
+							new AbstractAction(MessageFormat
+									.format(Messages.get("load.failed.button"),
+											new Object[] { progress.getFailed()
+													.size() })) {
+								public void actionPerformed(ActionEvent e) {
+									showFailed(progress.getFailed());
+								}
+							});
+					failedButton.setForeground(Color.RED);
+					toolbar.add(failedButton);
+				}
+
 				return null;
+			}
+
+			private void showFailed(final List<File> failed) {
+				final JPanel failedPanel = new JPanel();
+				failedPanel.setLayout(new GridBagLayout());
+
+				int row = 0;
+				failedPanel.add(new InfoLabel("load.failed.message"),
+						new GridBagConstraints(0, row++, 1, 1, 1, 0,
+								GridBagConstraints.NORTHWEST,
+								GridBagConstraints.HORIZONTAL, new Insets(0, 0,
+										10, 0), 0, 0));
+
+				for (File file : failed) {
+					failedPanel.add(new JLabel(file.getName()),
+							new GridBagConstraints(0, row++, 1, 1, 1, 0,
+									GridBagConstraints.NORTHWEST,
+									GridBagConstraints.HORIZONTAL, new Insets(
+											0, 20, 0, 0), 0, 0));
+				}
+
+				JOptionPane.showMessageDialog(owner, failedPanel, Messages
+						.get("load.failed.title"), JOptionPane.ERROR_MESSAGE);
 			}
 
 			@Override
@@ -92,6 +135,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
 	}
 
 	private class SavegameProgress implements Progress {
+		private final List<File> failed = new LinkedList<File>();
 		private int done = 0;
 
 		public void setTotalNumberOfSavegames(int total) {
@@ -104,8 +148,12 @@ public class LoadDialog extends JDialog implements SavegameListener {
 			step();
 		}
 
-		public void onSavegameFailed(File file) {
+		public void onSavegameFailed(File file, Throwable cause) {
+			failed.add(file);
 			step();
+
+			// Wird nicht gerendert
+			progressBar.setMaximum(progressBar.getMaximum() - 1);
 		}
 
 		public void onSavegameRendered() {
@@ -116,9 +164,14 @@ public class LoadDialog extends JDialog implements SavegameListener {
 			done++;
 			progressBar.setValue(done);
 		}
+
+		public List<File> getFailed() {
+			return failed;
+		}
 	}
 
 	private class LoadProgress extends JDialog {
+
 		public LoadProgress() {
 			super(owner, Messages.get("LoadingGames"), true);
 
@@ -129,6 +182,8 @@ public class LoadDialog extends JDialog implements SavegameListener {
 		}
 
 		public void showDialog() {
+			final SavegameProgress progress = new SavegameProgress();
+
 			// Let's start loading the savegames.
 			final SwingWorker<List<Savegame>, Object> worker = new SwingWorker<List<Savegame>, Object>() {
 				@Override
@@ -146,7 +201,7 @@ public class LoadDialog extends JDialog implements SavegameListener {
 				@Override
 				protected void done() {
 					try {
-						init(get());
+						init(get(), progress);
 					} catch (InterruptedException e) {
 						// ignore
 					} catch (ExecutionException e) {
@@ -165,7 +220,8 @@ public class LoadDialog extends JDialog implements SavegameListener {
 	}
 
 	private class SavegameListPanel extends JPanel {
-		public SavegameListPanel(final List<Savegame> savegames) {
+		public SavegameListPanel(final List<Savegame> savegames,
+				SavegameProgress progress) {
 			super();
 			setLayout(new GridBagLayout());
 

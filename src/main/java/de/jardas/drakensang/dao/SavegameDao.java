@@ -184,7 +184,7 @@ public class SavegameDao {
 				progress.onSavegameLoaded(save);
 			} catch (IllegalArgumentException e) {
 				LOG.warn("Error loading savegame from " + file + ": " + e, e);
-				progress.onSavegameFailed(file);
+				progress.onSavegameFailed(file, e);
 			}
 		}
 
@@ -284,6 +284,6 @@ public class SavegameDao {
 
 		void onSavegameLoaded(Savegame savegame);
 
-		void onSavegameFailed(File file);
+		void onSavegameFailed(File file, Throwable cause);
 	}
 }

@@ -9,7 +9,6 @@ import java.util.Date;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import de.jardas.drakensang.shared.DrakensangException;
 import de.jardas.drakensang.shared.io.PackReader;
 import de.jardas.drakensang.shared.io.PackReader.PackData;
 
@@ -121,7 +120,7 @@ public class Savegame implements Comparable<Savegame> {
 			in = new FileInputStream(infoFile);
 			final PackData info = PackReader.read(in);
 			game.setVersion(info.getVersion());
-			
+
 			final String[] data = info.getData();
 			game.setWorldMap(data[0]);
 
@@ -130,26 +129,27 @@ public class Savegame implements Comparable<Savegame> {
 			game.setLevel(Integer.parseInt(hero.split(":")[1].trim()));
 			game.setName(data[2]);
 		} catch (IOException e) {
-			throw new DrakensangException("Error reading save game info from "
-					+ infoFile + ": " + e, e);
+			throw new IllegalArgumentException(
+					"Error reading save game info from " + infoFile + ": " + e,
+					e);
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
 	}
 
 	public static Savegame load(File directory) {
-		final File[] files = directory.listFiles(new FilenameFilter() {
+		final File[] dsaFiles = directory.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".dsa");
 			}
 		});
 
-		if ((files == null) || (files.length != 1)) {
+		if ((dsaFiles == null) || (dsaFiles.length != 1)) {
 			throw new IllegalArgumentException("No savegame found at "
 					+ directory);
 		}
 
-		File file = files[0];
+		File file = dsaFiles[0];
 
 		final Savegame game = new Savegame();
 		game.setDirectory(directory);
