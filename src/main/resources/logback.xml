@@ -10,12 +10,16 @@
     <level value="info" />
   </logger>
 
+  <logger name="de.jardas.drakensang.shared.db">
+    <level value="info" />
+  </logger>
+
   <logger name="de.jardas.drakensang.shared.db.Messages">
     <level value="info" />
   </logger>
 
   <logger name="de.jardas.drakensang.shared.db.Static">
-    <level value="warn" />
+    <level value="info" />
   </logger>
 
   <logger name="de.jardas.drakensang.dao.InventoryDao">

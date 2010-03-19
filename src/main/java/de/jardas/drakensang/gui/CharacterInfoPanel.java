@@ -1,9 +1,12 @@
 package de.jardas.drakensang.gui;
 
 import de.jardas.drakensang.shared.db.CharSetDao;
+import de.jardas.drakensang.shared.db.CultureDao;
 import de.jardas.drakensang.shared.db.FaceDao;
 import de.jardas.drakensang.shared.db.HairDao;
 import de.jardas.drakensang.shared.db.Messages;
+import de.jardas.drakensang.shared.db.ProfessionDao;
+import de.jardas.drakensang.shared.db.RaceDao;
 import de.jardas.drakensang.shared.gui.EnumComboBox;
 import de.jardas.drakensang.shared.gui.IdentifiedComboBox;
 import de.jardas.drakensang.shared.gui.InfoLabel;
@@ -148,8 +151,8 @@ public class CharacterInfoPanel extends JPanel {
             addInput(archetypePanel, "Name", name, row++);
         }
 
-        final EnumComboBox<Race> race =
-            new EnumComboBox<Race>(Race.values(), character.getRace()) {
+        final IdentifiedComboBox<Race> race =
+            new IdentifiedComboBox<Race>(RaceDao.values(), character.getRace()) {
                 protected void valueChanged(Race item) {
                     character.setRace(item);
                 }
@@ -157,8 +160,8 @@ public class CharacterInfoPanel extends JPanel {
 
         addInput(archetypePanel, "Race", race, row++);
 
-        final EnumComboBox<Culture> culture =
-            new EnumComboBox<Culture>(Culture.values(), character.getCulture()) {
+        final IdentifiedComboBox<Culture> culture =
+            new IdentifiedComboBox<Culture>(CultureDao.values(), character.getCulture()) {
                 protected void valueChanged(Culture item) {
                     character.setCulture(item);
                 }
@@ -166,8 +169,8 @@ public class CharacterInfoPanel extends JPanel {
 
         addInput(archetypePanel, "Culture", culture, row++);
 
-        final EnumComboBox<Profession> profession =
-            new EnumComboBox<Profession>(Profession.values(), character.getProfession()) {
+        final IdentifiedComboBox<Profession> profession =
+            new IdentifiedComboBox<Profession>(ProfessionDao.values(), character.getProfession()) {
                 protected void valueChanged(Profession item) {
                     character.setProfession(item);
                 }
