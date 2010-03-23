@@ -233,7 +233,7 @@ public class CharacterInfoPanel extends JPanel {
         addInput(panel, "Stufe", level, row++);
 
         final JSpinner xp =
-            new JSpinner(new SpinnerNumberModel(character.getAbenteuerpunkte(), 0, 100000, 1));
+            new JSpinner(new SpinnerNumberModel(character.getAbenteuerpunkte(), 0, 9999999, 1));
         xp.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     character.setAbenteuerpunkte(((Number) xp.getValue()).intValue());
@@ -242,7 +242,7 @@ public class CharacterInfoPanel extends JPanel {
         addInput(panel, "XP", xp, row++);
 
         final JSpinner up =
-            new JSpinner(new SpinnerNumberModel(character.getSteigerungspunkte(), 0, 1000000, 1));
+            new JSpinner(new SpinnerNumberModel(character.getSteigerungspunkte(), 0, 9999999, 1));
         up.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     character.setSteigerungspunkte(((Number) up.getValue()).intValue());
