@@ -6,12 +6,22 @@
     </layout>
   </appender>
 
+  <appender name="LOG" class="de.jardas.drakensang.shared.log.LogCollector">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%date %-5level %file:%line - %msg%n</pattern>
+    </layout>
+  </appender>
+
   <logger name="de.jardas.drakensang">
-    <level value="info" />
+    <level value="debug" />
   </logger>
 
-  <logger name="de.jardas.drakensang.shared.db">
+  <logger name="de.jardas.drakensang.shared.model">
     <level value="info" />
+  </logger>
+  
+  <logger name="de.jardas.drakensang.shared.db">
+    <level value="debug" />
   </logger>
 
   <logger name="de.jardas.drakensang.shared.db.Messages">
@@ -22,10 +32,6 @@
     <level value="info" />
   </logger>
 
-  <logger name="de.jardas.drakensang.dao.InventoryDao">
-    <level value="warn" />
-  </logger>
-
   <logger name="de.jardas.drakensang.shared.registry.WindowsRegistry">
     <level value="debug" />
   </logger>
@@ -33,6 +39,7 @@
   <root>
     <level value="debug" />
     <appender-ref ref="STDOUT" />
+    <appender-ref ref="LOG" />
   </root>
 
 </configuration>
