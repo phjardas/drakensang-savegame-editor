@@ -18,9 +18,4 @@ public class VersionInformationTest {
 		assertEquals("Changelog #1", "Added a nifty new feature.", version.getChangelog()[0]);
 		assertEquals("Changelog #2", "Added another great feature.", version.getChangelog()[1]);
 	}
-	
-	@Test
-	public void testGetNewestVersion() {
-		VersionInformation.getNewestVersion();
-	}
 }

@@ -1,14 +1,6 @@
 package de.jardas.drakensang;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.URL;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import de.jardas.drakensang.shared.DrakensangException;
 
 
 public class VersionInformation {
@@ -42,11 +34,6 @@ public class VersionInformation {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public static VersionInformation getNewestVersion() {
-        String content = loadVersionContent();
-        return load(content);
-    }
-
 	protected static VersionInformation load(String content) {
 		String[] tokens = content.split("\n+");
         String ver = tokens[0];
@@ -59,35 +46,4 @@ public class VersionInformation {
 
         return new VersionInformation(ver, changes);
 	}
-
-    private static String loadVersionContent() {
-        try {
-            Object connection = new URL(
-                    "http://www.jardas.de/drakensang/version.txt").getContent();
-            InputStream is = (InputStream) connection;
-            InputStreamReader reader = new InputStreamReader(is);
-            StringWriter writer = new StringWriter();
-
-            while (true) {
-                try {
-                    if (!reader.ready()) {
-                        break;
-                    }
-
-                    writer.append((char) reader.read());
-                } catch (IOException e) {
-                    break;
-                }
-            }
-
-            writer.flush();
-            reader.close();
-            is.close();
-
-            return writer.toString().trim();
-        } catch (Exception e) {
-            throw new DrakensangException("Error retrieving newest version: "
-                + e, e);
-        }
-    }
 }
