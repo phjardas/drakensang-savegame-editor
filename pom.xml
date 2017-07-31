@@ -108,23 +108,17 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.codehaus.mojo.webstart</groupId>
-				<artifactId>webstart-maven-plugin</artifactId>
-				<version>1.0-beta-1</version>
-				<configuration>
-					<jnlp>
-						<mainClass>de.jardas.drakensang.Main</mainClass>
-						<outputFile>drakensang-savegame-editor.jnlp</outputFile>
-					</jnlp>
-					<sign>
-						<keystore>${basedir}/src/main/jnlp/jnlp.jks</keystore>
-						<storepass>password</storepass>
-						<storetype>jks</storetype>
-						<alias>drakensang</alias>
-						<verify>true</verify>
-					</sign>
-					<verbose>true</verbose>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
