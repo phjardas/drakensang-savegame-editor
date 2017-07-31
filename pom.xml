@@ -148,36 +148,6 @@
           </archive>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo.webstart</groupId>
-        <artifactId>webstart-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-      </plugin>
     </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>webstart-maven-plugin</artifactId>
-          <configuration>
-            <jnlp>
-              <mainClass>de.jardas.drakensang.Main</mainClass>
-              <outputFile>drakensang-savegame-editor-${pom.version}.jnlp</outputFile>
-            </jnlp>
-            <sign>
-              <keystore>../../src/jnlp/jnlp.jks</keystore>
-              <keypass>bluejeans</keypass>
-              <storepass>bluejeans</storepass>
-              <storetype>jks</storetype>
-              <alias>drakensang</alias>
-              <verify>true</verify>
-            </sign>
-            <verbose>true</verbose>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 </project>
